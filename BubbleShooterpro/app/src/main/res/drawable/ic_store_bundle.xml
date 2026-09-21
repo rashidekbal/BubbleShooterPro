@@ -6,7 +6,9 @@
     android:viewportHeight="48">
 
     <!-- Shadow -->
-    <ellipse cx="24" cy="44" rx="17" ry="3" fill="#30000000" />
+    <path
+        android:fillColor="#30000000"
+        android:pathData="M7,44 A17,3 0 1,0 41,44 A17,3 0 1,0 7,44 Z" />
 
     <!-- Box Base (Vibrant Royal Purple) -->
     <path
@@ -19,7 +21,9 @@
         android:pathData="M24,22 L39,22 L37,42 L24,42 Z" />
 
     <!-- Vertical Golden Ribbon on Box -->
-    <rect x="21.5" y="22" width="5" height="20" fill="#FBBF24" />
+    <path
+        android:fillColor="#FBBF24"
+        android:pathData="M21.5,22 H26.5 V42 H21.5 Z" />
 
     <!-- Box Lid -->
     <path
@@ -30,7 +34,9 @@
         android:pathData="M24,17 L41,17 L41,23 L24,23 Z" />
 
     <!-- Vertical Ribbon on Lid -->
-    <rect x="21.5" y="17" width="5" height="6" fill="#FBBF24" />
+    <path
+        android:fillColor="#FBBF24"
+        android:pathData="M21.5,17 H26.5 V23 H21.5 Z" />
 
     <!-- Golden Bow Loops -->
     <!-- Left Loop -->
@@ -50,8 +56,12 @@
         android:pathData="M27,16.5 C28,13 32,10 32.5,12.5 C33,15 29,16 27,16.5 Z" />
 
     <!-- Bow Center Knot -->
-    <circle cx="24" cy="17" r="3" fill="#D97706" />
-    <circle cx="24" cy="17" r="2.2" fill="#FBBF24" />
+    <path
+        android:fillColor="#D97706"
+        android:pathData="M21,17 A3,3 0 1,0 27,17 A3,3 0 1,0 21,17 Z" />
+    <path
+        android:fillColor="#FBBF24"
+        android:pathData="M21.8,17 A2.2,2.2 0 1,0 26.2,17 A2.2,2.2 0 1,0 21.8,17 Z" />
 
     <!-- Sparkle Stars -->
     <path

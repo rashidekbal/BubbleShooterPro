@@ -368,11 +368,6 @@ public class GameActivity extends BaseActivity implements GameEngine.GameEventLi
     }
 
     @Override
-    public void onBackPressed() {
-        handleBackPress();
-    }
-
-    @Override
     public void onScoreUpdated(int score, int stars, float starProgress) {
         runOnUiThread(() -> {
             if (isFinishing() || isDestroyed()) return;

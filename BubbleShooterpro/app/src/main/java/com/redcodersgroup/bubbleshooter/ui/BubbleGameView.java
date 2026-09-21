@@ -383,12 +383,20 @@ public class BubbleGameView extends View {
                 gameEngine.onTouchMove(x, y);
                 return true;
             case MotionEvent.ACTION_UP:
+                performClick();
+                gameEngine.onTouchUp(x, y);
+                return true;
             case MotionEvent.ACTION_CANCEL:
                 gameEngine.onTouchUp(x, y);
                 return true;
         }
 
         return super.onTouchEvent(event);
+    }
+
+    @Override
+    public boolean performClick() {
+        return super.performClick();
     }
 
     @Override

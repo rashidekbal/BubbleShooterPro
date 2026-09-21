@@ -267,6 +267,11 @@ public class HomeBackgroundView extends View {
                 this.targetCursorY = y;
                 return true;
             case MotionEvent.ACTION_UP:
+                performClick();
+                this.isCursorActive = false;
+                this.targetCursorX = -9999f;
+                this.targetCursorY = -9999f;
+                return true;
             case MotionEvent.ACTION_CANCEL:
                 this.isCursorActive = false;
                 this.targetCursorX = -9999f;
@@ -274,6 +279,11 @@ public class HomeBackgroundView extends View {
                 return true;
         }
         return super.onTouchEvent(event);
+    }
+
+    @Override
+    public boolean performClick() {
+        return super.performClick();
     }
 
     /**

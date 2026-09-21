@@ -6,7 +6,9 @@
     android:viewportHeight="48">
 
     <!-- Shadow -->
-    <ellipse cx="24" cy="45" rx="18" ry="3" fill="#30000000" />
+    <path
+        android:fillColor="#30000000"
+        android:pathData="M6,45 A18,3 0 1,0 42,45 A18,3 0 1,0 6,45 Z" />
 
     <!-- Sack Body (Amber Leather / Canvas) -->
     <path
@@ -19,7 +21,9 @@
         android:pathData="M16,19 C10,21 8,27 9,35 C14,39 21,40 27,35 C22,29 18,24 16,19 Z" />
 
     <!-- Big Center Diamond Emblem on Sack -->
-    <circle cx="24" cy="32" r="8" fill="#B45309" />
+    <path
+        android:fillColor="#B45309"
+        android:pathData="M16,32 A8,8 0 1,0 32,32 A8,8 0 1,0 16,32 Z" />
     <path
         android:fillColor="#38BDF8"
         android:pathData="M24,26 L20,31 L24,37 L28,31 Z" />

@@ -6,14 +6,22 @@
     android:viewportHeight="48">
 
     <!-- Shadow -->
-    <ellipse cx="24" cy="44" rx="16" ry="3" fill="#30000000" />
+    <path
+        android:fillColor="#30000000"
+        android:pathData="M8,44 A16,3 0 1,0 40,44 A16,3 0 1,0 8,44 Z" />
 
     <!-- TV / Monitor Body (Indigo Blue) -->
-    <rect x="6" y="10" width="36" height="26" rx="6" fill="#4338CA" />
-    <rect x="8" y="12" width="32" height="22" rx="4" fill="#6366F1" />
+    <path
+        android:fillColor="#4338CA"
+        android:pathData="M12,10 H36 A6,6 0 0 1 42,16 V30 A6,6 0 0 1 36,36 H12 A6,6 0 0 1 6,30 V16 A6,6 0 0 1 12,10 Z" />
+    <path
+        android:fillColor="#6366F1"
+        android:pathData="M12,12 H36 A4,4 0 0 1 40,16 V28 A4,4 0 0 1 36,32 H12 A4,4 0 0 1 8,28 V16 A4,4 0 0 1 12,12 Z" />
 
     <!-- Screen Gloss Surface -->
-    <rect x="10" y="14" width="28" height="18" rx="3" fill="#1E1B4B" />
+    <path
+        android:fillColor="#1E1B4B"
+        android:pathData="M13,14 H35 A3,3 0 0 1 38,17 V29 A3,3 0 0 1 35,32 H13 A3,3 0 0 1 10,17 V17 A3,3 0 0 1 13,14 Z" />
 
     <!-- Bright Triangle Play Icon on Screen -->
     <path
@@ -26,11 +34,17 @@
         android:strokeWidth="2.5"
         android:strokeLineCap="round"
         android:pathData="M16,5 L22,10 M32,5 L26,10" />
-    <circle cx="16" cy="5" r="2" fill="#FBBF24" />
-    <circle cx="32" cy="5" r="2" fill="#FBBF24" />
+    <path
+        android:fillColor="#FBBF24"
+        android:pathData="M14,5 A2,2 0 1,0 18,5 A2,2 0 1,0 14,5 Z" />
+    <path
+        android:fillColor="#FBBF24"
+        android:pathData="M30,5 A2,2 0 1,0 34,5 A2,2 0 1,0 30,5 Z" />
 
     <!-- "AD" Badge in Corner -->
-    <rect x="11" y="15" width="9" height="5" rx="1.5" fill="#EF4444" />
+    <path
+        android:fillColor="#EF4444"
+        android:pathData="M12.5,15 H18.5 A1.5,1.5 0 0 1 20,16.5 V18.5 A1.5,1.5 0 0 1 18.5,20 H12.5 A1.5,1.5 0 0 1 11,18.5 V16.5 A1.5,1.5 0 0 1 12.5,15 Z" />
     <!-- AD Text Paths -->
     <path
         android:strokeColor="#FFFFFF"

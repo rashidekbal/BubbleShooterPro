@@ -14,6 +14,7 @@ import com.redcodersgroup.bubbleshooter.audio.SoundManager;
 import com.redcodersgroup.bubbleshooter.databinding.ActivitySplashBinding;
 import com.redcodersgroup.bubbleshooter.ui.BaseActivity;
 
+@android.annotation.SuppressLint("CustomSplashScreen")
 public class SplashActivity extends BaseActivity {
 
     private ActivitySplashBinding binding;

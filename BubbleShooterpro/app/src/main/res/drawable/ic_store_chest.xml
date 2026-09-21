@@ -6,7 +6,9 @@
     android:viewportHeight="48">
 
     <!-- Shadow -->
-    <ellipse cx="24" cy="44" rx="20" ry="3" fill="#30000000" />
+    <path
+        android:fillColor="#30000000"
+        android:pathData="M4,44 A20,3 0 1,0 44,44 A20,3 0 1,0 4,44 Z" />
 
     <!-- Chest Lower Box (Rich Royal Mahogany Wood) -->
     <path
@@ -19,13 +21,23 @@
         android:pathData="M11,26 L37,26 L36,40 L12,40 Z" />
 
     <!-- Golden Straps & Corner Brackets on Lower Box -->
-    <rect x="7" y="24" width="5" height="18" fill="#F59E0B" />
-    <rect x="36" y="24" width="5" height="18" fill="#F59E0B" />
-    <rect x="21.5" y="24" width="5" height="10" fill="#F59E0B" />
+    <path
+        android:fillColor="#F59E0B"
+        android:pathData="M7,24 H12 V42 H7 Z" />
+    <path
+        android:fillColor="#F59E0B"
+        android:pathData="M36,24 H41 V42 H36 Z" />
+    <path
+        android:fillColor="#F59E0B"
+        android:pathData="M21.5,24 H26.5 V34 H21.5 Z" />
 
     <!-- Keyhole Clasp / Lock Plate -->
-    <rect x="21" y="27" width="6" height="7" rx="1.5" fill="#FBBF24" />
-    <circle cx="24" cy="29.5" r="1.2" fill="#78350F" />
+    <path
+        android:fillColor="#FBBF24"
+        android:pathData="M22.5,27 H25.5 A1.5,1.5 0 0 1 27,28.5 V32.5 A1.5,1.5 0 0 1 25.5,34 H22.5 A1.5,1.5 0 0 1 21,32.5 V28.5 A1.5,1.5 0 0 1 22.5,27 Z" />
+    <path
+        android:fillColor="#78350F"
+        android:pathData="M22.8,29.5 A1.2,1.2 0 1,0 25.2,29.5 A1.2,1.2 0 1,0 22.8,29.5 Z" />
     <path
         android:strokeColor="#78350F"
         android:strokeWidth="1"
@@ -43,11 +55,17 @@
     <path
         android:fillColor="#FBBF24"
         android:pathData="M6,20 L42,20 L42,22 L6,22 Z" />
-    <rect x="7" y="10" width="5" height="11" fill="#F59E0B" />
-    <rect x="36" y="10" width="5" height="11" fill="#F59E0B" />
+    <path
+        android:fillColor="#F59E0B"
+        android:pathData="M7,10 H12 V21 H7 Z" />
+    <path
+        android:fillColor="#F59E0B"
+        android:pathData="M36,10 H41 V21 H36 Z" />
 
     <!-- Sparkling Sea of Diamonds Spilling Over Chest Interior -->
-    <ellipse cx="24" cy="22" rx="15" ry="5" fill="#0284C7" />
+    <path
+        android:fillColor="#0284C7"
+        android:pathData="M9,22 A15,5 0 1,0 39,22 A15,5 0 1,0 9,22 Z" />
 
     <!-- Big Center Diamond -->
     <path

@@ -6,7 +6,9 @@
     android:viewportHeight="48">
 
     <!-- Shadow -->
-    <ellipse cx="24" cy="44" rx="15" ry="3" fill="#30000000" />
+    <path
+        android:fillColor="#30000000"
+        android:pathData="M9,44 A15,3 0 1,0 39,44 A15,3 0 1,0 9,44 Z" />
 
     <!-- Gift Box Base (Emerald Green) -->
     <path
@@ -17,7 +19,9 @@
         android:pathData="M24,23 L37,23 L35,42 L24,42 Z" />
 
     <!-- Ribbon Vertical -->
-    <rect x="22" y="23" width="4" height="19" fill="#FBBF24" />
+    <path
+        android:fillColor="#FBBF24"
+        android:pathData="M22,23 H26 V42 H22 Z" />
 
     <!-- Lid -->
     <path
@@ -26,12 +30,20 @@
     <path
         android:fillColor="#059669"
         android:pathData="M24,18 L39,18 L39,24 L24,24 Z" />
-    <rect x="22" y="18" width="4" height="6" fill="#FBBF24" />
+    <path
+        android:fillColor="#FBBF24"
+        android:pathData="M22,18 H26 V24 H22 Z" />
 
     <!-- Bow -->
-    <circle cx="21" cy="15" r="3.5" fill="#F59E0B" />
-    <circle cx="27" cy="15" r="3.5" fill="#F59E0B" />
-    <circle cx="24" cy="17" r="2.5" fill="#FBBF24" />
+    <path
+        android:fillColor="#F59E0B"
+        android:pathData="M17.5,15 A3.5,3.5 0 1,0 24.5,15 A3.5,3.5 0 1,0 17.5,15 Z" />
+    <path
+        android:fillColor="#F59E0B"
+        android:pathData="M23.5,15 A3.5,3.5 0 1,0 30.5,15 A3.5,3.5 0 1,0 23.5,15 Z" />
+    <path
+        android:fillColor="#FBBF24"
+        android:pathData="M21.5,17 A2.5,2.5 0 1,0 26.5,17 A2.5,2.5 0 1,0 21.5,17 Z" />
 
     <!-- Diamond Floating Above Gift Box -->
     <path
