@@ -1,14 +1,14 @@
 {
+  "level": 53,
   "shots": 14,
   "colors": [
-    "BLUE",
-    "YELLOW",
     "RED",
-    "GREEN"
+    "GREEN",
+    "BLUE",
+    "YELLOW"
   ],
   "objective": {
-    "type": "POP_COLOR",
-    "color": "RED",
+    "type": "CLEAR_ALL",
     "target": 16
   },
   "starThresholds": [
@@ -23,6 +23,5 @@
     "..GBGG..",
     "..BBBBBB.",
     "...B*B.."
-  ],
-  "level": 53
+  ]
 }

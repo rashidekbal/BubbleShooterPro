@@ -10,7 +10,7 @@ import java.util.List;
 public class TrajectoryCalculator {
     public static final float STEP_SIZE = 22f; // px between guide points
     public static final int MAX_STEPS = 120;
-    public static final int MAX_BOUNCES = 2;
+    public static final int MAX_BOUNCES = 5;
 
     public static class TrajectoryResult {
         public final List<PointF> points;
@@ -74,7 +74,7 @@ public class TrajectoryCalculator {
                 float wallY = prevRy + dy * tWall;
                 rx = minX;
                 ry = wallY;
-                if (bounces >= maxBounces) {
+                if (maxBounces > 0 && bounces >= maxBounces) {
                     bounceLimitExceeded = true;
                     points.add(new PointF(rx, ry));
                     break;
@@ -86,7 +86,7 @@ public class TrajectoryCalculator {
                 float wallY = prevRy + dy * tWall;
                 rx = maxX;
                 ry = wallY;
-                if (bounces >= maxBounces) {
+                if (maxBounces > 0 && bounces >= maxBounces) {
                     bounceLimitExceeded = true;
                     points.add(new PointF(rx, ry));
                     break;

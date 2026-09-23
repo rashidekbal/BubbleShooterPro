@@ -1,15 +1,16 @@
 {
+  "level": 107,
   "shots": 20,
   "colors": [
     "RED",
-    "ORANGE",
+    "GREEN",
     "YELLOW",
     "PURPLE",
-    "GREEN"
+    "ORANGE"
   ],
   "objective": {
     "type": "CLEAR_ALL",
-    "target": 0
+    "target": 20
   },
   "starThresholds": [
     1670,
@@ -17,12 +18,11 @@
     6667
   ],
   "rows": [
-    "SRORORORS",
+    "ORORORORO",
     "ORORRORO",
     "ROROROROR",
     "OROLLORO",
     "ROROROROR",
     "ORORRORO"
-  ],
-  "level": 107
+  ]
 }

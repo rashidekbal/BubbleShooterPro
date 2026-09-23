@@ -997,7 +997,7 @@ public class GameEngine {
             boolean isFireball = (activeProjectile.getType() == BubbleType.FIREBALL
                     || activeProjectile.getColor() == BubbleColor.FIREBALL);
 
-            int maxBounces = isFireball ? 1 : 2;
+            int maxBounces = isFireball ? 1 : -1;
             boolean bounced = WallBounceCalculator.checkAndHandleWallBounce(activeProjectile, boardLeft, boardRight, maxBounces);
             if (bounced) {
                 soundManager.playBounce();

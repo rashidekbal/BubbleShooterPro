@@ -1,11 +1,12 @@
 {
+  "level": 102,
   "shots": 19,
   "colors": [
     "RED",
-    "ORANGE",
+    "GREEN",
     "YELLOW",
     "PURPLE",
-    "GREEN"
+    "ORANGE"
   ],
   "objective": {
     "type": "DROP_COUNT",
@@ -17,13 +18,12 @@
     6610
   ],
   "rows": [
-    "TOYSPSYOR",
+    "TOYTPTYOR",
     "ROYPTYOR",
     ".OYTPRYO.",
     "..YYYY..",
     ".TYRPRYP.",
     "PORYYTOP",
     "PORSTSROP"
-  ],
-  "level": 102
+  ]
 }
