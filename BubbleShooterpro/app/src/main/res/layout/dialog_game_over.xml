@@ -131,8 +131,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:gravity="center_vertical"
-            android:layout_marginTop="@dimen/dp_4">
+            android:gravity="center"
+            android:layout_marginTop="@dimen/dp_6">
 
             <!-- Home Orb Button -->
             <ImageButton
@@ -144,23 +144,16 @@
                 android:src="@drawable/btn_home_yellow"
                 android:contentDescription="@string/home" />
 
-            <!-- Big Glossy Green Retry Button -->
-            <Button
+            <!-- Restart / Retry Orb Button -->
+            <ImageButton
                 android:id="@+id/btnLoseRetry"
-                android:layout_width="0dp"
+                android:layout_width="@dimen/dp_56"
                 android:layout_height="@dimen/dp_56"
-                android:layout_weight="1"
-                android:layout_marginStart="@dimen/dp_14"
-                android:background="@drawable/btn_pill_blank_green"
-                android:text="@string/restart"
-                android:textColor="#FFFFFF"
-                android:textSize="@dimen/sp_18"
-                android:textStyle="bold"
-                android:letterSpacing="0.03"
-                android:shadowColor="#80000000"
-                android:shadowDx="1"
-                android:shadowDy="2"
-                android:shadowRadius="3" />
+                android:layout_marginStart="@dimen/dp_24"
+                android:background="@android:color/transparent"
+                android:scaleType="fitCenter"
+                android:src="@drawable/btn_restart_yellow"
+                android:contentDescription="@string/restart" />
         </LinearLayout>
 
     </LinearLayout>

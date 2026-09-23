@@ -83,7 +83,7 @@ public class GameOverDialog extends Dialog {
             binding.tvLoseBestScore.setVisibility(View.GONE);
         }
 
-        // Show no-hearts warning and update retry button label for level mode
+        // Show no-hearts warning for level mode
         if (!isEndless && livesRemaining <= 0) {
             binding.layoutNoHeartsWarning.setVisibility(View.VISIBLE);
             long nextLifeSecs = getSecondsUntilNextLife();
@@ -94,8 +94,10 @@ public class GameOverDialog extends Dialog {
                         String.format(java.util.Locale.getDefault(),
                                 "Next heart in %02d:%02d — or buy one in the shop", mins, secs));
             }
-            binding.btnLoseRetry.setText("💎 Get Hearts");
-            binding.btnLoseRetry.setBackgroundResource(com.redcodersgroup.bubbleshooter.R.drawable.btn_pill_blank_rose);
+            binding.layoutNoHeartsWarning.setOnClickListener(v -> {
+                dismiss();
+                if (listener != null) listener.onRetryClicked();
+            });
         }
 
         binding.btnLoseRetry.setOnClickListener(v -> {
