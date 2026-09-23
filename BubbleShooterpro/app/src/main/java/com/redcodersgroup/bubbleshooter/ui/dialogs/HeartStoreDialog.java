@@ -10,7 +10,6 @@ import android.os.Looper;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.ImageView;
-import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import com.redcodersgroup.bubbleshooter.R;
@@ -106,21 +105,39 @@ public class HeartStoreDialog extends Dialog {
     private void handleWatchAdForLife() {
         if (prefs.getLives() >= 5) {
             soundManager.playClick();
-            Toast.makeText(getContext(), "❤️ Lives are already FULL (5/5)!", Toast.LENGTH_SHORT).show();
+            NoticeDialog.showInfo(
+                    getContext(),
+                    "NOTICE",
+                    "HEARTS FULL",
+                    "MAXIMUM CAPACITY",
+                    "Your life energy is already fully restored (5/5)."
+            );
             return;
         }
 
         soundManager.playWin();
         prefs.addLives(1);
         AnalyticsManager.getInstance(getContext()).logHeartRefilled("ad", 1);
-        Toast.makeText(getContext(), "🎬 Video reward granted! +1 Heart added!", Toast.LENGTH_SHORT).show();
         updateLivesUI();
+        NoticeDialog.showReward(
+                getContext(),
+                "REWARD",
+                "LIFE RESTORED",
+                "+1 HEART ADDED",
+                "Ad reward granted. One heart added to your pool."
+        );
     }
 
     private void handleBuyOneHeart() {
         if (prefs.getLives() >= 5) {
             soundManager.playClick();
-            Toast.makeText(getContext(), "❤️ Lives are already FULL (5/5)!", Toast.LENGTH_SHORT).show();
+            NoticeDialog.showInfo(
+                    getContext(),
+                    "NOTICE",
+                    "HEARTS FULL",
+                    "MAXIMUM CAPACITY",
+                    "Your life energy is already fully restored (5/5)."
+            );
             return;
         }
 
@@ -128,18 +145,36 @@ public class HeartStoreDialog extends Dialog {
             soundManager.playWin();
             prefs.addLives(1);
             AnalyticsManager.getInstance(getContext()).logHeartRefilled("diamond", 1);
-            Toast.makeText(getContext(), "❤️ +1 Heart added!", Toast.LENGTH_SHORT).show();
             updateLivesUI();
+            NoticeDialog.showReward(
+                    getContext(),
+                    "REFILL",
+                    "PURCHASE COMPLETE",
+                    "+1 HEART ADDED",
+                    "One heart has been added to your pool."
+            );
         } else {
             soundManager.playClick();
-            Toast.makeText(getContext(), "❌ Not enough diamonds! Watch an ad or get diamonds.", Toast.LENGTH_SHORT).show();
+            NoticeDialog.showWarning(
+                    getContext(),
+                    "WARNING",
+                    "INSUFFICIENT DIAMONDS",
+                    "NEED MORE DIAMONDS",
+                    "You do not have enough diamonds to purchase hearts."
+            );
         }
     }
 
     private void handleBuyFullRefill() {
         if (prefs.getLives() >= 5) {
             soundManager.playClick();
-            Toast.makeText(getContext(), "❤️ Lives are already FULL (5/5)!", Toast.LENGTH_SHORT).show();
+            NoticeDialog.showInfo(
+                    getContext(),
+                    "NOTICE",
+                    "HEARTS FULL",
+                    "MAXIMUM CAPACITY",
+                    "Your life energy is already fully restored (5/5)."
+            );
             return;
         }
 
@@ -147,18 +182,36 @@ public class HeartStoreDialog extends Dialog {
             soundManager.playWin();
             prefs.refillLives();
             AnalyticsManager.getInstance(getContext()).logHeartRefilled("diamond", 5);
-            Toast.makeText(getContext(), "❤️ Lives fully restored (5/5)!", Toast.LENGTH_SHORT).show();
             updateLivesUI();
+            NoticeDialog.showReward(
+                    getContext(),
+                    "REFILL",
+                    "FULL RESTORATION",
+                    "5/5 HEARTS RESTORED",
+                    "Your life pool has been completely replenished."
+            );
         } else {
             soundManager.playClick();
-            Toast.makeText(getContext(), "❌ Not enough diamonds! Watch an ad or get diamonds.", Toast.LENGTH_SHORT).show();
+            NoticeDialog.showWarning(
+                    getContext(),
+                    "WARNING",
+                    "INSUFFICIENT DIAMONDS",
+                    "NEED MORE DIAMONDS",
+                    "You do not have enough diamonds to purchase hearts."
+            );
         }
     }
 
     private void handleBuyTripleHearts() {
         if (prefs.getLives() >= 5) {
             soundManager.playClick();
-            Toast.makeText(getContext(), "❤️ Lives are already FULL (5/5)!", Toast.LENGTH_SHORT).show();
+            NoticeDialog.showInfo(
+                    getContext(),
+                    "NOTICE",
+                    "HEARTS FULL",
+                    "MAXIMUM CAPACITY",
+                    "Your life energy is already fully restored (5/5)."
+            );
             return;
         }
 
@@ -166,11 +219,23 @@ public class HeartStoreDialog extends Dialog {
             soundManager.playWin();
             prefs.addLives(3);
             AnalyticsManager.getInstance(getContext()).logHeartRefilled("diamond", 3);
-            Toast.makeText(getContext(), "❤️ +3 Hearts added!", Toast.LENGTH_SHORT).show();
             updateLivesUI();
+            NoticeDialog.showReward(
+                    getContext(),
+                    "REFILL",
+                    "PURCHASE COMPLETE",
+                    "+3 HEARTS ADDED",
+                    "Three hearts have been added to your pool."
+            );
         } else {
             soundManager.playClick();
-            Toast.makeText(getContext(), "❌ Not enough diamonds! Watch an ad or get diamonds.", Toast.LENGTH_SHORT).show();
+            NoticeDialog.showWarning(
+                    getContext(),
+                    "WARNING",
+                    "INSUFFICIENT DIAMONDS",
+                    "NEED MORE DIAMONDS",
+                    "You do not have enough diamonds to purchase hearts."
+            );
         }
     }
 

@@ -7,7 +7,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
-import android.widget.Toast;
+import com.redcodersgroup.bubbleshooter.ui.dialogs.NoticeDialog;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.viewpager2.widget.ViewPager2;
@@ -85,7 +85,6 @@ public class MainActivity extends AppCompatActivity {
                 if (worldMapAdapter != null) {
                     worldMapAdapter.notifyDataSetChanged();
                 }
-                Toast.makeText(MainActivity.this, "Profile updated: " + name, Toast.LENGTH_SHORT).show();
             });
             profileDialog.show();
         });
@@ -138,8 +137,14 @@ public class MainActivity extends AppCompatActivity {
                 soundManager.playWin();
                 prefs.addDiamonds(bonusDiamonds);
                 AnalyticsManager.getInstance(MainActivity.this).logGiftChestClaimed(worldNumber, giftIndex, bonusDiamonds);
-                Toast.makeText(MainActivity.this, "🎁 Mystery Gift Unlocked! +" + bonusDiamonds + " Diamonds!", Toast.LENGTH_LONG).show();
                 updateDiamondsUI();
+                NoticeDialog.showReward(
+                        MainActivity.this,
+                        "REWARD",
+                        "MYSTERY GIFT UNLOCKED",
+                        "+" + bonusDiamonds + " DIAMONDS",
+                        "Bonus diamonds added to your vault."
+                );
             }
         });
         binding.viewPagerWorldMaps.setAdapter(worldMapAdapter);
@@ -289,27 +294,14 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-        previewBinding.btnToggleBoosterRainbow.setOnClickListener(v -> {
-            soundManager.playClick();
-            Toast.makeText(this, "★ Rainbow Booster Ready", Toast.LENGTH_SHORT).show();
-        });
-        previewBinding.btnToggleBoosterFireball.setOnClickListener(v -> {
-            soundManager.playClick();
-            Toast.makeText(this, "🔥 Fireball Booster Ready", Toast.LENGTH_SHORT).show();
-        });
-        previewBinding.btnToggleBoosterLightning.setOnClickListener(v -> {
-            soundManager.playClick();
-            Toast.makeText(this, "⚡ Lightning Booster Ready", Toast.LENGTH_SHORT).show();
-        });
-        previewBinding.btnToggleBoosterBomb.setOnClickListener(v -> {
-            soundManager.playClick();
-            Toast.makeText(this, "💣 Bomb Booster Ready", Toast.LENGTH_SHORT).show();
-        });
+        previewBinding.btnToggleBoosterRainbow.setOnClickListener(v -> soundManager.playClick());
+        previewBinding.btnToggleBoosterFireball.setOnClickListener(v -> soundManager.playClick());
+        previewBinding.btnToggleBoosterLightning.setOnClickListener(v -> soundManager.playClick());
+        previewBinding.btnToggleBoosterBomb.setOnClickListener(v -> soundManager.playClick());
 
         previewBinding.btnStartLevel.setOnClickListener(v -> {
             soundManager.playClick();
             if (prefs.getLives() <= 0) {
-                Toast.makeText(this, "💔 Out of lives! Get more hearts in the Heart Shop.", Toast.LENGTH_SHORT).show();
                 showHeartStoreDialog();
                 return;
             }

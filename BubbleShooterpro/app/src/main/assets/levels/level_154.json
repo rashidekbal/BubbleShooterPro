@@ -1,15 +1,15 @@
 {
+  "level": 154,
   "shots": 16,
   "colors": [
-    "BLUE",
-    "CYAN",
     "GREEN",
+    "BLUE",
     "YELLOW",
     "PURPLE"
   ],
   "objective": {
     "type": "CLEAR_ALL",
-    "target": 0
+    "target": 19
   },
   "starThresholds": [
     1957,
@@ -22,8 +22,7 @@
     ".BCCCCCB.",
     "BCXCCXCB",
     "BCCCCCCCB",
-    ".G.GG.G.",
+    "GG.GG.GG",
     "G..YYY..G"
-  ],
-  "level": 154
+  ]
 }

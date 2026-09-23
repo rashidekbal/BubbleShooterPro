@@ -1,15 +1,14 @@
 {
+  "level": 147,
   "shots": 20,
   "colors": [
-    "CYAN",
-    "MAGENTA",
+    "BLUE",
     "YELLOW",
-    "GREEN",
-    "BLUE"
+    "ORANGE"
   ],
   "objective": {
     "type": "CLEAR_ALL",
-    "target": 0
+    "target": 4486
   },
   "starThresholds": [
     2060,
@@ -17,12 +16,11 @@
     7736
   ],
   "rows": [
-    "MCMCMCMCM",
-    "MCMCCMCM",
-    "CMCMCMCMC",
-    "MCMYYMCM",
-    "CMCMCMCMC",
-    "MCMCCMCM"
-  ],
-  "level": 147
+    "MCBCBCBCB",
+    "BCOCCGCB",
+    "CBCOCGCBC",
+    "BCOYYGCB",
+    "CBOOCGGBC",
+    "BCOCCGCB"
+  ]
 }

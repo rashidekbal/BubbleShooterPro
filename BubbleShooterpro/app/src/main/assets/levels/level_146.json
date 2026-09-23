@@ -1,11 +1,10 @@
 {
+  "level": 146,
   "shots": 17,
   "colors": [
-    "CYAN",
-    "MAGENTA",
-    "YELLOW",
     "GREEN",
-    "BLUE"
+    "BLUE",
+    "YELLOW"
   ],
   "objective": {
     "type": "SCORE_TARGET",
@@ -18,11 +17,10 @@
   ],
   "rows": [
     "..CCMCCMC",
-    ".CMMMMC.",
-    "YYMGGGMYY",
+    ".CMMMMCY",
+    "YYYGGGMYY",
     "YMGGGGMY",
     "..GGGGGGG",
     ".GXGGXG."
-  ],
-  "level": 146
+  ]
 }

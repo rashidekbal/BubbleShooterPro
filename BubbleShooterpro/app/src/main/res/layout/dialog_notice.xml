@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/rootNoticeDialog"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center"
+    android:clipChildren="false"
+    android:clipToPadding="false"
+    android:paddingStart="@dimen/dp_16"
+    android:paddingEnd="@dimen/dp_16"
+    android:paddingTop="@dimen/dp_12"
+    android:paddingBottom="@dimen/dp_12">
+
+    <!-- Main Dialog Card Body -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center_horizontal"
+        android:background="@drawable/bg_dialog_frame"
+        android:paddingStart="@dimen/dp_20"
+        android:paddingEnd="@dimen/dp_20"
+        android:paddingTop="@dimen/dp_48"
+        android:paddingBottom="@dimen/dp_26">
+
+        <!-- Inset Content Panel -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:background="@drawable/bg_dialog_inset_panel"
+            android:paddingStart="@dimen/dp_16"
+            android:paddingEnd="@dimen/dp_16"
+            android:paddingTop="@dimen/dp_18"
+            android:paddingBottom="@dimen/dp_18"
+            android:layout_marginTop="@dimen/dp_6">
+
+            <!-- Category / Urgency Tag -->
+            <TextView
+                android:id="@+id/tvNoticeTag"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="ATTENTION"
+                android:textColor="#DC2626"
+                android:textSize="@dimen/sp_12"
+                android:textStyle="bold"
+                android:letterSpacing="0.08" />
+
+            <!-- Prominent Callout -->
+            <TextView
+                android:id="@+id/tvNoticeCallout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/dp_4"
+                android:text="LEVEL LOCKED"
+                android:textColor="#D97706"
+                android:textSize="@dimen/sp_20"
+                android:textStyle="bold"
+                android:gravity="center"
+                android:shadowColor="#30000000"
+                android:shadowDx="1"
+                android:shadowDy="2"
+                android:shadowRadius="3" />
+
+            <!-- Subtitle Notice -->
+            <TextView
+                android:id="@+id/tvNoticeSubtitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/dp_6"
+                android:text="Complete previous levels to unlock this stage."
+                android:textColor="#64748B"
+                android:textSize="@dimen/sp_13"
+                android:textStyle="bold"
+                android:gravity="center" />
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <!-- Top Curved Header Plaque -->
+    <LinearLayout
+        android:id="@+id/layoutNoticePlaque"
+        android:layout_width="@dimen/dp_200"
+        android:layout_height="@dimen/dp_46"
+        android:layout_gravity="top|center_horizontal"
+        android:background="@drawable/bg_dialog_header_plaque"
+        android:gravity="center"
+        android:elevation="@dimen/dp_4">
+
+        <TextView
+            android:id="@+id/tvNoticePlaqueTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="NOTICE"
+            android:textColor="#FFFFFF"
+            android:textSize="@dimen/sp_18"
+            android:textStyle="bold"
+            android:shadowColor="#B0000000"
+            android:shadowDx="1"
+            android:shadowDy="2"
+            android:shadowRadius="4" />
+    </LinearLayout>
+</FrameLayout>

@@ -9,7 +9,7 @@ import android.view.ViewGroup;
 import android.view.animation.CycleInterpolator;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.Toast;
+import com.redcodersgroup.bubbleshooter.ui.dialogs.NoticeDialog;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -228,7 +228,13 @@ public class WorldMapPagerAdapter extends RecyclerView.Adapter<WorldMapPagerAdap
                         if (listener != null) listener.onLevelSelected(level);
                     } else {
                         soundManager.playClick();
-                        Toast.makeText(context, "Complete Level " + (level - 1) + " to unlock!", Toast.LENGTH_SHORT).show();
+                        NoticeDialog.showWarning(
+                                context,
+                                "LOCKED",
+                                "STAGE NOT ACCESSIBLE",
+                                "LEVEL " + level + " LOCKED",
+                                "Complete Level " + (level - 1) + " to unlock this stage."
+                        );
                     }
                 });
 
@@ -285,9 +291,21 @@ public class WorldMapPagerAdapter extends RecyclerView.Adapter<WorldMapPagerAdap
                 ivGift.setOnClickListener(v -> {
                     soundManager.playClick();
                     if (!isUnlocked) {
-                        Toast.makeText(context, "🎁 Complete Level " + requiredLevel + " to open this Mystery Gift!", Toast.LENGTH_SHORT).show();
+                        NoticeDialog.showWarning(
+                                context,
+                                "LOCKED",
+                                "CHEST LOCKED",
+                                "MYSTERY GIFT",
+                                "Complete Level " + requiredLevel + " to open this mystery chest."
+                        );
                     } else if (isClaimed) {
-                        Toast.makeText(context, "🎁 Gift already claimed! Keep climbing!", Toast.LENGTH_SHORT).show();
+                        NoticeDialog.showInfo(
+                                context,
+                                "NOTICE",
+                                "ALREADY CLAIMED",
+                                "REWARD COLLECTED",
+                                "You have already collected this reward. Keep progressing!"
+                        );
                     } else {
                         prefs.setClaimedWorldGift(world.worldNumber, giftIndex, true);
                         ivGift.setAlpha(0.55f);

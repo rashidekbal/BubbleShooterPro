@@ -7,7 +7,6 @@ import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.view.ViewGroup;
 import android.view.Window;
-import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import com.redcodersgroup.bubbleshooter.R;
@@ -113,11 +112,23 @@ public class StoreDialog extends Dialog {
             soundManager.playWin();
             prefs.addDiamonds(30);
             prefs.markDailyFreeDiamondsClaimed();
-            Toast.makeText(getContext(), "🎉 +30 Free Daily Diamonds Claimed!", Toast.LENGTH_SHORT).show();
             updateStoreUI();
+            NoticeDialog.showReward(
+                    getContext(),
+                    "REWARD",
+                    "DAILY GIFT",
+                    "+30 FREE DIAMONDS",
+                    "Free diamonds added to your vault. Return tomorrow for more!"
+            );
         } else {
             soundManager.playClick();
-            Toast.makeText(getContext(), "⏰ Daily Gift already claimed! Come back tomorrow.", Toast.LENGTH_SHORT).show();
+            NoticeDialog.showInfo(
+                    getContext(),
+                    "NOTICE",
+                    "DAILY GIFT",
+                    "ALREADY CLAIMED",
+                    "You have already collected today's free gift. Check back tomorrow!"
+            );
         }
     }
 
@@ -128,8 +139,14 @@ public class StoreDialog extends Dialog {
         bundle.putString("pack_name", packName);
         bundle.putInt("diamonds", diamonds);
         AnalyticsManager.getInstance(getContext()).logEvent("diamond_pack_purchased", bundle);
-        Toast.makeText(getContext(), "💎 +" + String.format(java.util.Locale.getDefault(), "%,d", diamonds) + " Diamonds added (" + packName + ")!", Toast.LENGTH_SHORT).show();
         updateStoreUI();
+        NoticeDialog.showReward(
+                getContext(),
+                "PURCHASE",
+                "ORDER COMPLETE",
+                "+" + String.format(java.util.Locale.getDefault(), "%,d", diamonds) + " DIAMONDS",
+                packName + " has been added to your vault."
+        );
     }
 
     private void handleBoosterPurchase(String type, int cost) {
@@ -139,26 +156,38 @@ public class StoreDialog extends Dialog {
             switch (type) {
                 case "BOMB":
                     prefs.addBombBoosters(3);
-                    name = "💣 3x Bomb Boosters";
+                    name = "3x BOMB BOOSTERS";
                     break;
                 case "FIREBALL":
                     prefs.addFireballBoosters(3);
-                    name = "🔥 3x Fireball Boosters";
+                    name = "3x FIREBALL BOOSTERS";
                     break;
                 case "LIGHTNING":
                     prefs.addLightningBoosters(3);
-                    name = "⚡ 3x Lightning Boosters";
+                    name = "3x LIGHTNING BOOSTERS";
                     break;
                 case "RAINBOW":
                     prefs.addRainbowBoosters(3);
-                    name = "🌈 3x Rainbow Boosters";
+                    name = "3x RAINBOW BOOSTERS";
                     break;
             }
-            Toast.makeText(getContext(), "✓ Purchased: " + name + "!", Toast.LENGTH_SHORT).show();
             updateStoreUI();
+            NoticeDialog.showReward(
+                    getContext(),
+                    "PURCHASE",
+                    "BOOSTER UNLOCKED",
+                    name,
+                    "3 boosters added to your gameplay inventory."
+            );
         } else {
             soundManager.playClick();
-            Toast.makeText(getContext(), "❌ Not enough diamonds! Choose a diamond pack above.", Toast.LENGTH_SHORT).show();
+            NoticeDialog.showWarning(
+                    getContext(),
+                    "WARNING",
+                    "INSUFFICIENT DIAMONDS",
+                    "NEED MORE DIAMONDS",
+                    "You do not have enough diamonds. Choose a pack above to top up."
+            );
         }
     }
 
@@ -171,11 +200,23 @@ public class StoreDialog extends Dialog {
             prefs.addLightningBoosters(2);
             prefs.addRainbowBoosters(2);
             prefs.refillLives();
-            Toast.makeText(getContext(), "⭐ Ultimate Power Pack Unlocked! 2x Each Booster + Full Lives!", Toast.LENGTH_LONG).show();
             updateStoreUI();
+            NoticeDialog.showReward(
+                    getContext(),
+                    "BUNDLE",
+                    "PURCHASE COMPLETE",
+                    "ULTIMATE POWER PACK",
+                    "2x each booster and full lives have been unlocked!"
+            );
         } else {
             soundManager.playClick();
-            Toast.makeText(getContext(), "❌ Not enough diamonds! Choose a diamond pack above.", Toast.LENGTH_SHORT).show();
+            NoticeDialog.showWarning(
+                    getContext(),
+                    "WARNING",
+                    "INSUFFICIENT DIAMONDS",
+                    "NEED MORE DIAMONDS",
+                    "You do not have enough diamonds. Choose a pack above to top up."
+            );
         }
     }
 
