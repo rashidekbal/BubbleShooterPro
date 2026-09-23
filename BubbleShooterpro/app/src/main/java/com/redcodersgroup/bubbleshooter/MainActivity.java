@@ -28,6 +28,7 @@ import com.redcodersgroup.bubbleshooter.ui.dialogs.ProfileDialog;
 import com.redcodersgroup.bubbleshooter.ui.dialogs.SettingsDialog;
 import com.redcodersgroup.bubbleshooter.ui.dialogs.StarChestDialog;
 import com.redcodersgroup.bubbleshooter.ui.dialogs.StoreDialog;
+import com.redcodersgroup.bubbleshooter.analytics.AnalyticsManager;
 import com.redcodersgroup.bubbleshooter.ui.dialogs.HeartStoreDialog;
 
 public class MainActivity extends AppCompatActivity {
@@ -136,6 +137,7 @@ public class MainActivity extends AppCompatActivity {
             public void onWorldGiftClaimed(int worldNumber, int giftIndex, int bonusDiamonds) {
                 soundManager.playWin();
                 prefs.addDiamonds(bonusDiamonds);
+                AnalyticsManager.getInstance(MainActivity.this).logGiftChestClaimed(worldNumber, giftIndex, bonusDiamonds);
                 Toast.makeText(MainActivity.this, "🎁 Mystery Gift Unlocked! +" + bonusDiamonds + " Diamonds!", Toast.LENGTH_LONG).show();
                 updateDiamondsUI();
             }
@@ -167,6 +169,7 @@ public class MainActivity extends AppCompatActivity {
         if (storeDialog != null && storeDialog.isShowing()) {
             storeDialog.dismiss();
         }
+        AnalyticsManager.getInstance(this).logStoreOpened("diamond");
         storeDialog = new StoreDialog(this, () -> {
             updateDiamondsUI();
             updateLivesUI();
@@ -179,6 +182,7 @@ public class MainActivity extends AppCompatActivity {
         if (heartStoreDialog != null && heartStoreDialog.isShowing()) {
             heartStoreDialog.dismiss();
         }
+        AnalyticsManager.getInstance(this).logStoreOpened("heart");
         heartStoreDialog = new HeartStoreDialog(this, () -> {
             updateDiamondsUI();
             updateLivesUI();

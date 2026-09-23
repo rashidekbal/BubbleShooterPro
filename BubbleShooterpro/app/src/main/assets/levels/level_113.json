@@ -1,11 +1,12 @@
 {
+  "level": 113,
   "shots": 15,
   "colors": [
     "RED",
-    "ORANGE",
+    "GREEN",
     "YELLOW",
     "PURPLE",
-    "GREEN"
+    "ORANGE"
   ],
   "objective": {
     "type": "SCORE_TARGET",
@@ -23,6 +24,5 @@
     "..PXPP..",
     "..GGGGGG.",
     "...R*R.."
-  ],
-  "level": 113
+  ]
 }

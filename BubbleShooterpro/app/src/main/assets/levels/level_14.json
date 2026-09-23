@@ -1,14 +1,15 @@
 {
+  "level": 14,
   "shots": 15,
   "colors": [
     "RED",
+    "GREEN",
     "BLUE",
-    "YELLOW",
-    "GREEN"
+    "YELLOW"
   ],
   "objective": {
     "type": "CLEAR_ALL",
-    "target": 0
+    "target": 13
   },
   "starThresholds": [
     1255,
@@ -17,12 +18,11 @@
   ],
   "rows": [
     "..R....R.",
-    ".R......",
+    ".R....B.",
     ".RBBBBBR.",
     "RBRBBRBR",
     "RBBBBBBBR",
-    ".Y.YY.Y.",
+    "BY.YY.YB",
     "Y..GGG..Y"
-  ],
-  "level": 14
+  ]
 }

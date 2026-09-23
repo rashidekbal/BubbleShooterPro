@@ -14,6 +14,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import com.redcodersgroup.bubbleshooter.R;
+import com.redcodersgroup.bubbleshooter.analytics.AnalyticsManager;
 import com.redcodersgroup.bubbleshooter.audio.SoundManager;
 import com.redcodersgroup.bubbleshooter.data.PreferencesManager;
 import com.redcodersgroup.bubbleshooter.databinding.DialogHeartStoreBinding;
@@ -111,6 +112,7 @@ public class HeartStoreDialog extends Dialog {
 
         soundManager.playWin();
         prefs.addLives(1);
+        AnalyticsManager.getInstance(getContext()).logHeartRefilled("ad", 1);
         Toast.makeText(getContext(), "🎬 Video reward granted! +1 Heart added!", Toast.LENGTH_SHORT).show();
         updateLivesUI();
     }
@@ -125,6 +127,7 @@ public class HeartStoreDialog extends Dialog {
         if (prefs.spendDiamonds(COST_ONE_HEART)) {
             soundManager.playWin();
             prefs.addLives(1);
+            AnalyticsManager.getInstance(getContext()).logHeartRefilled("diamond", 1);
             Toast.makeText(getContext(), "❤️ +1 Heart added!", Toast.LENGTH_SHORT).show();
             updateLivesUI();
         } else {
@@ -143,6 +146,7 @@ public class HeartStoreDialog extends Dialog {
         if (prefs.spendDiamonds(COST_FULL_REFILL)) {
             soundManager.playWin();
             prefs.refillLives();
+            AnalyticsManager.getInstance(getContext()).logHeartRefilled("diamond", 5);
             Toast.makeText(getContext(), "❤️ Lives fully restored (5/5)!", Toast.LENGTH_SHORT).show();
             updateLivesUI();
         } else {
@@ -161,6 +165,7 @@ public class HeartStoreDialog extends Dialog {
         if (prefs.spendDiamonds(COST_TRIPLE_HEARTS)) {
             soundManager.playWin();
             prefs.addLives(3);
+            AnalyticsManager.getInstance(getContext()).logHeartRefilled("diamond", 3);
             Toast.makeText(getContext(), "❤️ +3 Hearts added!", Toast.LENGTH_SHORT).show();
             updateLivesUI();
         } else {

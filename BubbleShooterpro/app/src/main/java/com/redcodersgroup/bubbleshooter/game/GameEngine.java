@@ -30,6 +30,7 @@ import com.redcodersgroup.bubbleshooter.visual.FloatingText;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
@@ -450,16 +451,31 @@ public class GameEngine {
         return pickSmartLauncherColor(currentBubble != null ? currentBubble.getColor() : null);
     }
 
-    private BubbleColor pickSmartLauncherColor(BubbleColor avoidColorIfPossible) {
-        // 1. Identify all active normal bubbles on the board
-        List<Bubble> allBubbles = new ArrayList<>();
+    public Set<BubbleColor> getRequiredColors(BubbleColor launcherColor) {
+        Set<BubbleColor> requiredColors = new LinkedHashSet<>();
+
+        // 1. Collect all distinct normal bubble colors on the board grid
         for (Bubble b : grid.getAllBubbles()) {
-            if (b != null && b.getType() == BubbleType.NORMAL && b.getColor() != BubbleColor.NONE) {
-                allBubbles.add(b);
+            if (b != null && !b.isPopping() && !b.isFalling()
+                    && b.getType() == BubbleType.NORMAL
+                    && b.getColor() != null && b.getColor() != BubbleColor.NONE) {
+                requiredColors.add(b.getColor());
             }
         }
 
-        if (allBubbles.isEmpty()) {
+        // 2. If launcher has a color, include it as well (up to that color count)
+        if (launcherColor != null && launcherColor != BubbleColor.NONE) {
+            requiredColors.add(launcherColor);
+        }
+
+        return requiredColors;
+    }
+
+    private BubbleColor pickSmartLauncherColor(BubbleColor avoidColorIfPossible) {
+        Set<BubbleColor> requiredSet = getRequiredColors(avoidColorIfPossible);
+
+        // Fallback if no bubbles are present on the board or in launcher
+        if (requiredSet.isEmpty()) {
             if (isEndlessMode) {
                 List<BubbleColor> active = EndlessPatternGenerator.getActiveColors(endlessWaveCount, endlessColorsPool);
                 return !active.isEmpty() ? active.get(random.nextInt(active.size())) : BubbleColor.RED;
@@ -470,7 +486,18 @@ public class GameEngine {
             return BubbleColor.RED;
         }
 
-        // 2. Identify exposed bottom frontier bubbles (bubbles with at least one open neighbor or lowest in column)
+        List<BubbleColor> requiredColors = new ArrayList<>(requiredSet);
+
+        // 1. Identify all active normal bubbles on the board
+        List<Bubble> allBubbles = new ArrayList<>();
+        for (Bubble b : grid.getAllBubbles()) {
+            if (b != null && !b.isPopping() && !b.isFalling()
+                    && b.getType() == BubbleType.NORMAL && b.getColor() != BubbleColor.NONE) {
+                allBubbles.add(b);
+            }
+        }
+
+        // 2. Identify exposed bottom frontier bubbles and lowest danger bubble
         List<Bubble> frontierBubbles = new ArrayList<>();
         Bubble lowestDangerBubble = null;
         float maxDangerY = -1f;
@@ -479,7 +506,6 @@ public class GameEngine {
             GridPosition pos = b.getGridPosition();
             if (pos == null) continue;
 
-            // Check if lowest in column or has empty downward neighbor
             boolean isBottomExposed = false;
             List<GridPosition> neighbors = NeighborCalculator.getNeighbors(pos, grid.getRowParity());
             for (GridPosition n : neighbors) {
@@ -492,7 +518,6 @@ public class GameEngine {
                 frontierBubbles.add(b);
             }
 
-            // Check if in danger zone (within 3.5 radii of danger line)
             if (deadlineY > 0 && (b.getY() + b.getRadius()) >= (deadlineY - bubbleRadius * 3.5f)) {
                 if (b.getY() > maxDangerY) {
                     maxDangerY = b.getY();
@@ -505,46 +530,48 @@ public class GameEngine {
             frontierBubbles = allBubbles;
         }
 
-        // 3. Priority 1: If in critical danger zone, 75% chance to give the exact danger bubble's color!
-        if (lowestDangerBubble != null && random.nextInt(100) < 75) {
+        // Priority 1: If in critical danger zone, 75% chance to give danger bubble's color (if in requiredColors)
+        if (lowestDangerBubble != null && requiredColors.contains(lowestDangerBubble.getColor()) && random.nextInt(100) < 75) {
             return lowestDangerBubble.getColor();
         }
 
-        // 4. Priority 2: Look for match clusters on the exposed frontier (groups of 2+ connected same color)
+        // Priority 2: Look for match clusters on the exposed frontier (groups of 2+ connected same color)
         List<BubbleColor> matchableColors = new ArrayList<>();
         List<BubbleColor> frontierColors = new ArrayList<>();
         for (Bubble b : frontierBubbles) {
             BubbleColor c = b.getColor();
-            if (!frontierColors.contains(c)) {
+            if (requiredColors.contains(c) && !frontierColors.contains(c)) {
                 frontierColors.add(c);
             }
             GridPosition pos = b.getGridPosition();
             if (pos != null) {
                 for (GridPosition n : NeighborCalculator.getNeighbors(pos, grid.getRowParity())) {
                     Bubble nb = grid.getBubble(n);
-                    if (nb != null && nb.getColor() == c && !matchableColors.contains(c)) {
+                    if (nb != null && !nb.isPopping() && !nb.isFalling()
+                            && nb.getColor() == c && requiredColors.contains(c) && !matchableColors.contains(c)) {
                         matchableColors.add(c);
                     }
                 }
             }
         }
 
-        // 5. Select from matchable colors (high priority 70%), then frontier colors, then all board colors
+        // Select candidate pool strictly from required colors
         List<BubbleColor> candidatePool;
         if (!matchableColors.isEmpty() && random.nextInt(100) < 70) {
-            candidatePool = matchableColors;
+            candidatePool = new ArrayList<>(matchableColors);
         } else if (!frontierColors.isEmpty()) {
-            candidatePool = frontierColors;
+            candidatePool = new ArrayList<>(frontierColors);
         } else {
-            candidatePool = new ArrayList<>();
-            for (Bubble b : allBubbles) {
-                if (!candidatePool.contains(b.getColor())) {
-                    candidatePool.add(b.getColor());
-                }
-            }
+            candidatePool = new ArrayList<>(requiredColors);
         }
 
-        // 6. If possible, pick a color different from avoidColorIfPossible (so current & next are versatile)
+        // Enforce candidatePool strictly never contains any color outside requiredColors
+        candidatePool.retainAll(requiredColors);
+        if (candidatePool.isEmpty()) {
+            candidatePool = new ArrayList<>(requiredColors);
+        }
+
+        // If possible, pick a color different from avoidColorIfPossible to provide shot versatility
         if (avoidColorIfPossible != null && candidatePool.size() > 1) {
             List<BubbleColor> diversePool = new ArrayList<>(candidatePool);
             diversePool.remove(avoidColorIfPossible);
@@ -554,6 +581,15 @@ public class GameEngine {
         }
 
         return candidatePool.get(random.nextInt(candidatePool.size()));
+    }
+
+    private void sanitizeNextBubble() {
+        if (nextBubble == null || nextBubble.getType() != BubbleType.NORMAL) return;
+        BubbleColor currColor = currentBubble != null ? currentBubble.getColor() : null;
+        Set<BubbleColor> required = getRequiredColors(currColor);
+        if (!required.isEmpty() && !required.contains(nextBubble.getColor())) {
+            nextBubble.setColor(pickSmartLauncherColor(currColor));
+        }
     }
 
     public void swapBubbles() {
@@ -1365,6 +1401,7 @@ public class GameEngine {
                 return;
             }
 
+            sanitizeNextBubble();
             state = GameState.READY;
             updateTrajectory();
             return;
@@ -1429,6 +1466,7 @@ public class GameEngine {
             return;
         }
 
+        sanitizeNextBubble();
         state = GameState.READY;
         updateTrajectory();
     }

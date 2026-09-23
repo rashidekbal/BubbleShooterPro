@@ -1,16 +1,17 @@
 {
+  "level": 109,
   "shots": 15,
   "colors": [
     "RED",
-    "ORANGE",
+    "GREEN",
     "YELLOW",
     "PURPLE",
-    "GREEN"
+    "ORANGE"
   ],
   "objective": {
     "type": "POP_COLOR",
-    "color": "PURPLE",
-    "target": 17
+    "target": 17,
+    "color": "PURPLE"
   },
   "starThresholds": [
     1677,
@@ -20,11 +21,10 @@
   "rows": [
     "RROOOOORR",
     "RROOOORR",
-    "RR.....RR",
-    "YY....YY",
-    "YYR...RYY",
-    "PP....PP",
+    "RRGGGGGRR",
+    "YYRRRRYY",
+    "YYROOORYY",
+    "PPBBBBPP",
     "PPOOOOOPP"
-  ],
-  "level": 109
+  ]
 }

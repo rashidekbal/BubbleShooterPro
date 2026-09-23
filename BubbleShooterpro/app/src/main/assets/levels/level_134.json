@@ -1,16 +1,15 @@
 {
+  "level": 134,
   "shots": 15,
   "colors": [
-    "CYAN",
-    "MAGENTA",
-    "YELLOW",
     "GREEN",
-    "BLUE"
+    "BLUE",
+    "YELLOW"
   ],
   "objective": {
     "type": "POP_COLOR",
-    "color": "BLUE",
-    "target": 16
+    "target": 16,
+    "color": "BLUE"
   },
   "starThresholds": [
     1943,
@@ -18,13 +17,12 @@
     7399
   ],
   "rows": [
-    "..C....C.",
-    ".C......",
-    ".TMTMTMT.",
-    "CMCMMCMC",
-    "CMMMMMMMC",
-    ".Y.YY.Y.",
-    "Y..GGG..Y"
-  ],
-  "level": 134
+    "..CBBGYC.",
+    ".CBBGBYO",
+    ".TBTGBYT.",
+    "CBCBBCYC",
+    "CBRGBBYYC",
+    "BYGYYYYO",
+    "YGGGGGYYY"
+  ]
 }

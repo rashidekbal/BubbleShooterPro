@@ -1,14 +1,14 @@
 {
+  "level": 74,
   "shots": 15,
   "colors": [
-    "PURPLE",
-    "CYAN",
+    "RED",
     "YELLOW",
-    "RED"
+    "PURPLE"
   ],
   "objective": {
     "type": "CLEAR_ALL",
-    "target": 0
+    "target": 3545
   },
   "starThresholds": [
     1533,
@@ -17,12 +17,11 @@
   ],
   "rows": [
     "..P....P.",
-    ".P......",
+    ".P....G.",
     ".PCCCCCP.",
     "PCXCCXCP",
     "PCCCCCCCP",
     ".Y.YY.Y.",
     "Y..RRR..Y"
-  ],
-  "level": 74
+  ]
 }

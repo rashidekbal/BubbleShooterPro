@@ -1,15 +1,14 @@
 {
+  "level": 135,
   "shots": 20,
   "colors": [
-    "CYAN",
-    "MAGENTA",
-    "YELLOW",
     "GREEN",
-    "BLUE"
+    "BLUE",
+    "YELLOW"
   ],
   "objective": {
     "type": "CLEAR_ALL",
-    "target": 0
+    "target": 16
   },
   "starThresholds": [
     1916,
@@ -17,12 +16,11 @@
     7389
   ],
   "rows": [
-    "SSCCCCCSS",
-    "SCMMMCSS",
-    "CM****MCC",
+    "GGCCCCCYY",
+    "GCMMMCYY",
+    "CMPPPPMCC",
     "MMXMMXMM",
     "SYYYYYYSS",
     "YYYYYY.."
-  ],
-  "level": 135
+  ]
 }

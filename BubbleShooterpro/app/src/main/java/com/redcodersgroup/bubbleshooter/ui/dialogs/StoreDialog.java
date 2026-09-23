@@ -11,6 +11,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import com.redcodersgroup.bubbleshooter.R;
+import com.redcodersgroup.bubbleshooter.analytics.AnalyticsManager;
 import com.redcodersgroup.bubbleshooter.audio.SoundManager;
 import com.redcodersgroup.bubbleshooter.data.PreferencesManager;
 import com.redcodersgroup.bubbleshooter.databinding.DialogStoreBinding;
@@ -123,6 +124,10 @@ public class StoreDialog extends Dialog {
     private void handleDiamondPackPurchase(int diamonds, String packName) {
         soundManager.playWin();
         prefs.addDiamonds(diamonds);
+        Bundle bundle = new Bundle();
+        bundle.putString("pack_name", packName);
+        bundle.putInt("diamonds", diamonds);
+        AnalyticsManager.getInstance(getContext()).logEvent("diamond_pack_purchased", bundle);
         Toast.makeText(getContext(), "💎 +" + String.format(java.util.Locale.getDefault(), "%,d", diamonds) + " Diamonds added (" + packName + ")!", Toast.LENGTH_SHORT).show();
         updateStoreUI();
     }

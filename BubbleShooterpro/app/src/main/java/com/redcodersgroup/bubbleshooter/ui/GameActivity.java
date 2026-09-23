@@ -19,6 +19,7 @@ import com.redcodersgroup.bubbleshooter.databinding.ActivityGameBinding;
 import com.redcodersgroup.bubbleshooter.game.GameEngine;
 import com.redcodersgroup.bubbleshooter.level.Level;
 import com.redcodersgroup.bubbleshooter.level.LevelManager;
+import com.redcodersgroup.bubbleshooter.analytics.AnalyticsManager;
 import com.redcodersgroup.bubbleshooter.ui.dialogs.GameOverDialog;
 import com.redcodersgroup.bubbleshooter.ui.dialogs.LowShotsWarningDialog;
 import com.redcodersgroup.bubbleshooter.ui.dialogs.PauseDialog;
@@ -196,9 +197,11 @@ public class GameActivity extends BaseActivity implements GameEngine.GameEventLi
         currentStarsCount = 0;
         resetStarProgressNodes(level != null ? level.getStarThresholds() : new int[]{1000, 2000, 3000});
         gameEngine.loadLevel(level);
+        AnalyticsManager.getInstance(this).logLevelStart(currentLevelNumber, theme != null ? theme.title : "World");
     }
 
     private void loadEndlessMode() {
+        AnalyticsManager.getInstance(this).logEndlessStart();
         isGameOverOrWon = false;
         wasBackgrounded = false;
         hasShownLowShotsWarning = false;
@@ -530,6 +533,14 @@ public class GameActivity extends BaseActivity implements GameEngine.GameEventLi
             int newHigh = Math.max(previousHigh, score);
             repository.completeLevel(currentLevelNumber, effectiveStars, score);
 
+            BubbleGameView.BiomeTheme theme = binding.bubbleGameView.getCurrentBiome();
+            AnalyticsManager.getInstance(this).logLevelComplete(
+                    currentLevelNumber,
+                    theme != null ? theme.title : "World",
+                    score,
+                    effectiveStars
+            );
+
             activeVictoryDialog = new VictoryDialog(this, score, newHigh, effectiveStars, objectiveSummary, shotsRemaining, shotBonus, new VictoryDialog.VictoryDialogListener() {
                 @Override
                 public void onNextLevelClicked() {
@@ -587,9 +598,17 @@ public class GameActivity extends BaseActivity implements GameEngine.GameEventLi
                 if (score > personalBest) {
                     prefs.setEndlessHighScore(score);
                 }
+                AnalyticsManager.getInstance(this).logEndlessGameOver(score, personalBest);
             } else {
                 // Deduct one heart for losing a level (not in endless mode)
                 prefs.deductLife();
+                BubbleGameView.BiomeTheme theme = binding.bubbleGameView.getCurrentBiome();
+                AnalyticsManager.getInstance(this).logLevelFail(
+                        currentLevelNumber,
+                        theme != null ? theme.title : "World",
+                        score,
+                        reason
+                );
             }
 
             final int livesAfterLoss = prefs.getLives();

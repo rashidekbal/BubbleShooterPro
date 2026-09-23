@@ -12,6 +12,7 @@ public class BubbleShooterApp extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+        com.redcodersgroup.bubbleshooter.analytics.AnalyticsManager.getInstance(this);
         MusicManager musicManager = MusicManager.getInstance(this);
 
         registerActivityLifecycleCallbacks(new ActivityLifecycleCallbacks() {

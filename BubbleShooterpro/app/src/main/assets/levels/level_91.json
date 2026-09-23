@@ -1,15 +1,15 @@
 {
-  "shots": 15,
+  "level": 91,
+  "shots": 25,
   "colors": [
     "RED",
-    "ORANGE",
+    "GREEN",
     "YELLOW",
     "PURPLE",
-    "GREEN"
+    "ORANGE"
   ],
   "objective": {
-    "type": "POP_COLOR",
-    "color": "YELLOW",
+    "type": "CLEAR_ALL",
     "target": 18
   },
   "starThresholds": [
@@ -19,11 +19,10 @@
   ],
   "rows": [
     "ROYPROYPR",
-    "RLYPRLYP",
+    "R*YPR*YP",
     "PYORPYORP",
-    "PYLRPYLR",
+    "PY*RPY*R",
     "OOYYPPRRO",
     "OYYPPRRO"
-  ],
-  "level": 91
+  ]
 }

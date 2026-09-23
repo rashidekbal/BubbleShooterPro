@@ -1,11 +1,10 @@
 {
+  "level": 126,
   "shots": 15,
   "colors": [
-    "CYAN",
-    "MAGENTA",
-    "YELLOW",
     "GREEN",
-    "BLUE"
+    "BLUE",
+    "YELLOW"
   ],
   "objective": {
     "type": "DROP_COUNT",
@@ -23,6 +22,5 @@
     "YMGGGGMY",
     "..GGGGGGG",
     ".GCGGCG."
-  ],
-  "level": 126
+  ]
 }

@@ -1,10 +1,10 @@
 {
+  "level": 80,
   "shots": 15,
   "colors": [
-    "PURPLE",
-    "CYAN",
+    "RED",
     "YELLOW",
-    "RED"
+    "PURPLE"
   ],
   "objective": {
     "type": "DROP_COUNT",
@@ -18,10 +18,9 @@
   "rows": [
     "PPCCPCCPP",
     "YTRRRRTY",
-    "YLYPPPYLY",
+    "YSYPPPYSY",
     "CTCPPCTC",
     "RRYYCYYRR",
     ".PPCCPP."
-  ],
-  "level": 80
+  ]
 }

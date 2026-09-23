@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "378965108331",
+    "project_id": "bubbleshooterpro-2382f",
+    "storage_bucket": "bubbleshooterpro-2382f.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:378965108331:android:cd82d3bee67c750bd4b32e",
+        "android_client_info": {
+          "package_name": "com.redcodersgroup.bubbleshooter"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDxPX1x3fwSr_VDIlqHj9gBb-SginQuLFE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
