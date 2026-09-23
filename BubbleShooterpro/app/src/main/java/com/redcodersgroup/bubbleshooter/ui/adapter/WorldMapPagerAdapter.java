@@ -128,7 +128,7 @@ public class WorldMapPagerAdapter extends RecyclerView.Adapter<WorldMapPagerAdap
                 if (normY > 1f) normY = 1f;
 
                 float minNodeDp = 24f;
-                float maxNodeDp = 54f;
+                float maxNodeDp = 44f;
                 float nodeDp = minNodeDp + normY * (maxNodeDp - minNodeDp);
                 int nodeSize = Math.round(nodeDp * density);
 
