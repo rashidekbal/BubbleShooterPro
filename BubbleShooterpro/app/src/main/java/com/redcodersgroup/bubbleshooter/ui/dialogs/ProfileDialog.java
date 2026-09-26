@@ -101,8 +101,13 @@ public class ProfileDialog extends Dialog {
 
         // Initialize Player Name
         String currentName = prefs.getPlayerName();
+        if (currentName == null || currentName.trim().isEmpty()) {
+            currentName = AvatarManager.DEFAULT_PLAYER_NAME;
+        }
         binding.etPlayerName.setText(currentName);
-        binding.etPlayerName.setSelection(currentName.length());
+        if (binding.etPlayerName.getText() != null) {
+            binding.etPlayerName.setSelection(binding.etPlayerName.getText().length());
+        }
 
         // Initialize Avatar Preview
         updateAvatarPreview(selectedAvatarId);
@@ -145,7 +150,9 @@ public class ProfileDialog extends Dialog {
 
             if (auth.isAuthenticated() && auth.getDisplayName() != null) {
                 binding.etPlayerName.setText(auth.getDisplayName());
-                binding.etPlayerName.setSelection(auth.getDisplayName().length());
+                if (binding.etPlayerName.getText() != null) {
+                    binding.etPlayerName.setSelection(binding.etPlayerName.getText().length());
+                }
                 binding.tvSyncPlayGames.setText("Synced with Google ✓");
                 binding.tvSyncPlayGames.setTextColor(android.graphics.Color.parseColor("#059669"));
             } else if (hostActivity != null) {
@@ -155,7 +162,9 @@ public class ProfileDialog extends Dialog {
                     public void onSuccess(@androidx.annotation.NonNull com.google.android.gms.games.Player player) {
                         if (binding != null && player.getDisplayName() != null) {
                             binding.etPlayerName.setText(player.getDisplayName());
-                            binding.etPlayerName.setSelection(player.getDisplayName().length());
+                            if (binding.etPlayerName.getText() != null) {
+                                binding.etPlayerName.setSelection(binding.etPlayerName.getText().length());
+                            }
                             binding.tvSyncPlayGames.setText("Synced with Google ✓");
                             binding.tvSyncPlayGames.setTextColor(android.graphics.Color.parseColor("#059669"));
                         }
@@ -182,7 +191,9 @@ public class ProfileDialog extends Dialog {
     public void onAuthSuccess(String displayName) {
         if (binding != null && displayName != null && !displayName.isEmpty()) {
             binding.etPlayerName.setText(displayName);
-            binding.etPlayerName.setSelection(displayName.length());
+            if (binding.etPlayerName.getText() != null) {
+                binding.etPlayerName.setSelection(binding.etPlayerName.getText().length());
+            }
             binding.tvSyncPlayGames.setText("Synced with Google ✓");
             binding.tvSyncPlayGames.setTextColor(android.graphics.Color.parseColor("#059669"));
         }

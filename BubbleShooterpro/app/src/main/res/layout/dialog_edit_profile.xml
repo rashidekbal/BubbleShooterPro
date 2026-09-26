@@ -79,7 +79,7 @@
                         android:background="@android:color/transparent"
                         android:hint="Player Name"
                         android:inputType="textPersonName"
-                        android:maxLength="16"
+                        android:maxLength="25"
                         android:textColor="#1E293B"
                         android:textSize="@dimen/sp_15"
                         android:textStyle="bold" />
@@ -125,11 +125,13 @@
             android:layout_marginBottom="@dimen/dp_16" />
 
         <!-- Big Glossy Green Confirm Button -->
-        <Button
+        <androidx.appcompat.widget.AppCompatButton
+            xmlns:app="http://schemas.android.com/apk/res-auto"
             android:id="@+id/btnProfileConfirm"
             android:layout_width="@dimen/dp_200"
             android:layout_height="@dimen/dp_54"
             android:background="@drawable/btn_pill_blank_green"
+            app:backgroundTint="@null"
             android:text="Confirm"
             android:textColor="#FFFFFF"
             android:textSize="@dimen/sp_18"
