@@ -21,6 +21,7 @@ public class ProfileDialog extends Dialog {
         void onProfileUpdated(String playerName, String avatarId);
     }
 
+    private final android.app.Activity hostActivity;
     private final PreferencesManager prefs;
     private final ProfileDialogListener listener;
     private final SoundManager soundManager;
@@ -29,6 +30,7 @@ public class ProfileDialog extends Dialog {
 
     public ProfileDialog(@NonNull Context context, ProfileDialogListener listener) {
         super(context);
+        this.hostActivity = getActivityFromContext(context);
         this.prefs = new PreferencesManager(context);
         this.listener = listener;
         this.soundManager = SoundManager.getInstance(context);
@@ -37,6 +39,7 @@ public class ProfileDialog extends Dialog {
 
     public ProfileDialog(@NonNull Context context, String currentName, String currentAvatarId, ProfileDialogListener listener) {
         super(context);
+        this.hostActivity = getActivityFromContext(context);
         this.prefs = new PreferencesManager(context);
         this.listener = listener;
         this.soundManager = SoundManager.getInstance(context);
@@ -45,6 +48,39 @@ public class ProfileDialog extends Dialog {
         if (currentName != null && !currentName.isEmpty()) {
             prefs.setPlayerName(currentName);
         }
+    }
+
+    public ProfileDialog(@NonNull android.app.Activity activity, ProfileDialogListener listener) {
+        super(activity);
+        this.hostActivity = activity;
+        this.prefs = new PreferencesManager(activity);
+        this.listener = listener;
+        this.soundManager = SoundManager.getInstance(activity);
+        this.selectedAvatarId = prefs.getPlayerAvatar();
+    }
+
+    public ProfileDialog(@NonNull android.app.Activity activity, String currentName, String currentAvatarId, ProfileDialogListener listener) {
+        super(activity);
+        this.hostActivity = activity;
+        this.prefs = new PreferencesManager(activity);
+        this.listener = listener;
+        this.soundManager = SoundManager.getInstance(activity);
+        this.selectedAvatarId = (currentAvatarId != null && !currentAvatarId.isEmpty())
+                ? currentAvatarId : prefs.getPlayerAvatar();
+        if (currentName != null && !currentName.isEmpty()) {
+            prefs.setPlayerName(currentName);
+        }
+    }
+
+    @androidx.annotation.Nullable
+    private static android.app.Activity getActivityFromContext(Context context) {
+        while (context instanceof android.content.ContextWrapper) {
+            if (context instanceof android.app.Activity) {
+                return (android.app.Activity) context;
+            }
+            context = ((android.content.ContextWrapper) context).getBaseContext();
+        }
+        return null;
     }
 
     @Override
@@ -101,11 +137,62 @@ public class ProfileDialog extends Dialog {
             dismiss();
         });
 
+        // Sync Play Games Name
+        binding.tvSyncPlayGames.setOnClickListener(v -> {
+            soundManager.playClick();
+            com.redcodersgroup.bubbleshooter.auth.PlayGamesAuthManager auth =
+                    com.redcodersgroup.bubbleshooter.auth.PlayGamesAuthManager.getInstance();
+
+            if (auth.isAuthenticated() && auth.getDisplayName() != null) {
+                binding.etPlayerName.setText(auth.getDisplayName());
+                binding.etPlayerName.setSelection(auth.getDisplayName().length());
+                binding.tvSyncPlayGames.setText("Synced with Google ✓");
+                binding.tvSyncPlayGames.setTextColor(android.graphics.Color.parseColor("#059669"));
+            } else if (hostActivity != null) {
+                binding.tvSyncPlayGames.setText("Signing in...");
+                auth.signIn(hostActivity, new com.redcodersgroup.bubbleshooter.auth.PlayGamesAuthManager.AuthCallback() {
+                    @Override
+                    public void onSuccess(@androidx.annotation.NonNull com.google.android.gms.games.Player player) {
+                        if (binding != null && player.getDisplayName() != null) {
+                            binding.etPlayerName.setText(player.getDisplayName());
+                            binding.etPlayerName.setSelection(player.getDisplayName().length());
+                            binding.tvSyncPlayGames.setText("Synced with Google ✓");
+                            binding.tvSyncPlayGames.setTextColor(android.graphics.Color.parseColor("#059669"));
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Exception exception) {
+                        if (binding != null) {
+                            binding.tvSyncPlayGames.setText("Sign in failed. Tap to retry");
+                            binding.tvSyncPlayGames.setTextColor(android.graphics.Color.parseColor("#EF4444"));
+                        }
+                    }
+                });
+            }
+        });
+
         // Close Button
         binding.btnCloseProfile.setOnClickListener(v -> {
             soundManager.playClick();
             dismiss();
         });
+    }
+
+    public void onAuthSuccess(String displayName) {
+        if (binding != null && displayName != null && !displayName.isEmpty()) {
+            binding.etPlayerName.setText(displayName);
+            binding.etPlayerName.setSelection(displayName.length());
+            binding.tvSyncPlayGames.setText("Synced with Google ✓");
+            binding.tvSyncPlayGames.setTextColor(android.graphics.Color.parseColor("#059669"));
+        }
+    }
+
+    public void onAuthFailure(Exception exception) {
+        if (binding != null) {
+            binding.tvSyncPlayGames.setText("Sign in failed. Tap to retry");
+            binding.tvSyncPlayGames.setTextColor(android.graphics.Color.parseColor("#EF4444"));
+        }
     }
 
     private void updateAvatarPreview(String avatarId) {

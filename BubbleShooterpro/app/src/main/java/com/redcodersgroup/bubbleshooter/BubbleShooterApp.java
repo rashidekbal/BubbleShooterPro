@@ -13,6 +13,8 @@ public class BubbleShooterApp extends Application {
     public void onCreate() {
         super.onCreate();
         com.redcodersgroup.bubbleshooter.analytics.AnalyticsManager.getInstance(this);
+        com.redcodersgroup.bubbleshooter.auth.PlayGamesAuthManager.initialize(this);
+        com.redcodersgroup.bubbleshooter.ads.AdManager.getInstance().initialize(this);
         MusicManager musicManager = MusicManager.getInstance(this);
 
         registerActivityLifecycleCallbacks(new ActivityLifecycleCallbacks() {

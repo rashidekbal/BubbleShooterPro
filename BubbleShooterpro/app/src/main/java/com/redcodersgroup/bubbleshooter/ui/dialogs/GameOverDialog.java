@@ -16,6 +16,7 @@ public class GameOverDialog extends Dialog {
     public interface GameOverDialogListener {
         void onRetryClicked();
         void onHomeClicked();
+        void onGetMoreBubblesClicked();
     }
 
     private final GameOverDialogListener listener;
@@ -24,29 +25,39 @@ public class GameOverDialog extends Dialog {
     private final int highScore;
     private final boolean isEndless;
     private final int livesRemaining;
+    private final boolean isOutOfShots;
+    private final int continueCost;
     private DialogGameOverBinding binding;
 
     public GameOverDialog(@NonNull Context context, int score, GameOverDialogListener listener) {
-        this(context, score, "Out of shots! Don't give up!", 0, false, 1, listener);
+        this(context, score, "Out of shots! Don't give up!", 0, false, 1, false, 5, listener);
     }
 
     public GameOverDialog(@NonNull Context context, int score, String reason, GameOverDialogListener listener) {
-        this(context, score, reason, 0, false, 1, listener);
+        this(context, score, reason, 0, false, 1, false, 5, listener);
     }
 
     public GameOverDialog(@NonNull Context context, int score, String reason, int highScore, boolean isEndless, GameOverDialogListener listener) {
-        this(context, score, reason, highScore, isEndless, 1, listener);
+        this(context, score, reason, highScore, isEndless, 1, false, 5, listener);
     }
 
-    /** Full constructor that includes livesRemaining after the loss. */
     public GameOverDialog(@NonNull Context context, int score, String reason, int highScore,
                           boolean isEndless, int livesRemaining, GameOverDialogListener listener) {
+        this(context, score, reason, highScore, isEndless, livesRemaining, false, 5, listener);
+    }
+
+    /** Full constructor with +5 Bubbles continue support. */
+    public GameOverDialog(@NonNull Context context, int score, String reason, int highScore,
+                          boolean isEndless, int livesRemaining, boolean isOutOfShots, int continueCost,
+                          GameOverDialogListener listener) {
         super(context);
         this.score = score;
         this.reason = reason;
         this.highScore = highScore;
         this.isEndless = isEndless;
         this.livesRemaining = livesRemaining;
+        this.isOutOfShots = isOutOfShots;
+        this.continueCost = continueCost;
         this.listener = listener;
     }
 
@@ -83,7 +94,20 @@ public class GameOverDialog extends Dialog {
             binding.tvLoseBestScore.setVisibility(View.GONE);
         }
 
-        // Show no-hearts warning for level mode
+        // Show Get More Bubbles option if lost due to running out of shots in Level Mode
+        if (isOutOfShots && !isEndless) {
+            binding.layoutGetMoreBubbles.setVisibility(View.VISIBLE);
+            binding.btnGetMoreBubbles.setText("+5 BUBBLES (💎 " + continueCost + ")");
+            binding.btnGetMoreBubbles.setOnClickListener(v -> {
+                if (listener != null) {
+                    listener.onGetMoreBubblesClicked();
+                }
+            });
+        } else {
+            binding.layoutGetMoreBubbles.setVisibility(View.GONE);
+        }
+
+        // Show no-hearts warning for level mode (if not continuing)
         if (!isEndless && livesRemaining <= 0) {
             binding.layoutNoHeartsWarning.setVisibility(View.VISIBLE);
             long nextLifeSecs = getSecondsUntilNextLife();

@@ -3,7 +3,7 @@ package com.redcodersgroup.bubbleshooter.store;
 public class StoreManager {
 
     // Diamond Acquisition Packs
-    public static final int DIAMONDS_DAILY_FREE = 30;
+    public static final int DIAMONDS_DAILY_FREE = 5;
     public static final int DIAMONDS_POUCH = 150;
     public static final int DIAMONDS_SACK = 500;
     public static final int DIAMONDS_CHEST = 1500;

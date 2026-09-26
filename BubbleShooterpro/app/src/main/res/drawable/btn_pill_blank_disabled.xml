@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- 3D Bottom Drop Bevel -->
+    <item android:top="6dp">
+        <shape android:shape="rectangle">
+            <corners android:radius="30dp" />
+            <solid android:color="#475569" />
+        </shape>
+    </item>
+    <!-- Main Button Body with Crisp Outer Stroke -->
+    <item android:bottom="6dp">
+        <shape android:shape="rectangle">
+            <corners android:radius="30dp" />
+            <gradient
+                android:angle="270"
+                android:startColor="#94A3B8"
+                android:centerColor="#64748B"
+                android:endColor="#475569" />
+            <stroke
+                android:width="2.5dp"
+                android:color="#CBD5E1" />
+        </shape>
+    </item>
+    <!-- Top Specular Crescent Sheen -->
+    <item
+        android:bottom="24dp"
+        android:left="8dp"
+        android:right="8dp"
+        android:top="3dp">
+        <shape android:shape="rectangle">
+            <corners
+                android:topLeftRadius="24dp"
+                android:topRightRadius="24dp"
+                android:bottomLeftRadius="8dp"
+                android:bottomRightRadius="8dp" />
+            <gradient
+                android:angle="270"
+                android:startColor="#40FFFFFF"
+                android:endColor="#00FFFFFF" />
+        </shape>
+    </item>
+</layer-list>

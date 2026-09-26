@@ -48,6 +48,9 @@ public class MainActivity extends AppCompatActivity {
     private HeartStoreDialog heartStoreDialog;
     private Dialog activePreviewDialog;
 
+    private androidx.activity.result.ActivityResultLauncher<android.content.Intent> googleSignInLauncher;
+    private com.redcodersgroup.bubbleshooter.auth.PlayGamesAuthManager.AuthCallback activeAuthCallback;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -60,7 +63,55 @@ public class MainActivity extends AppCompatActivity {
         soundManager = SoundManager.getInstance(this);
         worldConfigManager = WorldConfigManager.getInstance(this);
 
+        setupAuthLauncher();
         initViews();
+        checkPlayGamesSignIn();
+    }
+
+    private void setupAuthLauncher() {
+        googleSignInLauncher = registerForActivityResult(
+                new androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult(),
+                result -> {
+                    android.content.Intent data = result.getData();
+                    com.redcodersgroup.bubbleshooter.auth.PlayGamesAuthManager.getInstance().handleSignInResult(data,
+                            new com.redcodersgroup.bubbleshooter.auth.PlayGamesAuthManager.AuthCallback() {
+                                @Override
+                                public void onSuccess(@androidx.annotation.NonNull com.google.android.gms.games.Player player) {
+                                    String currentName = prefs.getPlayerName();
+                                    if (player.getDisplayName() != null && !player.getDisplayName().isEmpty()) {
+                                        if (currentName == null || currentName.isEmpty() || currentName.equals(com.redcodersgroup.bubbleshooter.profile.AvatarManager.DEFAULT_PLAYER_NAME)) {
+                                            prefs.setPlayerName(player.getDisplayName());
+                                            updateProfileUI();
+                                        }
+                                    }
+                                    if (settingsDialog != null && settingsDialog.isShowing()) {
+                                        settingsDialog.onAuthSuccess();
+                                    }
+                                    if (profileDialog != null && profileDialog.isShowing()) {
+                                        profileDialog.onAuthSuccess(player.getDisplayName());
+                                    }
+                                    if (activeAuthCallback != null) {
+                                        activeAuthCallback.onSuccess(player);
+                                        activeAuthCallback = null;
+                                    }
+                                }
+
+                                @Override
+                                public void onFailure(Exception exception) {
+                                    if (settingsDialog != null && settingsDialog.isShowing()) {
+                                        settingsDialog.onAuthFailure(exception);
+                                    }
+                                    if (profileDialog != null && profileDialog.isShowing()) {
+                                        profileDialog.onAuthFailure(exception);
+                                    }
+                                    if (activeAuthCallback != null) {
+                                        activeAuthCallback.onFailure(exception);
+                                        activeAuthCallback = null;
+                                    }
+                                }
+                            });
+                }
+        );
     }
 
     private void initViews() {
@@ -171,28 +222,16 @@ public class MainActivity extends AppCompatActivity {
 
     private void showStoreDialog() {
         if (isFinishing() || isDestroyed()) return;
-        if (storeDialog != null && storeDialog.isShowing()) {
-            storeDialog.dismiss();
-        }
         AnalyticsManager.getInstance(this).logStoreOpened("diamond");
-        storeDialog = new StoreDialog(this, () -> {
-            updateDiamondsUI();
-            updateLivesUI();
-        });
-        storeDialog.show();
+        startActivity(com.redcodersgroup.bubbleshooter.ui.ShopActivity.createIntent(this, com.redcodersgroup.bubbleshooter.ui.ShopActivity.TAB_DIAMONDS));
+        overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
     }
 
     private void showHeartStoreDialog() {
         if (isFinishing() || isDestroyed()) return;
-        if (heartStoreDialog != null && heartStoreDialog.isShowing()) {
-            heartStoreDialog.dismiss();
-        }
         AnalyticsManager.getInstance(this).logStoreOpened("heart");
-        heartStoreDialog = new HeartStoreDialog(this, () -> {
-            updateDiamondsUI();
-            updateLivesUI();
-        });
-        heartStoreDialog.show();
+        startActivity(com.redcodersgroup.bubbleshooter.ui.ShopActivity.createIntent(this, com.redcodersgroup.bubbleshooter.ui.ShopActivity.TAB_HEARTS));
+        overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
     }
 
     private void updateDiamondsUI() {
@@ -318,5 +357,71 @@ public class MainActivity extends AppCompatActivity {
 
         activePreviewDialog = dialog;
         dialog.show();
+    }
+
+    public void startGoogleSignIn(com.redcodersgroup.bubbleshooter.auth.PlayGamesAuthManager.AuthCallback callback) {
+        this.activeAuthCallback = callback;
+        // 1. Try modern Google Play Games v2 sign-in first
+        com.redcodersgroup.bubbleshooter.auth.PlayGamesAuthManager.getInstance().signInWithPlayGames(this,
+                new com.redcodersgroup.bubbleshooter.auth.PlayGamesAuthManager.AuthCallback() {
+                    @Override
+                    public void onSuccess(@androidx.annotation.NonNull com.google.android.gms.games.Player player) {
+                        String currentName = prefs.getPlayerName();
+                        if (player.getDisplayName() != null && !player.getDisplayName().isEmpty()) {
+                            if (currentName == null || currentName.isEmpty() || currentName.equals(com.redcodersgroup.bubbleshooter.profile.AvatarManager.DEFAULT_PLAYER_NAME)) {
+                                prefs.setPlayerName(player.getDisplayName());
+                                updateProfileUI();
+                            }
+                        }
+                        if (settingsDialog != null && settingsDialog.isShowing()) {
+                            settingsDialog.onAuthSuccess();
+                        }
+                        if (profileDialog != null && profileDialog.isShowing()) {
+                            profileDialog.onAuthSuccess(player.getDisplayName());
+                        }
+                        if (callback != null) {
+                            callback.onSuccess(player);
+                        }
+                        activeAuthCallback = null;
+                    }
+
+                    @Override
+                    public void onFailure(Exception exception) {
+                        // 2. If Play Games is unlinked or returns an error, launch the modern Google Sign-In account chooser
+                        try {
+                            android.content.Intent signInIntent =
+                                    com.redcodersgroup.bubbleshooter.auth.PlayGamesAuthManager.getInstance().getGoogleSignInIntent(MainActivity.this);
+                            if (googleSignInLauncher != null) {
+                                googleSignInLauncher.launch(signInIntent);
+                            }
+                        } catch (Exception e) {
+                            if (callback != null) {
+                                callback.onFailure(e);
+                            }
+                            activeAuthCallback = null;
+                        }
+                    }
+                });
+    }
+
+    private void checkPlayGamesSignIn() {
+        com.redcodersgroup.bubbleshooter.auth.PlayGamesAuthManager.getInstance().checkSilentSignIn(this,
+                new com.redcodersgroup.bubbleshooter.auth.PlayGamesAuthManager.AuthCallback() {
+                    @Override
+                    public void onSuccess(@androidx.annotation.NonNull com.google.android.gms.games.Player player) {
+                        String currentName = prefs.getPlayerName();
+                        if (currentName == null || currentName.isEmpty() || currentName.equals(com.redcodersgroup.bubbleshooter.profile.AvatarManager.DEFAULT_PLAYER_NAME)) {
+                            if (player.getDisplayName() != null && !player.getDisplayName().isEmpty()) {
+                                prefs.setPlayerName(player.getDisplayName());
+                                updateProfileUI();
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Exception exception) {
+                        // Silent sign-in not available or cancelled
+                    }
+                });
     }
 }

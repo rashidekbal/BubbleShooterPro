@@ -131,6 +131,63 @@
 
         </LinearLayout>
 
+        <!-- Google Play Games Connection Row -->
+        <LinearLayout
+            android:id="@+id/btnPlayGamesAuth"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:background="@drawable/bg_dialog_inset_panel"
+            android:paddingStart="@dimen/dp_12"
+            android:paddingEnd="@dimen/dp_12"
+            android:paddingTop="@dimen/dp_10"
+            android:paddingBottom="@dimen/dp_10"
+            android:layout_marginBottom="@dimen/dp_12"
+            android:clickable="true"
+            android:focusable="true">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="🎮"
+                android:textSize="@dimen/sp_20"
+                android:layout_marginEnd="@dimen/dp_8" />
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/tvPlayGamesTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Google Play Games"
+                    android:textColor="#334155"
+                    android:textSize="@dimen/sp_14"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/tvPlayGamesStatus"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Tap to Sign In"
+                    android:textColor="#64748B"
+                    android:textSize="@dimen/sp_12" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/tvPlayGamesAction"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Sign In"
+                android:textColor="#059669"
+                android:textSize="@dimen/sp_13"
+                android:textStyle="bold" />
+        </LinearLayout>
+
         <!-- Version Footer -->
         <TextView
             android:id="@+id/tvAppVersion"

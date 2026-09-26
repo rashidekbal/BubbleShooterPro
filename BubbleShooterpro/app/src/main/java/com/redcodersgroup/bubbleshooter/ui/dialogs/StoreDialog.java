@@ -110,14 +110,14 @@ public class StoreDialog extends Dialog {
     private void handleDailyFreeClaim() {
         if (prefs.canClaimDailyFreeDiamonds()) {
             soundManager.playWin();
-            prefs.addDiamonds(30);
+            prefs.addDiamonds(StoreManager.DIAMONDS_DAILY_FREE);
             prefs.markDailyFreeDiamondsClaimed();
             updateStoreUI();
             NoticeDialog.showReward(
                     getContext(),
                     "REWARD",
                     "DAILY GIFT",
-                    "+30 FREE DIAMONDS",
+                    "+" + StoreManager.DIAMONDS_DAILY_FREE + " FREE DIAMONDS",
                     "Free diamonds added to your vault. Return tomorrow for more!"
             );
         } else {
@@ -236,7 +236,8 @@ public class StoreDialog extends Dialog {
 
         boolean canClaim = prefs.canClaimDailyFreeDiamonds();
         binding.btnBuyDailyFree.setText(canClaim ? "FREE" : "CLAIMED");
-        binding.btnBuyDailyFree.setAlpha(canClaim ? 1.0f : 0.6f);
+        binding.btnBuyDailyFree.setBackgroundResource(canClaim ? R.drawable.bg_store_btn_green : R.drawable.bg_store_btn_disabled);
+        binding.btnBuyDailyFree.setAlpha(canClaim ? 1.0f : 0.65f);
 
         int lives = prefs.getLives();
         binding.tvStoreLivesStatus.setText(lives >= 5 ? "Lives are FULL (5/5)" : "Current: " + lives + "/5 Hearts");

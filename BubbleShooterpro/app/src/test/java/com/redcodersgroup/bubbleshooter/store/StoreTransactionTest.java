@@ -7,7 +7,7 @@ public class StoreTransactionTest {
 
     @Test
     public void testCatalogConstants() {
-        assertEquals(30, StoreManager.DIAMONDS_DAILY_FREE);
+        assertEquals(5, StoreManager.DIAMONDS_DAILY_FREE);
         assertEquals(150, StoreManager.DIAMONDS_POUCH);
         assertEquals(500, StoreManager.DIAMONDS_SACK);
         assertEquals(1500, StoreManager.DIAMONDS_CHEST);

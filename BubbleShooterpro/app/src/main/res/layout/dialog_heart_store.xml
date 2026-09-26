@@ -238,7 +238,7 @@
                             android:id="@+id/btnWatchAdForLife"
                             android:layout_width="@dimen/dp_100"
                             android:layout_height="@dimen/dp_34"
-                            android:background="@drawable/bg_store_btn_purple"
+                            android:background="@drawable/bg_store_btn_green"
                             android:gravity="center"
                             android:text="WATCH AD 🎬"
                             android:textColor="#FFFFFF"

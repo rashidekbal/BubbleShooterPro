@@ -41,7 +41,7 @@ dependencies {
     implementation libs.appcompat
     implementation libs.constraintlayout
     implementation libs.material
-    implementation 'androidx.viewpager2:viewpager2:1.1.0'
+    implementation libs.viewpager2
 
     // Firebase Analytics & Crashlytics
     implementation platform(libs.firebase.bom)
@@ -51,4 +51,7 @@ dependencies {
     testImplementation libs.junit
     androidTestImplementation libs.espresso.core
     androidTestImplementation libs.ext.junit
+    implementation libs.play.services.games.v2
+    implementation libs.play.services.auth
+    implementation libs.play.services.ads
 }

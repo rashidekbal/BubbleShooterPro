@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_gravity="center"
@@ -78,6 +79,57 @@
                 android:textColor="#94A3B8"
                 android:textSize="@dimen/sp_12"
                 android:textStyle="bold" />
+        </LinearLayout>
+
+        <!-- Out of Shots: Continue with +5 Bubbles Card -->
+        <LinearLayout
+            android:id="@+id/layoutGetMoreBubbles"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:background="@drawable/bg_dialog_inset_panel"
+            android:paddingStart="@dimen/dp_12"
+            android:paddingEnd="@dimen/dp_12"
+            android:paddingTop="@dimen/dp_12"
+            android:paddingBottom="@dimen/dp_12"
+            android:layout_marginBottom="@dimen/dp_12"
+            android:visibility="gone">
+
+            <TextView
+                android:id="@+id/tvGetMoreBubblesTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="🎯 Out of Bubbles!"
+                android:textColor="#1E293B"
+                android:textSize="@dimen/sp_14"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/dp_2"
+                android:text="Keep your current board &amp; combo!"
+                android:textColor="#64748B"
+                android:textSize="@dimen/sp_12" />
+
+            <!-- Big Green Continue Button -->
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btnGetMoreBubbles"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/dp_48"
+                android:layout_marginTop="@dimen/dp_10"
+                android:background="@drawable/btn_pill_blank_green"
+                app:backgroundTint="@null"
+                android:paddingBottom="@dimen/dp_4"
+                android:text="+5 BUBBLES (💎 5)"
+                android:textColor="#FFFFFF"
+                android:textSize="@dimen/sp_15"
+                android:textStyle="bold"
+                android:shadowColor="#80000000"
+                android:shadowDx="1"
+                android:shadowDy="2"
+                android:shadowRadius="3" />
         </LinearLayout>
 
         <!-- No-Hearts Warning Banner (shown only when lives == 0) -->

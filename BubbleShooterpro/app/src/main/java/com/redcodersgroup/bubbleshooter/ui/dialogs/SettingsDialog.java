@@ -16,14 +16,34 @@ import com.redcodersgroup.bubbleshooter.databinding.DialogSettingsBinding;
 
 public class SettingsDialog extends Dialog {
 
+    private final android.app.Activity hostActivity;
     private final PreferencesManager prefs;
     private final SoundManager soundManager;
     private DialogSettingsBinding binding;
 
     public SettingsDialog(@NonNull Context context) {
         super(context);
+        this.hostActivity = getActivityFromContext(context);
         this.prefs = new PreferencesManager(context);
         this.soundManager = SoundManager.getInstance(context);
+    }
+
+    public SettingsDialog(@NonNull android.app.Activity activity) {
+        super(activity);
+        this.hostActivity = activity;
+        this.prefs = new PreferencesManager(activity);
+        this.soundManager = SoundManager.getInstance(activity);
+    }
+
+    @androidx.annotation.Nullable
+    private static android.app.Activity getActivityFromContext(Context context) {
+        while (context instanceof android.content.ContextWrapper) {
+            if (context instanceof android.app.Activity) {
+                return (android.app.Activity) context;
+            }
+            context = ((android.content.ContextWrapper) context).getBaseContext();
+        }
+        return null;
     }
 
     @Override
@@ -45,6 +65,7 @@ public class SettingsDialog extends Dialog {
         updateSoundUI();
         updateMusicUI();
         updateHapticUI();
+        updatePlayGamesUI();
 
         binding.layoutSoundToggle.setOnClickListener(v -> toggleSound());
         binding.btnSettingSound.setOnClickListener(v -> toggleSound());
@@ -55,10 +76,77 @@ public class SettingsDialog extends Dialog {
         binding.layoutHapticToggle.setOnClickListener(v -> toggleHaptics());
         binding.btnSettingHaptic.setOnClickListener(v -> toggleHaptics());
 
+        binding.btnPlayGamesAuth.setOnClickListener(v -> handlePlayGamesClick());
+        binding.tvPlayGamesAction.setOnClickListener(v -> handlePlayGamesClick());
+        binding.tvPlayGamesStatus.setOnClickListener(v -> handlePlayGamesClick());
+        binding.tvPlayGamesTitle.setOnClickListener(v -> handlePlayGamesClick());
+
         binding.btnCloseSettings.setOnClickListener(v -> {
             soundManager.playClick();
             dismiss();
         });
+    }
+
+    private void handlePlayGamesClick() {
+        soundManager.playClick();
+        if (hostActivity != null) {
+            com.redcodersgroup.bubbleshooter.auth.PlayGamesAuthManager authManager =
+                    com.redcodersgroup.bubbleshooter.auth.PlayGamesAuthManager.getInstance();
+
+            binding.tvPlayGamesStatus.setText("Signing in...");
+            authManager.signIn(hostActivity, new com.redcodersgroup.bubbleshooter.auth.PlayGamesAuthManager.AuthCallback() {
+                @Override
+                public void onSuccess(@NonNull com.google.android.gms.games.Player player) {
+                    if (binding != null) {
+                        updatePlayGamesUI();
+                    }
+                }
+
+                @Override
+                public void onFailure(Exception exception) {
+                    if (binding != null) {
+                        binding.tvPlayGamesStatus.setText("Sign in failed. Tap to retry");
+                        binding.tvPlayGamesAction.setText("Sign In");
+                        binding.tvPlayGamesAction.setTextColor(android.graphics.Color.parseColor("#EF4444"));
+                    }
+                }
+            });
+        }
+    }
+
+    public void onAuthSuccess() {
+        if (binding != null) {
+            updatePlayGamesUI();
+        }
+    }
+
+    public void onAuthFailure(Exception exception) {
+        if (binding != null) {
+            binding.tvPlayGamesStatus.setText("Sign in failed. Tap to retry");
+            binding.tvPlayGamesAction.setText("Sign In");
+            binding.tvPlayGamesAction.setTextColor(android.graphics.Color.parseColor("#EF4444"));
+        }
+    }
+
+    private void updatePlayGamesUI() {
+        if (binding == null) return;
+        com.redcodersgroup.bubbleshooter.auth.PlayGamesAuthManager authManager =
+                com.redcodersgroup.bubbleshooter.auth.PlayGamesAuthManager.getInstance();
+
+        if (authManager.isAuthenticated()) {
+            String name = authManager.getDisplayName() != null ? authManager.getDisplayName() : "Connected";
+            binding.tvPlayGamesTitle.setText("Google Account");
+            binding.tvPlayGamesStatus.setText(name);
+            binding.tvPlayGamesStatus.setTextColor(android.graphics.Color.parseColor("#059669"));
+            binding.tvPlayGamesAction.setText("Connected");
+            binding.tvPlayGamesAction.setTextColor(android.graphics.Color.parseColor("#059669"));
+        } else {
+            binding.tvPlayGamesTitle.setText("Google Account");
+            binding.tvPlayGamesStatus.setText("Tap to connect account");
+            binding.tvPlayGamesStatus.setTextColor(android.graphics.Color.parseColor("#64748B"));
+            binding.tvPlayGamesAction.setText("Sign In");
+            binding.tvPlayGamesAction.setTextColor(android.graphics.Color.parseColor("#2563EB"));
+        }
     }
 
     private void toggleSound() {

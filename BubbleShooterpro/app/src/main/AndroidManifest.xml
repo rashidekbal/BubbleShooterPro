@@ -14,6 +14,13 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.BubbleShooterPro">
+        <meta-data android:name="com.google.android.gms.games.APP_ID"
+            android:value="@string/game_services_project_id"/>
+
+        <!-- Google AdMob App ID -->
+        <meta-data
+            android:name="com.google.android.gms.ads.APPLICATION_ID"
+            android:value="@string/admob_app_id"/>
 
         <!-- Splash Screen Launcher Activity -->
         <activity
@@ -38,6 +45,13 @@
         <!-- Game Activity -->
         <activity
             android:name=".ui.GameActivity"
+            android:exported="false"
+            android:screenOrientation="portrait"
+            tools:ignore="DiscouragedApi,LockedOrientationActivity" />
+
+        <!-- Full-Screen Magical Shop Activity -->
+        <activity
+            android:name=".ui.ShopActivity"
             android:exported="false"
             android:screenOrientation="portrait"
             tools:ignore="DiscouragedApi,LockedOrientationActivity" />

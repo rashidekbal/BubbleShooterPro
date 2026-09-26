@@ -48,6 +48,7 @@ public class GameActivity extends BaseActivity implements GameEngine.GameEventLi
     private boolean hasShownLowShotsWarning = false;
     private boolean isGameOverOrWon = false;
     private boolean wasBackgrounded = false;
+    private int continueBubblePurchasesCount = 0;
 
     public static Intent createIntent(Context context, int levelNumber) {
         Intent intent = new Intent(context, GameActivity.class);
@@ -176,6 +177,7 @@ public class GameActivity extends BaseActivity implements GameEngine.GameEventLi
     }
 
     private void loadCurrentLevel() {
+        continueBubblePurchasesCount = 0;
         isGameOverOrWon = false;
         wasBackgrounded = false;
         hasShownLowShotsWarning = false;
@@ -201,6 +203,7 @@ public class GameActivity extends BaseActivity implements GameEngine.GameEventLi
     }
 
     private void loadEndlessMode() {
+        continueBubblePurchasesCount = 0;
         AnalyticsManager.getInstance(this).logEndlessStart();
         isGameOverOrWon = false;
         wasBackgrounded = false;
@@ -545,13 +548,16 @@ public class GameActivity extends BaseActivity implements GameEngine.GameEventLi
                 @Override
                 public void onNextLevelClicked() {
                     activeVictoryDialog = null;
+                    final int completedLvl = currentLevelNumber;
                     if (currentLevelNumber < levelManager.getTotalLevels()) {
                         currentLevelNumber++;
-                        loadCurrentLevel();
+                        com.redcodersgroup.bubbleshooter.ads.AdManager.getInstance().onLevelCompleted(GameActivity.this, completedLvl, () -> {
+                            loadCurrentLevel();
+                            enableImmersiveStickyMode();
+                        });
                     } else {
                         finish();
                     }
-                    enableImmersiveStickyMode();
                 }
 
                 @Override
@@ -612,8 +618,10 @@ public class GameActivity extends BaseActivity implements GameEngine.GameEventLi
             }
 
             final int livesAfterLoss = prefs.getLives();
+            final boolean isOutOfShots = !isEndlessMode && ((gameEngine != null && gameEngine.getShotsRemaining() <= 0) || (reason != null && reason.toLowerCase().contains("out of shot")));
+            final int continueCost = 5 + continueBubblePurchasesCount;
 
-            activeGameOverDialog = new GameOverDialog(this, score, reason, personalBest, isEndlessMode, livesAfterLoss, new GameOverDialog.GameOverDialogListener() {
+            activeGameOverDialog = new GameOverDialog(this, score, reason, personalBest, isEndlessMode, livesAfterLoss, isOutOfShots, continueCost, new GameOverDialog.GameOverDialogListener() {
                 @Override
                 public void onRetryClicked() {
                     activeGameOverDialog = null;
@@ -635,6 +643,25 @@ public class GameActivity extends BaseActivity implements GameEngine.GameEventLi
                     activeGameOverDialog = null;
                     finish();
                 }
+
+                @Override
+                public void onGetMoreBubblesClicked() {
+                    if (prefs.spendDiamonds(continueCost)) {
+                        continueBubblePurchasesCount++;
+                        prefs.addLives(1); // Refund the heart deducted when game over occurred
+                        isGameOverOrWon = false;
+                        if (activeGameOverDialog != null) {
+                            activeGameOverDialog.dismiss();
+                            activeGameOverDialog = null;
+                        }
+                        if (gameEngine != null) {
+                            gameEngine.addExtraShots(5);
+                        }
+                        enableImmersiveStickyMode();
+                    } else {
+                        startActivity(com.redcodersgroup.bubbleshooter.ui.ShopActivity.createIntent(GameActivity.this, com.redcodersgroup.bubbleshooter.ui.ShopActivity.TAB_DIAMONDS));
+                    }
+                }
             });
             activeGameOverDialog.show();
         });
@@ -642,16 +669,8 @@ public class GameActivity extends BaseActivity implements GameEngine.GameEventLi
 
     private void showNoHeartsDialog() {
         if (isFinishing() || isDestroyed()) return;
-        new com.redcodersgroup.bubbleshooter.ui.dialogs.HeartStoreDialog(this, () -> {
-            // After store is dismissed, re-check lives
-            if (prefs.getLives() > 0) {
-                loadCurrentLevel();
-                enableImmersiveStickyMode();
-            } else {
-                // Still no hearts — go home
-                finish();
-            }
-        }).show();
+        startActivity(com.redcodersgroup.bubbleshooter.ui.ShopActivity.createIntent(this, com.redcodersgroup.bubbleshooter.ui.ShopActivity.TAB_HEARTS));
+        overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
     }
 
     @Override

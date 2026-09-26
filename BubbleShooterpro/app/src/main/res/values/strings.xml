@@ -19,4 +19,11 @@
     <string name="world_1">World 1 - Sunny Meadows</string>
     <string name="world_2">World 2 - Candy Kingdom</string>
     <string name="world_3">World 3 - Starlight Cavern</string>
+    <string translatable="false"  name="game_services_project_id">378965108331</string>
+
+    <!-- Google AdMob Configuration (Replace with production IDs when releasing) -->
+    <string translatable="false" name="admob_app_id">ca-app-pub-3940256099942544~3347511713</string>
+    <string translatable="false" name="admob_banner_unit_id">ca-app-pub-3940256099942544/9214589741</string>
+    <string translatable="false" name="admob_interstitial_unit_id">ca-app-pub-3940256099942544/1033173712</string>
+    <string translatable="false" name="admob_rewarded_unit_id">ca-app-pub-3940256099942544/5224354917</string>
 </resources>

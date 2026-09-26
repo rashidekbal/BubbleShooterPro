@@ -146,7 +146,7 @@
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="+30 💎"
+                                android:text="+5 💎"
                                 android:textColor="#0284C7"
                                 android:textSize="@dimen/sp_13"
                                 android:textStyle="bold" />

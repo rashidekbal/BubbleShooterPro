@@ -385,7 +385,7 @@ public class GameEngine {
 
         this.endlessColorsPool = (colorsPool != null && !colorsPool.isEmpty())
                 ? new ArrayList<>(colorsPool)
-                : EndlessPatternGenerator.getActiveColors(1, null);
+                : new ArrayList<>(EndlessPatternGenerator.DEFAULT_PALETTE);
 
         // Pre-fill buffer queue with 3 multi-row pattern chunks
         for (int i = 0; i < 3; i++) {
@@ -394,9 +394,9 @@ public class GameEngine {
             pregeneratedRowQueue.add(EndlessPatternGenerator.generateRow(1, grid.getCols(nextParity), nextParity, activeColors, random));
         }
 
-        // Populate initial board with 4 rows of patterned bubbles
+        // Populate initial board with 5 rows of patterned bubbles
         List<BubbleColor> initialActiveColors = EndlessPatternGenerator.getActiveColors(1, endlessColorsPool);
-        EndlessPatternGenerator.populateInitialBoard(grid, 4, initialActiveColors, random);
+        EndlessPatternGenerator.populateInitialBoard(grid, 5, initialActiveColors, random);
 
         // Initialize launcher bubbles
         BubbleColor firstColor = pickSmartLauncherColor(null);
@@ -1379,7 +1379,7 @@ public class GameEngine {
                 scoreManager.addScore(500);
                 floatingTexts.add(new FloatingText("BOARD CLEARED! +500", (boardLeft + boardRight) * 0.5f, boardTop + bubbleRadius * 3, Color.parseColor("#FFD54F"), 52f, 1.5f));
                 List<BubbleColor> activeColors = EndlessPatternGenerator.getActiveColors(endlessWaveCount, endlessColorsPool);
-                EndlessPatternGenerator.populateInitialBoard(grid, 4, activeColors, random);
+                EndlessPatternGenerator.populateInitialBoard(grid, 5, activeColors, random);
             }
 
             // Check danger line breach
@@ -1804,6 +1804,41 @@ public class GameEngine {
         if (state == GameState.PAUSED) {
             state = (stateBeforePause != null && stateBeforePause != GameState.PAUSED) ? stateBeforePause : GameState.READY;
         }
+    }
+
+    public void addExtraShots(int extraShots) {
+        this.shotsRemaining = Math.max(0, this.shotsRemaining) + extraShots;
+        this.state = GameState.READY;
+
+        // Re-initialize launcher bubbles if they were removed upon losing
+        if (currentBubble == null) {
+            BubbleColor firstColor = pickSmartLauncherColor(null);
+            currentBubble = new Bubble(firstColor, BubbleType.NORMAL, null);
+            currentBubble.setX(launcherX);
+            currentBubble.setY(launcherY);
+            currentBubble.setRadius(bubbleRadius);
+            currentBubble.setScale(1.0f);
+            currentBubble.setAlpha(1.0f);
+        }
+        if (nextBubble == null && shotsRemaining > 1) {
+            BubbleColor secondColor = pickSmartLauncherColor(currentBubble.getColor());
+            nextBubble = new Bubble(secondColor, BubbleType.NORMAL, null);
+            nextBubble.setX(previewX);
+            nextBubble.setY(previewY);
+            nextBubble.setRadius(bubbleRadius * 0.75f);
+            nextBubble.setScale(1.0f);
+            nextBubble.setAlpha(1.0f);
+        }
+
+        floatingTexts.add(new FloatingText("+" + extraShots + " BUBBLES!", launcherX, launcherY - bubbleRadius * 1.8f, Color.parseColor("#4ADE80"), 48f, 2.0f));
+        soundManager.playWin();
+
+        if (listener != null) {
+            listener.onShotsUpdated(shotsRemaining);
+            notifyObjectiveUpdated();
+        }
+
+        updateTrajectory();
     }
 
     public int getShotsRemaining() {

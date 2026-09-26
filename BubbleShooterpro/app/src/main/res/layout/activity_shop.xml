@@ -1,0 +1,1062 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/layoutShopRoot"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@drawable/bg_home_saga_world">
+
+    <!-- Top Navigation & HUD Header Bar -->
+    <LinearLayout
+        android:id="@+id/shopHeaderBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:paddingStart="@dimen/dp_12"
+        android:paddingEnd="@dimen/dp_12"
+        android:paddingTop="@dimen/dp_36"
+        android:paddingBottom="@dimen/dp_12"
+        android:elevation="@dimen/dp_10">
+
+        <!-- Back Button -->
+        <ImageButton
+            android:id="@+id/btnShopBack"
+            android:layout_width="@dimen/dp_44"
+            android:layout_height="@dimen/dp_44"
+            android:background="@android:color/transparent"
+            android:scaleType="fitCenter"
+            android:src="@drawable/btn_close_red"
+            android:contentDescription="Back" />
+
+        <!-- Title -->
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginStart="@dimen/dp_8"
+            android:text="MAGICAL SHOP"
+            android:textColor="#FFFFFF"
+            android:textSize="@dimen/sp_18"
+            android:textStyle="bold"
+            android:shadowColor="#80000000"
+            android:shadowDx="1"
+            android:shadowDy="2"
+            android:shadowRadius="3" />
+
+        <!-- Diamonds Counter Pill -->
+        <LinearLayout
+            android:id="@+id/layoutShopDiamonds"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/dp_36"
+            android:background="@drawable/bg_hud_pill"
+            android:gravity="center_vertical"
+            android:paddingStart="@dimen/dp_6"
+            android:paddingEnd="@dimen/dp_10"
+            android:layout_marginEnd="@dimen/dp_8">
+
+            <ImageView
+                android:layout_width="@dimen/dp_24"
+                android:layout_height="@dimen/dp_24"
+                android:src="@drawable/ic_hud_diamond"
+                android:contentDescription="Diamonds" />
+
+            <TextView
+                android:id="@+id/tvShopDiamonds"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/dp_4"
+                android:text="100"
+                android:textColor="#0369A1"
+                android:textSize="@dimen/sp_14"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <!-- Lives / Hearts Counter Pill -->
+        <LinearLayout
+            android:id="@+id/layoutShopHearts"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/dp_36"
+            android:background="@drawable/bg_hud_pill"
+            android:gravity="center_vertical"
+            android:paddingStart="@dimen/dp_6"
+            android:paddingEnd="@dimen/dp_10">
+
+            <ImageView
+                android:layout_width="@dimen/dp_24"
+                android:layout_height="@dimen/dp_24"
+                android:src="@drawable/ic_hud_heart"
+                android:contentDescription="Hearts" />
+
+            <TextView
+                android:id="@+id/tvShopHearts"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/dp_4"
+                android:text="5/5"
+                android:textColor="#E11D48"
+                android:textSize="@dimen/sp_14"
+                android:textStyle="bold" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <!-- Category Tabs Bar -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingStart="@dimen/dp_12"
+        android:paddingEnd="@dimen/dp_12"
+        android:paddingBottom="@dimen/dp_8">
+
+        <LinearLayout
+            android:id="@+id/tabHearts"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/dp_38"
+            android:layout_weight="1"
+            android:layout_marginEnd="@dimen/dp_6"
+            android:background="@drawable/bg_shop_tab_active"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:paddingStart="@dimen/dp_4"
+            android:paddingEnd="@dimen/dp_4"
+            android:clickable="true"
+            android:focusable="true">
+
+            <ImageView
+                android:layout_width="@dimen/dp_18"
+                android:layout_height="@dimen/dp_18"
+                android:src="@drawable/ic_hud_heart"
+                android:contentDescription="Hearts Tab Icon" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/dp_4"
+                android:text="HEARTS"
+                android:textColor="#FFFFFF"
+                android:textSize="@dimen/sp_11"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/tabDiamonds"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/dp_38"
+            android:layout_weight="1"
+            android:layout_marginEnd="@dimen/dp_6"
+            android:background="@drawable/bg_shop_tab_inactive"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:paddingStart="@dimen/dp_4"
+            android:paddingEnd="@dimen/dp_4"
+            android:clickable="true"
+            android:focusable="true">
+
+            <ImageView
+                android:layout_width="@dimen/dp_18"
+                android:layout_height="@dimen/dp_18"
+                android:src="@drawable/ic_hud_diamond"
+                android:contentDescription="Diamonds Tab Icon" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/dp_4"
+                android:text="DIAMONDS"
+                android:textColor="#FFFFFF"
+                android:textSize="@dimen/sp_11"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/tabBoosters"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/dp_38"
+            android:layout_weight="1"
+            android:background="@drawable/bg_shop_tab_inactive"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:paddingStart="@dimen/dp_4"
+            android:paddingEnd="@dimen/dp_4"
+            android:clickable="true"
+            android:focusable="true">
+
+            <ImageView
+                android:layout_width="@dimen/dp_20"
+                android:layout_height="@dimen/dp_20"
+                android:src="@drawable/ic_booster_bomb"
+                android:contentDescription="Boosters Tab Icon" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/dp_4"
+                android:text="BOOSTERS"
+                android:textColor="#FFFFFF"
+                android:textSize="@dimen/sp_11"
+                android:textStyle="bold" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <!-- Main Scrollable Inventory Container -->
+    <ScrollView
+        android:id="@+id/scrollShopInventory"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:scrollbars="none"
+        android:overScrollMode="never"
+        android:paddingStart="@dimen/dp_12"
+        android:paddingEnd="@dimen/dp_12"
+        android:paddingBottom="@dimen/dp_24">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <!-- ========================================================= -->
+            <!-- SECTION 1: HEARTS & LIVES -->
+            <!-- ========================================================= -->
+            <LinearLayout
+                android:id="@+id/sectionHearts"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginTop="@dimen/dp_8"
+                android:layout_marginBottom="@dimen/dp_16">
+
+                <!-- Section Header -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="❤️ LIVES &amp; ENERGY"
+                    android:textColor="#FFFFFF"
+                    android:textSize="@dimen/sp_16"
+                    android:textStyle="bold"
+                    android:shadowColor="#80000000"
+                    android:shadowDx="1"
+                    android:shadowDy="2"
+                    android:shadowRadius="3"
+                    android:layout_marginBottom="@dimen/dp_8" />
+
+                <!-- Current Energy Status Banner -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:gravity="center"
+                    android:background="@drawable/bg_dialog_inset_panel"
+                    android:paddingStart="@dimen/dp_16"
+                    android:paddingEnd="@dimen/dp_16"
+                    android:paddingTop="@dimen/dp_12"
+                    android:paddingBottom="@dimen/dp_12"
+                    android:layout_marginBottom="@dimen/dp_10">
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center">
+
+                        <ImageView
+                            android:id="@+id/ivShopHeartSlot1"
+                            android:layout_width="@dimen/dp_32"
+                            android:layout_height="@dimen/dp_32"
+                            android:src="@drawable/ic_heart_slot_full" />
+                        <ImageView
+                            android:id="@+id/ivShopHeartSlot2"
+                            android:layout_width="@dimen/dp_32"
+                            android:layout_height="@dimen/dp_32"
+                            android:layout_marginStart="@dimen/dp_6"
+                            android:src="@drawable/ic_heart_slot_full" />
+                        <ImageView
+                            android:id="@+id/ivShopHeartSlot3"
+                            android:layout_width="@dimen/dp_32"
+                            android:layout_height="@dimen/dp_32"
+                            android:layout_marginStart="@dimen/dp_6"
+                            android:src="@drawable/ic_heart_slot_full" />
+                        <ImageView
+                            android:id="@+id/ivShopHeartSlot4"
+                            android:layout_width="@dimen/dp_32"
+                            android:layout_height="@dimen/dp_32"
+                            android:layout_marginStart="@dimen/dp_6"
+                            android:src="@drawable/ic_heart_slot_full" />
+                        <ImageView
+                            android:id="@+id/ivShopHeartSlot5"
+                            android:layout_width="@dimen/dp_32"
+                            android:layout_height="@dimen/dp_32"
+                            android:layout_marginStart="@dimen/dp_6"
+                            android:src="@drawable/ic_heart_slot_full" />
+                    </LinearLayout>
+
+                    <TextView
+                        android:id="@+id/tvShopTimer"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/dp_6"
+                        android:text="FULL CAPACITY (5/5)"
+                        android:textColor="#059669"
+                        android:textSize="@dimen/sp_13"
+                        android:textStyle="bold" />
+                </LinearLayout>
+
+                <!-- 1. Watch Ad for +1 Life (REWARDED) -->
+                <LinearLayout
+                    android:id="@+id/cardShopWatchAd"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:background="@drawable/bg_store_item_card"
+                    android:padding="@dimen/dp_12"
+                    android:layout_marginBottom="@dimen/dp_10"
+                    android:clickable="true"
+                    android:focusable="true">
+
+                    <ImageView
+                        android:layout_width="@dimen/dp_48"
+                        android:layout_height="@dimen/dp_48"
+                        android:src="@drawable/ic_hud_heart" />
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_marginStart="@dimen/dp_12"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="+1 Free Life"
+                            android:textColor="#1E293B"
+                            android:textSize="@dimen/sp_15"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Watch a short video ad"
+                            android:textColor="#64748B"
+                            android:textSize="@dimen/sp_12" />
+                    </LinearLayout>
+
+                    <androidx.appcompat.widget.AppCompatButton
+                        android:id="@+id/btnShopWatchAd"
+                        android:layout_width="@dimen/dp_96"
+                        android:layout_height="@dimen/dp_40"
+                        android:background="@drawable/btn_pill_blank_green"
+                        app:backgroundTint="@null"
+                        android:paddingBottom="@dimen/dp_4"
+                        android:text="🎬 FREE"
+                        android:textColor="#FFFFFF"
+                        android:textSize="@dimen/sp_13"
+                        android:textStyle="bold"
+                        android:shadowColor="#60000000"
+                        android:shadowDx="1"
+                        android:shadowDy="2"
+                        android:shadowRadius="2" />
+                </LinearLayout>
+
+                <!-- 2. Single Heart (5 Diamonds) -->
+                <LinearLayout
+                    android:id="@+id/cardShopBuyOneHeart"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:background="@drawable/bg_store_item_card"
+                    android:padding="@dimen/dp_12"
+                    android:layout_marginBottom="@dimen/dp_10"
+                    android:clickable="true"
+                    android:focusable="true">
+
+                    <ImageView
+                        android:layout_width="@dimen/dp_48"
+                        android:layout_height="@dimen/dp_48"
+                        android:src="@drawable/ic_hud_heart" />
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_marginStart="@dimen/dp_12"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="+1 Heart"
+                            android:textColor="#1E293B"
+                            android:textSize="@dimen/sp_15"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Instant energy refill"
+                            android:textColor="#64748B"
+                            android:textSize="@dimen/sp_12" />
+                    </LinearLayout>
+
+                    <androidx.appcompat.widget.AppCompatButton
+                        android:id="@+id/btnShopBuyOneHeart"
+                        android:layout_width="@dimen/dp_96"
+                        android:layout_height="@dimen/dp_40"
+                        android:background="@drawable/btn_pill_blank_yellow"
+                        app:backgroundTint="@null"
+                        android:paddingBottom="@dimen/dp_4"
+                        android:text="💎 5"
+                        android:textColor="#FFFFFF"
+                        android:textSize="@dimen/sp_14"
+                        android:textStyle="bold"
+                        android:shadowColor="#805B210B"
+                        android:shadowDx="1"
+                        android:shadowDy="2"
+                        android:shadowRadius="2" />
+                </LinearLayout>
+
+                <!-- 3. Triple Hearts (12 Diamonds) -->
+                <LinearLayout
+                    android:id="@+id/cardShopBuyTripleHearts"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:background="@drawable/bg_store_item_card"
+                    android:padding="@dimen/dp_12"
+                    android:layout_marginBottom="@dimen/dp_10"
+                    android:clickable="true"
+                    android:focusable="true">
+
+                    <ImageView
+                        android:layout_width="@dimen/dp_48"
+                        android:layout_height="@dimen/dp_48"
+                        android:src="@drawable/ic_hud_heart" />
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_marginStart="@dimen/dp_12"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="+3 Hearts"
+                            android:textColor="#1E293B"
+                            android:textSize="@dimen/sp_15"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Popular Choice • Save 20%"
+                            android:textColor="#D97706"
+                            android:textSize="@dimen/sp_12"
+                            android:textStyle="bold" />
+                    </LinearLayout>
+
+                    <androidx.appcompat.widget.AppCompatButton
+                        android:id="@+id/btnShopBuyTripleHearts"
+                        android:layout_width="@dimen/dp_96"
+                        android:layout_height="@dimen/dp_40"
+                        android:background="@drawable/btn_pill_blank_yellow"
+                        app:backgroundTint="@null"
+                        android:paddingBottom="@dimen/dp_4"
+                        android:text="💎 12"
+                        android:textColor="#FFFFFF"
+                        android:textSize="@dimen/sp_14"
+                        android:textStyle="bold"
+                        android:shadowColor="#805B210B"
+                        android:shadowDx="1"
+                        android:shadowDy="2"
+                        android:shadowRadius="2" />
+                </LinearLayout>
+
+                <!-- 4. Full Refill (20 Diamonds) -->
+                <LinearLayout
+                    android:id="@+id/cardShopBuyFullRefill"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:background="@drawable/bg_store_item_card_featured"
+                    android:padding="@dimen/dp_12"
+                    android:clickable="true"
+                    android:focusable="true">
+
+                    <ImageView
+                        android:layout_width="@dimen/dp_48"
+                        android:layout_height="@dimen/dp_48"
+                        android:src="@drawable/ic_hud_heart" />
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_marginStart="@dimen/dp_12"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Full Energy Refill"
+                            android:textColor="#1E293B"
+                            android:textSize="@dimen/sp_15"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Max Pool 5 Hearts • Best Value"
+                            android:textColor="#059669"
+                            android:textSize="@dimen/sp_12"
+                            android:textStyle="bold" />
+                    </LinearLayout>
+
+                    <androidx.appcompat.widget.AppCompatButton
+                        android:id="@+id/btnShopBuyFullRefill"
+                        android:layout_width="@dimen/dp_96"
+                        android:layout_height="@dimen/dp_40"
+                        android:background="@drawable/btn_pill_blank_green"
+                        app:backgroundTint="@null"
+                        android:paddingBottom="@dimen/dp_4"
+                        android:text="💎 20"
+                        android:textColor="#FFFFFF"
+                        android:textSize="@dimen/sp_14"
+                        android:textStyle="bold"
+                        android:shadowColor="#60000000"
+                        android:shadowDx="1"
+                        android:shadowDy="2"
+                        android:shadowRadius="2" />
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <!-- ========================================================= -->
+            <!-- SECTION 2: DIAMOND PACKS -->
+            <!-- ========================================================= -->
+            <LinearLayout
+                android:id="@+id/sectionDiamonds"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginBottom="@dimen/dp_16">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="💎 DIAMOND VAULT"
+                    android:textColor="#FFFFFF"
+                    android:textSize="@dimen/sp_16"
+                    android:textStyle="bold"
+                    android:shadowColor="#80000000"
+                    android:shadowDx="1"
+                    android:shadowDy="2"
+                    android:shadowRadius="3"
+                    android:layout_marginBottom="@dimen/dp_8" />
+
+                <!-- Daily Free Gift Card -->
+                <LinearLayout
+                    android:id="@+id/cardShopDailyFree"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:background="@drawable/bg_store_item_card_featured"
+                    android:padding="@dimen/dp_12"
+                    android:layout_marginBottom="@dimen/dp_10"
+                    android:clickable="true"
+                    android:focusable="true">
+
+                    <ImageView
+                        android:layout_width="@dimen/dp_48"
+                        android:layout_height="@dimen/dp_48"
+                        android:src="@drawable/ic_hud_diamond" />
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_marginStart="@dimen/dp_12"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="+5 Daily Free Gems"
+                            android:textColor="#1E293B"
+                            android:textSize="@dimen/sp_15"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/tvShopDailyFreeSubtitle"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Claim once every 24 hours"
+                            android:textColor="#059669"
+                            android:textSize="@dimen/sp_12" />
+                    </LinearLayout>
+
+                    <androidx.appcompat.widget.AppCompatButton
+                        android:id="@+id/btnShopDailyFree"
+                        android:layout_width="@dimen/dp_96"
+                        android:layout_height="@dimen/dp_40"
+                        android:background="@drawable/btn_pill_blank_green"
+                        app:backgroundTint="@null"
+                        android:paddingBottom="@dimen/dp_4"
+                        android:text="CLAIM"
+                        android:textColor="#FFFFFF"
+                        android:textSize="@dimen/sp_13"
+                        android:textStyle="bold"
+                        android:shadowColor="#60000000"
+                        android:shadowDx="1"
+                        android:shadowDy="2"
+                        android:shadowRadius="2" />
+                </LinearLayout>
+
+                <!-- Watch Video Ad for +5 Free Diamonds -->
+                <LinearLayout
+                    android:id="@+id/cardShopWatchAdDiamonds"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:background="@drawable/bg_store_item_card"
+                    android:padding="@dimen/dp_12"
+                    android:layout_marginBottom="@dimen/dp_10"
+                    android:clickable="true"
+                    android:focusable="true">
+
+                    <ImageView
+                        android:layout_width="@dimen/dp_48"
+                        android:layout_height="@dimen/dp_48"
+                        android:src="@drawable/ic_hud_diamond" />
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_marginStart="@dimen/dp_12"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="+5 Free Diamonds"
+                            android:textColor="#1E293B"
+                            android:textSize="@dimen/sp_15"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Watch a short video ad"
+                            android:textColor="#64748B"
+                            android:textSize="@dimen/sp_12" />
+                    </LinearLayout>
+
+                    <androidx.appcompat.widget.AppCompatButton
+                        android:id="@+id/btnShopWatchAdDiamonds"
+                        android:layout_width="@dimen/dp_96"
+                        android:layout_height="@dimen/dp_40"
+                        android:background="@drawable/btn_pill_blank_green"
+                        app:backgroundTint="@null"
+                        android:paddingBottom="@dimen/dp_4"
+                        android:text="🎬 FREE"
+                        android:textColor="#FFFFFF"
+                        android:textSize="@dimen/sp_13"
+                        android:textStyle="bold"
+                        android:shadowColor="#60000000"
+                        android:shadowDx="1"
+                        android:shadowDy="2"
+                        android:shadowRadius="2" />
+                </LinearLayout>
+
+                <!-- Handful of Gems (150 Diamonds - $0.99) -->
+                <LinearLayout
+                    android:id="@+id/cardShopBuyPouch"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:background="@drawable/bg_store_item_card"
+                    android:padding="@dimen/dp_12"
+                    android:layout_marginBottom="@dimen/dp_10"
+                    android:clickable="true"
+                    android:focusable="true">
+
+                    <ImageView
+                        android:layout_width="@dimen/dp_48"
+                        android:layout_height="@dimen/dp_48"
+                        android:src="@drawable/ic_hud_diamond" />
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_marginStart="@dimen/dp_12"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="150 Diamonds"
+                            android:textColor="#1E293B"
+                            android:textSize="@dimen/sp_15"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Handful of Gems"
+                            android:textColor="#64748B"
+                            android:textSize="@dimen/sp_12" />
+                    </LinearLayout>
+
+                    <androidx.appcompat.widget.AppCompatButton
+                        android:id="@+id/btnShopBuyPouch"
+                        android:layout_width="@dimen/dp_96"
+                        android:layout_height="@dimen/dp_40"
+                        android:background="@drawable/btn_pill_blank_blue"
+                        app:backgroundTint="@null"
+                        android:paddingBottom="@dimen/dp_4"
+                        android:text="$0.99"
+                        android:textColor="#FFFFFF"
+                        android:textSize="@dimen/sp_13"
+                        android:textStyle="bold"
+                        android:shadowColor="#60000000"
+                        android:shadowDx="1"
+                        android:shadowDy="2"
+                        android:shadowRadius="2" />
+                </LinearLayout>
+
+                <!-- Sack of Gems (500 Diamonds - $2.99) -->
+                <LinearLayout
+                    android:id="@+id/cardShopBuySack"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:background="@drawable/bg_store_item_card"
+                    android:padding="@dimen/dp_12"
+                    android:layout_marginBottom="@dimen/dp_10"
+                    android:clickable="true"
+                    android:focusable="true">
+
+                    <ImageView
+                        android:layout_width="@dimen/dp_48"
+                        android:layout_height="@dimen/dp_48"
+                        android:src="@drawable/ic_hud_diamond" />
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_marginStart="@dimen/dp_12"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="500 Diamonds"
+                            android:textColor="#1E293B"
+                            android:textSize="@dimen/sp_15"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Sack of Gems • Popular"
+                            android:textColor="#D97706"
+                            android:textSize="@dimen/sp_12"
+                            android:textStyle="bold" />
+                    </LinearLayout>
+
+                    <androidx.appcompat.widget.AppCompatButton
+                        android:id="@+id/btnShopBuySack"
+                        android:layout_width="@dimen/dp_96"
+                        android:layout_height="@dimen/dp_40"
+                        android:background="@drawable/btn_pill_blank_blue"
+                        app:backgroundTint="@null"
+                        android:paddingBottom="@dimen/dp_4"
+                        android:text="$2.99"
+                        android:textColor="#FFFFFF"
+                        android:textSize="@dimen/sp_13"
+                        android:textStyle="bold"
+                        android:shadowColor="#60000000"
+                        android:shadowDx="1"
+                        android:shadowDy="2"
+                        android:shadowRadius="2" />
+                </LinearLayout>
+
+                <!-- Royal Chest (1,500 Diamonds - $6.99) -->
+                <LinearLayout
+                    android:id="@+id/cardShopBuyChest"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:background="@drawable/bg_store_item_card_featured"
+                    android:padding="@dimen/dp_12"
+                    android:clickable="true"
+                    android:focusable="true">
+
+                    <ImageView
+                        android:layout_width="@dimen/dp_48"
+                        android:layout_height="@dimen/dp_48"
+                        android:src="@drawable/ic_hud_diamond" />
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_marginStart="@dimen/dp_12"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="1,500 Diamonds"
+                            android:textColor="#1E293B"
+                            android:textSize="@dimen/sp_15"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Royal Vault • Best Deal"
+                            android:textColor="#059669"
+                            android:textSize="@dimen/sp_12"
+                            android:textStyle="bold" />
+                    </LinearLayout>
+
+                    <androidx.appcompat.widget.AppCompatButton
+                        android:id="@+id/btnShopBuyChest"
+                        android:layout_width="@dimen/dp_96"
+                        android:layout_height="@dimen/dp_40"
+                        android:background="@drawable/btn_pill_blank_green"
+                        app:backgroundTint="@null"
+                        android:paddingBottom="@dimen/dp_4"
+                        android:text="$6.99"
+                        android:textColor="#FFFFFF"
+                        android:textSize="@dimen/sp_13"
+                        android:textStyle="bold"
+                        android:shadowColor="#60000000"
+                        android:shadowDx="1"
+                        android:shadowDy="2"
+                        android:shadowRadius="2" />
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <!-- ========================================================= -->
+            <!-- SECTION 3: POWER-UP BOOSTERS -->
+            <!-- ========================================================= -->
+            <LinearLayout
+                android:id="@+id/sectionBoosters"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginBottom="@dimen/dp_16">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="POWER-UP BOOSTERS"
+                    android:textColor="#FFFFFF"
+                    android:textSize="@dimen/sp_16"
+                    android:textStyle="bold"
+                    android:shadowColor="#80000000"
+                    android:shadowDx="1"
+                    android:shadowDy="2"
+                    android:shadowRadius="3"
+                    android:layout_marginBottom="@dimen/dp_8" />
+
+                <!-- Bomb Booster Card -->
+                <LinearLayout
+                    android:id="@+id/cardShopBuyBomb"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:background="@drawable/bg_store_item_card"
+                    android:padding="@dimen/dp_12"
+                    android:layout_marginBottom="@dimen/dp_10"
+                    android:clickable="true"
+                    android:focusable="true">
+
+                    <ImageView
+                        android:layout_width="@dimen/dp_48"
+                        android:layout_height="@dimen/dp_48"
+                        android:src="@drawable/bomb_bubble" />
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_marginStart="@dimen/dp_12"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Bomb Booster (+1)"
+                            android:textColor="#1E293B"
+                            android:textSize="@dimen/sp_15"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/tvShopInventoryBomb"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Explodes radius • In bag: 0"
+                            android:textColor="#64748B"
+                            android:textSize="@dimen/sp_12" />
+                    </LinearLayout>
+
+                    <androidx.appcompat.widget.AppCompatButton
+                        android:id="@+id/btnShopBuyBomb"
+                        android:layout_width="@dimen/dp_96"
+                        android:layout_height="@dimen/dp_40"
+                        android:background="@drawable/btn_pill_blank_yellow"
+                        app:backgroundTint="@null"
+                        android:paddingBottom="@dimen/dp_4"
+                        android:text="💎 40"
+                        android:textColor="#FFFFFF"
+                        android:textSize="@dimen/sp_14"
+                        android:textStyle="bold"
+                        android:shadowColor="#805B210B"
+                        android:shadowDx="1"
+                        android:shadowDy="2"
+                        android:shadowRadius="2" />
+                </LinearLayout>
+
+                <!-- Fireball Booster Card -->
+                <LinearLayout
+                    android:id="@+id/cardShopBuyFireball"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:background="@drawable/bg_store_item_card"
+                    android:padding="@dimen/dp_12"
+                    android:layout_marginBottom="@dimen/dp_10"
+                    android:clickable="true"
+                    android:focusable="true">
+
+                    <ImageView
+                        android:layout_width="@dimen/dp_48"
+                        android:layout_height="@dimen/dp_48"
+                        android:src="@drawable/fireball_bubble" />
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_marginStart="@dimen/dp_12"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Fireball Booster (+1)"
+                            android:textColor="#1E293B"
+                            android:textSize="@dimen/sp_15"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/tvShopInventoryFireball"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Pierces column • In bag: 0"
+                            android:textColor="#64748B"
+                            android:textSize="@dimen/sp_12" />
+                    </LinearLayout>
+
+                    <androidx.appcompat.widget.AppCompatButton
+                        android:id="@+id/btnShopBuyFireball"
+                        android:layout_width="@dimen/dp_96"
+                        android:layout_height="@dimen/dp_40"
+                        android:background="@drawable/btn_pill_blank_yellow"
+                        app:backgroundTint="@null"
+                        android:paddingBottom="@dimen/dp_4"
+                        android:text="💎 40"
+                        android:textColor="#FFFFFF"
+                        android:textSize="@dimen/sp_14"
+                        android:textStyle="bold"
+                        android:shadowColor="#805B210B"
+                        android:shadowDx="1"
+                        android:shadowDy="2"
+                        android:shadowRadius="2" />
+                </LinearLayout>
+
+                <!-- Rainbow Booster Card -->
+                <LinearLayout
+                    android:id="@+id/cardShopBuyRainbow"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:background="@drawable/bg_store_item_card"
+                    android:padding="@dimen/dp_12"
+                    android:clickable="true"
+                    android:focusable="true">
+
+                    <ImageView
+                        android:layout_width="@dimen/dp_48"
+                        android:layout_height="@dimen/dp_48"
+                        android:src="@drawable/rainbow_bubble" />
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_marginStart="@dimen/dp_12"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Rainbow Booster (+1)"
+                            android:textColor="#1E293B"
+                            android:textSize="@dimen/sp_15"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/tvShopInventoryRainbow"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Matches any color • In bag: 0"
+                            android:textColor="#64748B"
+                            android:textSize="@dimen/sp_12" />
+                    </LinearLayout>
+
+                    <androidx.appcompat.widget.AppCompatButton
+                        android:id="@+id/btnShopBuyRainbow"
+                        android:layout_width="@dimen/dp_96"
+                        android:layout_height="@dimen/dp_40"
+                        android:background="@drawable/btn_pill_blank_yellow"
+                        app:backgroundTint="@null"
+                        android:paddingBottom="@dimen/dp_4"
+                        android:text="💎 50"
+                        android:textColor="#FFFFFF"
+                        android:textSize="@dimen/sp_14"
+                        android:textStyle="bold"
+                        android:shadowColor="#805B210B"
+                        android:shadowDx="1"
+                        android:shadowDy="2"
+                        android:shadowRadius="2" />
+                </LinearLayout>
+
+            </LinearLayout>
+
+        </LinearLayout>
+    </ScrollView>
+
+</LinearLayout>

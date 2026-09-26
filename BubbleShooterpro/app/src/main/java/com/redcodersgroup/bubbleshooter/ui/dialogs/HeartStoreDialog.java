@@ -115,17 +115,35 @@ public class HeartStoreDialog extends Dialog {
             return;
         }
 
-        soundManager.playWin();
-        prefs.addLives(1);
-        AnalyticsManager.getInstance(getContext()).logHeartRefilled("ad", 1);
-        updateLivesUI();
-        NoticeDialog.showReward(
-                getContext(),
-                "REWARD",
-                "LIFE RESTORED",
-                "+1 HEART ADDED",
-                "Ad reward granted. One heart added to your pool."
-        );
+        soundManager.playClick();
+        if (getContext() instanceof android.app.Activity) {
+            android.app.Activity activity = (android.app.Activity) getContext();
+            com.redcodersgroup.bubbleshooter.ads.AdManager.getInstance().showRewardedVideo(activity,
+                    new com.redcodersgroup.bubbleshooter.ads.AdManager.RewardCallback() {
+                        @Override
+                        public void onRewardEarned(int amount, String type) {
+                            soundManager.playWin();
+                            prefs.addLives(1);
+                            AnalyticsManager.getInstance(getContext()).logHeartRefilled("ad", 1);
+                            updateLivesUI();
+                            NoticeDialog.showReward(
+                                    getContext(),
+                                    "REWARD",
+                                    "LIFE RESTORED",
+                                    "+1 HEART ADDED",
+                                    "Ad reward granted! One heart has been added to your pool."
+                            );
+                        }
+
+                        @Override
+                        public void onAdClosed(boolean rewarded) {
+                            if (!rewarded) {
+                                // User closed ad early or ad was unavailable
+                                com.redcodersgroup.bubbleshooter.ads.AdManager.getInstance().preloadRewarded();
+                            }
+                        }
+                    });
+        }
     }
 
     private void handleBuyOneHeart() {

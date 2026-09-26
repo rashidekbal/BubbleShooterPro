@@ -13,7 +13,7 @@ import java.util.Random;
 
 public class EndlessPatternGenerator {
 
-    private static final List<BubbleColor> DEFAULT_PALETTE = Arrays.asList(
+    public static final List<BubbleColor> DEFAULT_PALETTE = Arrays.asList(
             BubbleColor.RED,
             BubbleColor.BLUE,
             BubbleColor.GREEN,
@@ -24,19 +24,19 @@ public class EndlessPatternGenerator {
 
     /**
      * Returns an active color palette scaled by wave progression.
-     * Starts with 3 colors for high matchability and gradually unlocks more colors.
+     * Starts with 3 colors for introductory flow and gradually unlocks 4th, 5th, and 6th colors.
      */
     public static List<BubbleColor> getActiveColors(int waveCount, List<BubbleColor> basePool) {
         List<BubbleColor> pool = (basePool != null && !basePool.isEmpty()) ? basePool : DEFAULT_PALETTE;
         int colorCount;
-        if (waveCount <= 12) {
-            colorCount = 3; // Waves 1-12: 3 colors (high matchability, great combo flow)
-        } else if (waveCount <= 28) {
-            colorCount = 4; // Waves 13-28: 4 colors
-        } else if (waveCount <= 50) {
-            colorCount = 5; // Waves 29-50: 5 colors
+        if (waveCount <= 5) {
+            colorCount = 3; // Waves 1-5: 3 colors (quick comfortable start)
+        } else if (waveCount <= 16) {
+            colorCount = 4; // Waves 6-16: 4 colors (moderate puzzle complexity)
+        } else if (waveCount <= 32) {
+            colorCount = 5; // Waves 17-32: 5 colors (healthy tactical challenge)
         } else {
-            colorCount = Math.min(pool.size(), 6); // Wave 51+: full palette
+            colorCount = Math.min(pool.size(), 6); // Wave 33+: full 6-color palette
         }
         colorCount = Math.min(colorCount, pool.size());
 
@@ -62,11 +62,11 @@ public class EndlessPatternGenerator {
         int patternType = random.nextInt(4);
 
         if (patternType == 0) {
-            // Pattern 1: Cohesive Cluster Runs (groups of 2-4 same color)
+            // Pattern 1: Cohesive Cluster Runs (groups of 2-3 bubbles)
             int c = 0;
             while (c < cols) {
                 BubbleColor clusterColor = activeColors.get(random.nextInt(activeColors.size()));
-                int clusterLen = 2 + random.nextInt(3); // 2 to 4 bubbles
+                int clusterLen = (waveCount <= 10) ? (2 + random.nextInt(3)) : (2 + random.nextInt(2));
                 for (int i = 0; i < clusterLen && c < cols; i++, c++) {
                     rowColors[c] = clusterColor;
                 }
@@ -114,7 +114,7 @@ public class EndlessPatternGenerator {
         }
 
         // Occasional tactical booster/special spawn (Bomb, Rainbow, or Transparent)
-        if (random.nextInt(100) < 9 || (waveCount > 0 && waveCount % 6 == 0 && random.nextBoolean())) {
+        if (random.nextInt(100) < 6 || (waveCount > 0 && waveCount % 8 == 0 && random.nextBoolean())) {
             int boosterCol = (cols > 2) ? (1 + random.nextInt(cols - 2)) : 0;
             int roll = random.nextInt(3);
             if (roll == 0) {
