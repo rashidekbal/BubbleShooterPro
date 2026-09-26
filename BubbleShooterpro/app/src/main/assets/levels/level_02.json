@@ -1,4 +1,5 @@
 {
+  "level": 2,
   "shots": 16,
   "colors": [
     "RED",
@@ -7,7 +8,7 @@
   ],
   "objective": {
     "type": "CLEAR_ALL",
-    "target": 0
+    "target": 5000
   },
   "starThresholds": [
     1252,
@@ -22,6 +23,5 @@
     ".RYRRRYR.",
     "RBRYYRBR",
     "RBRBRBRBR"
-  ],
-  "level": 2
+  ]
 }

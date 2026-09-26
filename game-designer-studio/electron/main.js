@@ -226,3 +226,102 @@ ipcMain.handle('image:load-base64', async (event, { drawableDir, imageName }) =>
     return { success: false, error: err.message };
   }
 });
+
+// Select Image Dialog
+ipcMain.handle('dialog:select-image', async (event, { title = 'Select Background Image' } = {}) => {
+  try {
+    const result = await dialog.showOpenDialog(mainWindow, {
+      title,
+      filters: [
+        { name: 'Image Files', extensions: ['jpg', 'jpeg', 'png', 'webp'] },
+        { name: 'All Files', extensions: ['*'] }
+      ],
+      properties: ['openFile']
+    });
+
+    if (result.canceled || result.filePaths.length === 0) {
+      return { canceled: true };
+    }
+
+    const filePath = result.filePaths[0];
+    const buffer = await fs.readFile(filePath);
+    const ext = path.extname(filePath).toLowerCase();
+    const mime = ext === '.png' ? 'image/png' : ext === '.webp' ? 'image/webp' : 'image/jpeg';
+    const base64Url = `data:${mime};base64,${buffer.toString('base64')}`;
+
+    return { canceled: false, filePath, fileName: path.basename(filePath), dataUrl: base64Url };
+  } catch (err) {
+    return { canceled: true, error: err.message };
+  }
+});
+
+// Copy Image into Android res/drawable folder
+ipcMain.handle('image:copy-to-drawable', async (event, { drawableDir, sourcePath, targetBaseName }) => {
+  try {
+    if (!fsSync.existsSync(drawableDir)) {
+      await fs.mkdir(drawableDir, { recursive: true });
+    }
+
+    const ext = path.extname(sourcePath).toLowerCase() || '.jpg';
+    const finalName = targetBaseName.endsWith(ext) ? targetBaseName : `${targetBaseName}${ext}`;
+    const destPath = path.join(drawableDir, finalName);
+
+    await fs.copyFile(sourcePath, destPath);
+
+    return { success: true, fileName: finalName, fullPath: destPath, baseDrawableName: path.parse(finalName).name };
+  } catch (err) {
+    return { success: false, error: err.message };
+  }
+});
+
+// List all background images in drawable folder and project
+ipcMain.handle('drawable:list-images', async (event, { drawableDir, projectRoot }) => {
+  try {
+    const mapImages = [];
+    const gameImages = [];
+    const allImages = [];
+
+    if (fsSync.existsSync(drawableDir)) {
+      const files = await fs.readdir(drawableDir);
+      for (const f of files) {
+        const ext = path.extname(f).toLowerCase();
+        if (['.jpg', '.jpeg', '.png', '.webp'].includes(ext)) {
+          const base = path.parse(f).name;
+          allImages.push({ name: base, file: f, path: path.join(drawableDir, f) });
+          if (base.startsWith('bg_map_')) {
+            mapImages.push({ name: base, file: f, path: path.join(drawableDir, f) });
+          } else if (base.startsWith('bg_game_')) {
+            gameImages.push({ name: base, file: f, path: path.join(drawableDir, f) });
+          }
+        }
+      }
+    }
+
+    return { success: true, mapImages, gameImages, allImages };
+  } catch (err) {
+    return { success: false, error: err.message };
+  }
+});
+
+// Save multiple levels in batch
+ipcMain.handle('levels:save-batch', async (event, { levelsDir, levelsList }) => {
+  try {
+    await fs.mkdir(levelsDir, { recursive: true });
+    const saved = [];
+
+    for (const item of levelsList) {
+      const lvlNum = item.levelNumber || item.data.level;
+      const filename = lvlNum < 100 
+        ? `level_${String(lvlNum).padStart(2, '0')}.json` 
+        : `level_${lvlNum}.json`;
+      const fullPath = path.join(levelsDir, filename);
+      const jsonStr = JSON.stringify(item.data, null, 2);
+      await fs.writeFile(fullPath, jsonStr, 'utf-8');
+      saved.push({ levelNumber: lvlNum, filename, fullPath });
+    }
+
+    return { success: true, count: saved.length, saved };
+  } catch (err) {
+    return { success: false, error: err.message };
+  }
+});

@@ -3,11 +3,55 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Bubble Shooter Pro - Game Designer Studio</title>
+  <title>Bubble Shooter Pro — Game Designer Studio</title>
+  
+  <!-- Inter & JetBrains Mono Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
   <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace'],
+          },
+          colors: {
+            studio: {
+              bg: '#090a0f',
+              surface: '#11131a',
+              panel: '#161922',
+              card: '#1c202c',
+              border: '#262b3a',
+              hover: '#2d3345',
+              accent: '#6366f1',
+              accentHover: '#4f46e5'
+            }
+          }
+        }
+      }
+    }
+  </script>
+
   <style>
-    body { margin: 0; user-select: none; font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
-    
+    * {
+      box-sizing: border-box;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    body {
+      margin: 0;
+      user-select: none;
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      background-color: #090a0f;
+      color: #e2e8f0;
+    }
+
     /* 3D Glossy Spherical Bubbles */
     .bubble {
       width: 44px;
@@ -15,7 +59,7 @@
       border-radius: 50%;
       cursor: pointer;
       position: relative;
-      transition: transform 0.08s ease, filter 0.08s ease;
+      transition: transform 0.1s cubic-bezier(0.34, 1.56, 0.64, 1), filter 0.1s ease;
       display: inline-flex;
       align-items: center;
       justify-content: center;
@@ -24,20 +68,21 @@
       color: rgba(255, 255, 255, 0.95);
       text-shadow: 0 1px 2px rgba(0,0,0,0.6);
       flex-shrink: 0;
-      box-sizing: border-box;
       margin: 0;
       background-size: contain;
       background-position: center;
       background-repeat: no-repeat;
     }
     .bubble:hover {
-      transform: scale(1.12);
+      transform: scale(1.14);
       z-index: 30;
-      filter: brightness(1.15);
-      box-shadow: 0 0 12px rgba(255,255,255,0.7), 0 6px 12px rgba(0,0,0,0.5);
+      filter: brightness(1.15) drop-shadow(0 4px 10px rgba(0,0,0,0.5));
+    }
+    .bubble:active {
+      transform: scale(0.96);
     }
 
-    /* Bubble Color Schemes - Authentic Game Vector & Glossy Textures */
+    /* Bubble Color Schemes */
     .bubble-R { background-image: url('../assets/bubbles/bubble_r.svg'); }
     .bubble-G { background-image: url('../assets/bubbles/bubble_g.svg'); }
     .bubble-B { background-image: url('../assets/bubbles/bubble_b.svg'); }
@@ -54,35 +99,32 @@
     .bubble-T { background-image: url('../assets/bubbles/bubble_t.svg'); }
     
     .bubble-EMPTY {
-      background: rgba(30, 41, 59, 0.35);
-      border: 2px dashed rgba(71, 85, 105, 0.45);
-      box-shadow: none;
+      background: rgba(26, 31, 46, 0.4);
+      border: 1.5px dashed rgba(74, 85, 114, 0.45);
+      box-shadow: inset 0 2px 4px rgba(0,0,0,0.3);
     }
     .bubble-EMPTY:hover {
-      background: rgba(51, 65, 85, 0.7);
+      background: rgba(45, 53, 76, 0.6);
       border-color: rgba(148, 163, 184, 0.7);
     }
 
     /* Hex Neighbor Highlight */
     .bubble.neighbor-highlight {
-      box-shadow: 0 0 0 3px #38bdf8, 0 0 14px rgba(56, 189, 248, 0.8) !important;
+      box-shadow: 0 0 0 3px #38bdf8, 0 0 16px rgba(56, 189, 248, 0.9) !important;
       z-index: 25;
     }
 
-    /* Floating / Unattached Bubble Warning */
+    /* Floating / Unattached Warning */
     .bubble.floating-warning {
-      animation: pulseWarning 1.5s infinite;
-      box-shadow: 0 0 0 3px #ef4444, 0 0 12px rgba(239, 68, 68, 0.8) !important;
+      animation: pulseWarning 1.4s infinite ease-in-out;
+      box-shadow: 0 0 0 3px #ef4444, 0 0 14px rgba(239, 68, 68, 0.85) !important;
     }
     @keyframes pulseWarning {
       0%, 100% { transform: scale(1); filter: brightness(1); }
-      50% { transform: scale(1.06); filter: brightness(1.25); }
+      50% { transform: scale(1.08); filter: brightness(1.3); }
     }
 
     /* Hex Staggering Layout - Diameter 44px */
-    /* 9 bubbles * 44px = 396px */
-    /* Odd row: 22px + 8*44px + 22px = 396px */
-    /* Row step = 44 * sqrt(3)/2 = 38.10px. Overlap = 44 - 38.10 = 5.9px */
     .hex-row {
       display: flex;
       width: 396px;
@@ -103,36 +145,59 @@
     }
 
     /* Palette Selection Outline */
+    .palette-item {
+      position: relative;
+      transition: all 0.15s ease;
+      outline: none;
+    }
     .palette-item.active {
-      transform: scale(1.15);
-      box-shadow: 0 0 0 3px #fbbf24, 0 8px 16px rgba(0,0,0,0.5);
+      transform: scale(1.12);
+      box-shadow: 0 0 0 3px #fbbf24, 0 8px 20px rgba(0,0,0,0.6);
       z-index: 10;
     }
+    .palette-item.active::after {
+      content: '✓';
+      position: absolute;
+      top: -4px;
+      right: -4px;
+      width: 16px;
+      height: 16px;
+      background: #fbbf24;
+      color: #000;
+      border-radius: 50%;
+      font-size: 10px;
+      font-weight: 900;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.5);
+    }
 
-    /* Draggable Level Pin (Reduced to Half Size ~18px) */
+    /* Draggable Level Pin */
     .level-pin {
       position: absolute;
       transform: translate(-50%, -50%);
-      width: 18px;
-      height: 18px;
+      width: 20px;
+      height: 20px;
       border-radius: 50%;
       cursor: grab;
       user-select: none;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-weight: 900;
+      font-weight: 800;
       font-size: 9px;
       color: white;
-      text-shadow: 0 1px 1px rgba(0,0,0,0.8);
-      box-shadow: 0 2px 5px rgba(0,0,0,0.5), inset 0 1px 2px rgba(255,255,255,0.4);
+      text-shadow: 0 1px 2px rgba(0,0,0,0.8);
+      box-shadow: 0 3px 6px rgba(0,0,0,0.6), inset 0 1px 2px rgba(255,255,255,0.4);
       transition: transform 0.1s ease, box-shadow 0.1s ease;
       z-index: 20;
     }
-    .level-pin:active { cursor: grabbing; transform: translate(-50%, -50%) scale(1.25); }
+    .level-pin:active { cursor: grabbing; transform: translate(-50%, -50%) scale(1.3); }
     .level-pin.pin-selected {
-      box-shadow: 0 0 0 2.5px #fbbf24, 0 4px 10px rgba(0,0,0,0.6);
+      box-shadow: 0 0 0 3px #fbbf24, 0 6px 14px rgba(0,0,0,0.7);
       z-index: 30;
+      transform: translate(-50%, -50%) scale(1.15);
     }
     .pin-completed { background: radial-gradient(circle at 35% 35%, #4ade80, #16a34a 60%, #14532d); }
     .pin-active {
@@ -141,16 +206,16 @@
     }
     .pin-locked { background: radial-gradient(circle at 35% 35%, #94a3b8, #475569 60%, #1e293b); }
     @keyframes pulseActivePin {
-      0%, 100% { box-shadow: 0 0 0 2px #facc15, 0 2px 6px rgba(0,0,0,0.5); }
-      50% { box-shadow: 0 0 0 4px #facc15, 0 0 12px rgba(250, 204, 21, 0.6); }
+      0%, 100% { box-shadow: 0 0 0 2px #facc15, 0 2px 8px rgba(0,0,0,0.5); }
+      50% { box-shadow: 0 0 0 4px #facc15, 0 0 14px rgba(250, 204, 21, 0.7); }
     }
 
-    /* Draggable Gift Chest Pin (Reduced to Half Size ~22px) */
+    /* Draggable Gift Chest Pin */
     .gift-pin {
       position: absolute;
       transform: translate(-50%, -50%);
-      width: 22px;
-      height: 22px;
+      width: 24px;
+      height: 24px;
       border-radius: 6px;
       cursor: grab;
       user-select: none;
@@ -159,232 +224,375 @@
       justify-content: center;
       background: radial-gradient(circle at 35% 35%, #fef08a, #f59e0b 60%, #b45309);
       border: 1.5px solid #fff;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.6), 0 0 6px rgba(245, 158, 11, 0.7);
+      box-shadow: 0 3px 8px rgba(0,0,0,0.6), 0 0 8px rgba(245, 158, 11, 0.6);
       transition: transform 0.1s ease, box-shadow 0.1s ease;
       z-index: 25;
     }
-    .gift-pin img {
-      width: 14px;
-      height: 14px;
-      pointer-events: none;
-    }
-    .gift-pin:active { cursor: grabbing; transform: translate(-50%, -50%) scale(1.25); }
+    .gift-pin img { width: 15px; height: 15px; pointer-events: none; }
+    .gift-pin:active { cursor: grabbing; transform: translate(-50%, -50%) scale(1.3); }
     .gift-pin.pin-selected {
-      box-shadow: 0 0 0 2.5px #ec4899, 0 4px 12px rgba(0,0,0,0.7), 0 0 10px rgba(236, 72, 153, 0.8);
+      box-shadow: 0 0 0 3px #ec4899, 0 6px 16px rgba(0,0,0,0.8), 0 0 12px rgba(236, 72, 153, 0.8);
       border-color: #fdf2f8;
       z-index: 35;
+      transform: translate(-50%, -50%) scale(1.15);
+    }
+
+    /* Studio UI Components */
+    .studio-panel {
+      background: #11131a;
+      border: 1px solid #202534;
+    }
+    .studio-card {
+      background: #161923;
+      border: 1px solid #24293a;
+      border-radius: 0.75rem;
+    }
+    .studio-card-header {
+      padding: 0.625rem 0.875rem;
+      border-bottom: 1px solid #222738;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .studio-card-body {
+      padding: 0.875rem;
+    }
+    .studio-input {
+      background: #0d0f16;
+      border: 1px solid #262c3e;
+      color: #f1f5f9;
+      border-radius: 0.5rem;
+      transition: border-color 0.15s ease, box-shadow 0.15s ease;
+    }
+    .studio-input:focus {
+      outline: none;
+      border-color: #6366f1;
+      box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2);
+    }
+    .studio-btn {
+      transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+      border-radius: 0.5rem;
+      user-select: none;
+    }
+    .studio-btn:active {
+      transform: scale(0.97);
+    }
+    .studio-btn-primary {
+      background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+      color: white;
+      box-shadow: 0 2px 8px rgba(99, 102, 241, 0.35);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    .studio-btn-primary:hover {
+      background: linear-gradient(135deg, #7175f3 0%, #5a52eb 100%);
+      box-shadow: 0 4px 14px rgba(99, 102, 241, 0.5);
+    }
+    .studio-btn-secondary {
+      background: #1e2230;
+      color: #cbd5e1;
+      border: 1px solid #2a3043;
+    }
+    .studio-btn-secondary:hover {
+      background: #272d40;
+      color: #ffffff;
+      border-color: #3b445e;
+    }
+    .studio-btn-success {
+      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+      color: white;
+      box-shadow: 0 2px 8px rgba(16, 185, 129, 0.35);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    .studio-btn-success:hover {
+      background: linear-gradient(135deg, #22c55e 0%, #10b981 100%);
+      box-shadow: 0 4px 14px rgba(16, 185, 129, 0.5);
+    }
+    .studio-btn-danger {
+      background: rgba(239, 68, 68, 0.12);
+      color: #fca5a5;
+      border: 1px solid rgba(239, 68, 68, 0.25);
+    }
+    .studio-btn-danger:hover {
+      background: rgba(239, 68, 68, 0.22);
+      color: #f87171;
+      border-color: rgba(239, 68, 68, 0.4);
     }
 
     /* Custom Scrollbars */
-    ::-webkit-scrollbar { width: 6px; height: 6px; }
-    ::-webkit-scrollbar-track { background: #0f172a; }
-    ::-webkit-scrollbar-thumb { background: #334155; border-radius: 3px; }
-    ::-webkit-scrollbar-thumb:hover { background: #475569; }
+    ::-webkit-scrollbar { width: 7px; height: 7px; }
+    ::-webkit-scrollbar-track { background: rgba(9, 10, 15, 0.8); }
+    ::-webkit-scrollbar-thumb { background: #32384c; border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: #4e5877; }
+
+    /* Subtle backdrop glow */
+    .canvas-ambient-glow {
+      background: radial-gradient(circle at 50% 30%, rgba(99, 102, 241, 0.08) 0%, rgba(9, 10, 15, 0) 70%);
+    }
   </style>
 </head>
-<body class="bg-slate-950 text-slate-100 flex flex-col h-screen overflow-hidden">
+<body class="bg-studio-bg text-slate-200 flex flex-col h-screen overflow-hidden text-xs antialiased">
 
-  <!-- TOP HEADER: App Brand & Project Folder Selector -->
-  <header class="bg-slate-900 border-b border-slate-800 px-4 py-2.5 flex items-center justify-between z-30 shrink-0 shadow-lg">
-    <!-- Brand -->
+  <!-- ============================================================================ -->
+  <!-- 1. TOP APP BAR: Studio Brand & Connected Project Header -->
+  <!-- ============================================================================ -->
+  <header class="bg-studio-surface border-b border-studio-border px-4 py-2 flex items-center justify-between z-30 shrink-0 shadow-md">
+    <!-- Brand Emblem -->
     <div class="flex items-center gap-3">
-      <img src="../assets/icon.png" alt="App Icon" class="w-9 h-9 rounded-xl shadow-lg shadow-indigo-500/25 border border-slate-700 object-cover" />
+      <div class="relative flex items-center justify-center">
+        <img src="../assets/icon.png" alt="App Icon" class="w-8 h-8 rounded-lg shadow-md border border-slate-700/60 object-cover" />
+      </div>
       <div>
-        <h1 class="font-bold text-sm md:text-base leading-tight text-white flex items-center gap-2">
-          Game Designer Studio
-          <span class="text-[10px] bg-indigo-900/80 text-indigo-300 px-2 py-0.5 rounded-full border border-indigo-500/40 font-mono font-semibold">Windows Desktop</span>
-        </h1>
-        <p class="text-[11px] text-slate-400">Integrated Level Designer, Saga Map Positioner & Campaign Studio</p>
+        <div class="flex items-center gap-2">
+          <span class="font-bold text-sm tracking-tight text-white">Bubble Shooter Pro</span>
+          <span class="text-[10px] font-semibold font-mono bg-indigo-500/15 text-indigo-400 border border-indigo-500/30 px-2 py-0.5 rounded-md">Studio Pro</span>
+        </div>
+        <p class="text-[11px] text-slate-400 font-medium">Professional Level & Campaign Designer</p>
       </div>
     </div>
 
-    <!-- Active Project Folder Bar -->
-    <div class="flex items-center gap-2 bg-slate-800/90 px-3 py-1.5 rounded-xl border border-slate-700 shadow-inner max-w-xl flex-1 mx-6">
-      <span class="text-xs text-slate-400 font-semibold flex items-center gap-1 shrink-0">
-        <span>📁 Project:</span>
+    <!-- Active Project Path & Actions -->
+    <div class="flex items-center gap-2 bg-studio-bg px-3 py-1 rounded-xl border border-studio-border max-w-xl flex-1 mx-6">
+      <span class="text-[11px] font-semibold text-slate-400 flex items-center gap-1 shrink-0 font-mono">
+        <span>DIR:</span>
       </span>
-      <input type="text" id="inputProjectPath" readonly class="flex-1 bg-slate-900/90 border border-slate-700 rounded px-2.5 py-1 text-xs text-slate-200 font-mono truncate focus:outline-none" placeholder="No project selected..." />
-      <button id="btnBrowseProject" class="bg-indigo-600 hover:bg-indigo-500 active:scale-95 text-white text-xs font-semibold px-3 py-1 rounded-lg transition shadow flex items-center gap-1 shrink-0">
-        <span>📂 Browse Folder</span>
+      <input type="text" id="inputProjectPath" readonly class="flex-1 bg-transparent border-0 px-1 py-0.5 text-xs text-slate-300 font-mono truncate focus:outline-none" placeholder="Locating Android project..." />
+      <button id="btnBrowseProject" class="studio-btn studio-btn-secondary text-[11px] px-2.5 py-1 gap-1 shrink-0">
+        <span>📂 Browse</span>
       </button>
-      <button id="btnRescanProject" class="bg-slate-700 hover:bg-slate-600 active:scale-95 text-slate-200 text-xs font-medium px-2 py-1 rounded-lg transition shrink-0" title="Rescan Project Assets">
+      <button id="btnRescanProject" class="studio-btn studio-btn-secondary text-[11px] px-2 py-1 shrink-0" title="Rescan Project Assets">
         <span>🔄</span>
       </button>
     </div>
 
-    <!-- Project Quick Stats Badges -->
-    <div class="flex items-center gap-2">
-      <div id="badgeProjectStatus" class="flex items-center gap-1.5 bg-emerald-950/60 border border-emerald-800/60 px-2.5 py-1 rounded-lg text-emerald-300 text-xs font-mono">
-        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+    <!-- Quick Stats & Help -->
+    <div class="flex items-center gap-3">
+      <div id="badgeProjectStatus" class="flex items-center gap-1.5 bg-emerald-500/10 border border-emerald-500/25 px-2.5 py-1 rounded-lg text-emerald-400 text-[11px] font-mono font-medium">
+        <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
         <span id="txtProjectStatus">Connected</span>
       </div>
-      <div class="flex items-center gap-1 bg-slate-800/80 border border-slate-700 px-2.5 py-1 rounded-lg text-xs font-mono text-slate-300">
-        <span>Worlds:</span>
-        <strong id="lblWorldCount" class="text-amber-400">49</strong>
+
+      <div class="flex items-center gap-2 text-slate-400 text-[11px] font-mono bg-studio-bg px-2.5 py-1 rounded-lg border border-studio-border">
+        <span>Worlds: <strong id="lblWorldCount" class="text-amber-400 font-bold">49</strong></span>
+        <span class="text-slate-600">•</span>
+        <span>Levels: <strong id="lblLevelCount" class="text-indigo-400 font-bold">490</strong></span>
       </div>
-      <div class="flex items-center gap-1 bg-slate-800/80 border border-slate-700 px-2.5 py-1 rounded-lg text-xs font-mono text-slate-300">
-        <span>Levels:</span>
-        <strong id="lblLevelCount" class="text-sky-400">490</strong>
-      </div>
+
+      <button id="btnOpenShortcutsModal" class="studio-btn studio-btn-secondary text-[11px] px-2 py-1 text-slate-400 hover:text-white" title="Keyboard Shortcuts Cheat-Sheet">
+        <span>⌨️ Keys</span>
+      </button>
     </div>
   </header>
 
-  <!-- SECONDARY NAV BAR: Studio Mode Switcher Tabs -->
-  <nav class="bg-slate-900/80 border-b border-slate-800/80 px-4 py-1.5 flex items-center justify-between shrink-0">
-    <div class="flex items-center gap-1 bg-slate-950/60 p-1 rounded-xl border border-slate-800">
-      <button id="tabBtnLevelDesigner" class="tab-btn px-4 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-2 transition bg-indigo-600 text-white shadow">
+  <!-- ============================================================================ -->
+  <!-- 2. STUDIO NAVIGATION: Segmented Mode Switcher -->
+  <!-- ============================================================================ -->
+  <nav class="bg-studio-surface/90 border-b border-studio-border px-4 py-1.5 flex items-center justify-between shrink-0">
+    <div class="flex items-center gap-1 bg-studio-bg p-0.5 rounded-xl border border-studio-border">
+      <button id="tabBtnLevelDesigner" class="tab-btn px-4 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-2 transition bg-indigo-600 text-white shadow-sm">
         <span>🔮 Visual Level Designer</span>
       </button>
-      <button id="tabBtnPinPositioner" class="tab-btn px-4 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-2 transition text-slate-400 hover:text-slate-200 hover:bg-slate-800/60">
-        <span>🎯 Map Pin Positioner</span>
+      <button id="tabBtnPinPositioner" class="tab-btn px-4 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-2 transition text-slate-400 hover:text-slate-200 hover:bg-studio-panel">
+        <span>🎯 Saga Map Positioner</span>
       </button>
-      <button id="tabBtnWorldsExplorer" class="tab-btn px-4 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-2 transition text-slate-400 hover:text-slate-200 hover:bg-slate-800/60">
-        <span>🗺️ Campaign Worlds (49)</span>
+      <button id="tabBtnWorldsExplorer" class="tab-btn px-4 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-2 transition text-slate-400 hover:text-slate-200 hover:bg-studio-panel">
+        <span>🗺️ Campaign Worlds</span>
       </button>
     </div>
 
-    <!-- Right Controls for active mode -->
-    <div id="subnavActions" class="flex items-center gap-2 text-xs">
-      <!-- Injected per tab -->
+    <!-- Right Quick Controls -->
+    <div class="flex items-center gap-3 text-xs">
+      <div id="quickKeyHint" class="hidden sm:flex items-center gap-2 text-slate-400 text-[11px]">
+        <span>Navigate:</span>
+        <kbd class="px-1.5 py-0.5 bg-studio-panel border border-studio-border rounded text-[10px] font-mono text-slate-300">← Left</kbd>
+        <kbd class="px-1.5 py-0.5 bg-studio-panel border border-studio-border rounded text-[10px] font-mono text-slate-300">Right →</kbd>
+      </div>
     </div>
   </nav>
 
-  <!-- MAIN WORKSPACE CONTAINER -->
+  <!-- ============================================================================ -->
+  <!-- 3. MAIN WORKSPACE CONTAINER -->
+  <!-- ============================================================================ -->
   <div id="studioWorkspace" class="flex-1 flex overflow-hidden relative">
 
-    <!-- ============================================================== -->
+    <!-- ======================================================================== -->
     <!-- TAB 1: VISUAL LEVEL DESIGNER -->
-    <!-- ============================================================== -->
+    <!-- ======================================================================== -->
     <section id="viewLevelDesigner" class="flex-1 flex overflow-hidden">
-      <!-- Left Panel: Tools & Palette -->
-      <aside class="w-72 bg-slate-900/90 border-r border-slate-800 flex flex-col p-4 space-y-4 overflow-y-auto shrink-0 text-xs">
+      
+      <!-- LEFT TOOLBAR & PALETTE (300px) -->
+      <aside class="w-[300px] bg-studio-panel border-r border-studio-border flex flex-col p-3 space-y-3 overflow-y-auto overflow-x-hidden shrink-0 text-xs pb-20">
         
-        <!-- Quick Level Navigation -->
-        <div class="bg-slate-800/80 p-3 rounded-xl border border-slate-700/80 space-y-2">
-          <div class="flex items-center justify-between">
-            <span class="font-bold text-slate-200">Level Selector:</span>
-            <span id="badgeCurrentWorld" class="bg-indigo-900/60 text-indigo-300 px-2 py-0.5 rounded text-[10px] font-mono">World 1</span>
+        <!-- Level Navigator Card -->
+        <div class="studio-card">
+          <div class="studio-card-header">
+            <span class="font-semibold text-slate-200 flex items-center gap-1.5">
+              <span>Level Navigator</span>
+            </span>
+            <span id="badgeCurrentWorld" class="bg-indigo-500/15 text-indigo-300 border border-indigo-500/30 px-2 py-0.5 rounded text-[10px] font-mono font-semibold">World 1</span>
           </div>
-          <div class="flex items-center gap-1.5">
-            <button id="btnPrevLevel" class="w-8 h-8 flex items-center justify-center bg-slate-700 hover:bg-slate-600 rounded-lg text-slate-200 font-bold transition">◀</button>
-            <input type="number" id="inputLevelNum" min="1" max="999" value="1" class="flex-1 bg-slate-900 border border-slate-600 rounded px-2 py-1 text-white font-mono text-center font-bold text-xs" />
-            <button id="btnNextLevel" class="w-8 h-8 flex items-center justify-center bg-slate-700 hover:bg-slate-600 rounded-lg text-slate-200 font-bold transition">▶</button>
-            <button id="btnLoadLevelDirect" class="bg-indigo-600 hover:bg-indigo-500 text-white text-xs px-2.5 py-1.5 rounded-lg font-semibold transition">Load</button>
-          </div>
-          <div class="pt-1">
-            <button id="btnOpenNewLevelModal" class="w-full bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white text-xs py-1.5 rounded-lg font-bold transition flex items-center justify-center gap-1.5 shadow shadow-emerald-950/40 active:scale-98">
+          <div class="p-2.5 space-y-2">
+            <div class="flex items-center gap-1.5">
+              <button id="btnPrevLevel" class="w-8 h-8 studio-btn studio-btn-secondary text-sm font-bold" title="Previous Level (← Left Arrow)">◀</button>
+              <div class="relative flex-1">
+                <input type="number" id="inputLevelNum" min="1" max="999" value="1" class="studio-input w-full px-2 py-1.5 text-center font-mono font-bold text-sm text-white" />
+              </div>
+              <button id="btnNextLevel" class="w-8 h-8 studio-btn studio-btn-secondary text-sm font-bold" title="Next Level (→ Right Arrow)">▶</button>
+              <button id="btnLoadLevelDirect" class="studio-btn studio-btn-primary px-3 py-1.5 text-xs">Load</button>
+            </div>
+            <button id="btnOpenNewLevelModal" class="w-full studio-btn studio-btn-success py-1.5 text-xs gap-1.5">
               <span>➕</span>
               <span>Create New Level</span>
             </button>
           </div>
         </div>
 
-        <!-- Tool Selection -->
-        <div class="bg-slate-800/80 p-3 rounded-xl border border-slate-700/80 space-y-2">
-          <span class="font-bold text-slate-300 block">Drawing Mode:</span>
-          <div class="grid grid-cols-3 gap-1.5">
-            <button id="toolBrush" class="p-2 rounded-lg bg-indigo-600 text-white font-semibold flex flex-col items-center gap-1">
-              <span>🖌️</span>
-              <span class="text-[10px]">Brush</span>
-            </button>
-            <button id="toolFill" class="p-2 rounded-lg bg-slate-700 hover:bg-slate-600 text-slate-200 font-semibold flex flex-col items-center gap-1 transition">
-              <span>🪣</span>
-              <span class="text-[10px]">Flood Fill</span>
-            </button>
-            <button id="toolEraser" class="p-2 rounded-lg bg-slate-700 hover:bg-slate-600 text-slate-200 font-semibold flex flex-col items-center gap-1 transition">
-              <span>🧹</span>
-              <span class="text-[10px]">Eraser</span>
-            </button>
+        <!-- Drawing Tools Segmented Bar -->
+        <div class="studio-card">
+          <div class="studio-card-header">
+            <span class="font-semibold text-slate-300">Tool Mode</span>
+            <span class="text-[10px] text-slate-400 font-mono">B / G / E / M</span>
           </div>
-          <button id="toolMirror" class="w-full mt-2 p-1.5 rounded bg-slate-700 hover:bg-slate-600 text-slate-300 font-semibold transition text-[11px] flex items-center justify-center gap-1.5">
-            <span>🪞</span>
-            <span id="txtMirror">Mirror: OFF</span>
-          </button>
-        </div>
-
-        <!-- Palette: Standard Bubbles -->
-        <div class="bg-slate-800/80 p-3 rounded-xl border border-slate-700/80 space-y-2">
-          <span class="font-bold text-slate-300 block">Standard Bubbles:</span>
-          <div class="grid grid-cols-4 gap-2">
-            <button data-code="R" class="palette-item bubble bubble-R active" title="Red (R)"></button>
-            <button data-code="G" class="palette-item bubble bubble-G" title="Green (G)"></button>
-            <button data-code="B" class="palette-item bubble bubble-B" title="Blue (B)"></button>
-            <button data-code="Y" class="palette-item bubble bubble-Y" title="Yellow (Y)"></button>
-            <button data-code="P" class="palette-item bubble bubble-P" title="Purple (P)"></button>
-            <button data-code="O" class="palette-item bubble bubble-O" title="Orange (O)"></button>
-            <button data-code="C" class="palette-item bubble bubble-C" title="Cyan (C)"></button>
-            <button data-code="." class="palette-item bubble bubble-EMPTY text-slate-400 font-bold" title="Empty Socket (.)">✕</button>
+          <div class="p-2.5 space-y-2">
+            <div class="grid grid-cols-3 gap-1 bg-studio-bg p-1 rounded-lg border border-studio-border">
+              <button id="toolBrush" class="studio-btn p-1.5 rounded-md bg-indigo-600 text-white flex flex-col items-center gap-0.5" title="Brush Tool (Key: B)">
+                <span class="text-sm">🖌️</span>
+                <span class="text-[10px]">Brush</span>
+              </button>
+              <button id="toolFill" class="studio-btn p-1.5 rounded-md text-slate-400 hover:text-white hover:bg-studio-hover flex flex-col items-center gap-0.5" title="Flood Fill (Key: G)">
+                <span class="text-sm">🪣</span>
+                <span class="text-[10px]">Fill</span>
+              </button>
+              <button id="toolEraser" class="studio-btn p-1.5 rounded-md text-slate-400 hover:text-white hover:bg-studio-hover flex flex-col items-center gap-0.5" title="Eraser (Key: E)">
+                <span class="text-sm">🧹</span>
+                <span class="text-[10px]">Erase</span>
+              </button>
+            </div>
+            <button id="toolMirror" class="w-full studio-btn studio-btn-secondary py-1 text-[11px] gap-1.5" title="Symmetrical Mirror Painting (Key: M)">
+              <span>🪞</span>
+              <span id="txtMirror">Mirror: OFF</span>
+            </button>
           </div>
         </div>
 
-        <!-- Palette: Special Bubbles -->
-        <div class="bg-slate-800/80 p-3 rounded-xl border border-slate-700/80 space-y-2">
-          <span class="font-bold text-slate-300 block">Special / Power Bubbles:</span>
-          <div class="grid grid-cols-3 gap-2">
-            <button data-code="*" class="palette-item bubble bubble-STAR" title="Rainbow Wildcard (*)"></button>
-            <button data-code="X" class="palette-item bubble bubble-X" title="Bomb Explosive (X)"></button>
-            <button data-code="L" class="palette-item bubble bubble-L" title="Lightning Piercing (L)"></button>
-            <button data-code="F" class="palette-item bubble bubble-F" title="Fireball Swirl (F)"></button>
-            <button data-code="S" class="palette-item bubble bubble-S" title="Stone Obstacle (S)"></button>
-            <button data-code="T" class="palette-item bubble bubble-T" title="Target Bubble (T)"></button>
+        <!-- Standard Colors Palette -->
+        <div class="studio-card">
+          <div class="studio-card-header">
+            <span class="font-semibold text-slate-300">Standard Bubbles</span>
+            <span class="text-[10px] text-slate-400 font-mono">Keys 1–7</span>
+          </div>
+          <div class="p-2.5">
+            <div class="grid grid-cols-4 gap-2">
+              <button data-code="R" class="palette-item bubble bubble-R active" title="Red (1)"></button>
+              <button data-code="G" class="palette-item bubble bubble-G" title="Green (2)"></button>
+              <button data-code="B" class="palette-item bubble bubble-B" title="Blue (3)"></button>
+              <button data-code="Y" class="palette-item bubble bubble-Y" title="Yellow (4)"></button>
+              <button data-code="P" class="palette-item bubble bubble-P" title="Purple (5)"></button>
+              <button data-code="O" class="palette-item bubble bubble-O" title="Orange (6)"></button>
+              <button data-code="C" class="palette-item bubble bubble-C" title="Cyan (7)"></button>
+              <button data-code="." class="palette-item bubble bubble-EMPTY text-slate-400 font-bold" title="Empty Socket (0 / Backspace)">✕</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Power / Special Bubbles Palette -->
+        <div class="studio-card">
+          <div class="studio-card-header">
+            <span class="font-semibold text-slate-300">Special & Powerups</span>
+            <span class="text-[10px] text-amber-400 font-mono">Special</span>
+          </div>
+          <div class="p-2.5">
+            <div class="grid grid-cols-3 gap-2">
+              <button data-code="*" class="palette-item bubble bubble-STAR" title="Rainbow Wildcard (*)"></button>
+              <button data-code="X" class="palette-item bubble bubble-X" title="Bomb Explosive (X)"></button>
+              <button data-code="L" class="palette-item bubble bubble-L" title="Lightning Piercing (L)"></button>
+              <button data-code="F" class="palette-item bubble bubble-F" title="Fireball Swirl (F)"></button>
+              <button data-code="S" class="palette-item bubble bubble-S" title="Stone Obstacle (S)"></button>
+              <button data-code="T" class="palette-item bubble bubble-T" title="Target Bubble (T)"></button>
+            </div>
           </div>
         </div>
 
         <!-- Hex Grid Operations -->
-        <div class="bg-slate-800/80 p-3 rounded-xl border border-slate-700/80 space-y-2">
-          <div class="flex items-center justify-between">
-            <span class="font-bold text-slate-300">Board Rows:</span>
-            <span class="text-[10px] text-amber-300 font-mono">9 Even / 8 Odd</span>
+        <div class="studio-card">
+          <div class="studio-card-header">
+            <span class="font-semibold text-slate-300">Board Transform</span>
+            <span class="text-[10px] text-slate-400 font-mono">9 / 8 Parity</span>
           </div>
-          <div class="grid grid-cols-2 gap-1.5 text-[11px]">
-            <button id="btnAddRowTop" class="p-1.5 bg-slate-700 hover:bg-slate-600 rounded text-slate-200 font-medium transition">+ Row Top</button>
-            <button id="btnAddRowBottom" class="p-1.5 bg-slate-700 hover:bg-slate-600 rounded text-slate-200 font-medium transition">+ Row Bottom</button>
-            <button id="btnRemoveRowTop" class="p-1.5 bg-slate-700 hover:bg-slate-600 rounded text-slate-200 font-medium transition">- Row Top</button>
-            <button id="btnRemoveRowBottom" class="p-1.5 bg-slate-700 hover:bg-slate-600 rounded text-slate-200 font-medium transition">- Row Bottom</button>
-          </div>
+          <div class="p-2.5 space-y-2">
+            <div class="grid grid-cols-2 gap-1.5">
+              <button id="btnAddRowTop" class="studio-btn studio-btn-secondary py-1 text-[11px]">+ Row Top</button>
+              <button id="btnAddRowBottom" class="studio-btn studio-btn-secondary py-1 text-[11px]">+ Row Bottom</button>
+              <button id="btnRemoveRowTop" class="studio-btn studio-btn-secondary py-1 text-[11px]">- Row Top</button>
+              <button id="btnRemoveRowBottom" class="studio-btn studio-btn-secondary py-1 text-[11px]">- Row Bottom</button>
+            </div>
+            
+            <div class="grid grid-cols-2 gap-1.5 pt-1 border-t border-studio-border">
+              <button id="btnShiftUp2" class="studio-btn studio-btn-secondary py-1 text-[10px] text-sky-300">▲▲ Shift Up (2)</button>
+              <button id="btnShiftDown2" class="studio-btn studio-btn-secondary py-1 text-[10px] text-sky-300">▼▼ Shift Down (2)</button>
+              <button id="btnShiftLeft" class="studio-btn studio-btn-secondary py-1 text-[10px]">◀ Shift Left</button>
+              <button id="btnShiftRight" class="studio-btn studio-btn-secondary py-1 text-[10px]">▶ Shift Right</button>
+            </div>
 
-          <span class="font-bold text-slate-300 block pt-1">Shift Board:</span>
-          <div class="grid grid-cols-2 gap-1.5 text-[10px]">
-            <button id="btnShiftUp2" class="p-1.5 bg-slate-700 hover:bg-slate-600 rounded text-sky-300 font-medium transition">▲▲ Up 2 (Hex)</button>
-            <button id="btnShiftDown2" class="p-1.5 bg-slate-700 hover:bg-slate-600 rounded text-sky-300 font-medium transition">▼▼ Down 2 (Hex)</button>
-            <button id="btnShiftLeft" class="p-1.5 bg-slate-700 hover:bg-slate-600 rounded text-slate-300 font-medium transition">◀ Left</button>
-            <button id="btnShiftRight" class="p-1.5 bg-slate-700 hover:bg-slate-600 rounded text-slate-300 font-medium transition">▶ Right</button>
+            <div class="grid grid-cols-2 gap-1.5 pt-1 border-t border-studio-border">
+              <button id="btnRandomize" class="studio-btn studio-btn-secondary py-1 text-[11px] text-amber-300 gap-1">
+                <span>🎲</span> Random
+              </button>
+              <button id="btnClearBoard" class="studio-btn studio-btn-danger py-1 text-[11px] gap-1">
+                <span>🗑️</span> Clear
+              </button>
+            </div>
           </div>
+        </div>
 
-          <button id="btnClearBoard" class="w-full mt-2 p-1.5 bg-red-950/60 hover:bg-red-900/80 border border-red-800/60 rounded text-red-300 font-semibold transition text-[11px]">
-            <span>🗑️ Clear All Bubbles</span>
-          </button>
-          <button id="btnRandomize" class="w-full mt-1 p-1.5 bg-slate-700 hover:bg-slate-600 rounded text-amber-300 font-semibold transition text-[11px]">
-            <span>🎲 Randomize Pattern</span>
-          </button>
+        <!-- Preset Patterns Library (Drag & Drop or 1-Click) -->
+        <div class="studio-card">
+          <div class="studio-card-header">
+            <span class="font-semibold text-slate-300 flex items-center gap-1.5">
+              <span>🧩 Patterns (14)</span>
+            </span>
+            <button id="btnOpenPatternsModal" class="text-[10px] text-indigo-400 hover:text-indigo-300 font-semibold">Browse All</button>
+          </div>
+          <div class="p-2 space-y-1.5">
+            <p class="text-[10px] text-slate-400">Drag pattern onto board or click to stamp:</p>
+            <div id="quickPatternsList" class="grid grid-cols-2 gap-1.5">
+              <!-- Rendered via JS -->
+            </div>
+          </div>
         </div>
 
       </aside>
 
-      <!-- Center Panel: Interactive Hexagonal Board -->
-      <main class="flex-1 bg-slate-950 flex flex-col relative overflow-hidden">
-        <!-- HUD Header -->
-        <div class="h-8 bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 border-b border-slate-800 shadow-md shrink-0 flex items-center justify-between px-6 text-xs text-slate-300 font-medium">
+      <!-- CENTER PLAYING FIELD CANVAS -->
+      <main class="flex-1 bg-studio-bg canvas-ambient-glow flex flex-col relative overflow-hidden">
+        
+        <!-- Minimal HUD Header -->
+        <div class="h-9 bg-studio-panel/80 backdrop-blur-sm border-b border-studio-border shrink-0 flex items-center justify-between px-5 text-xs text-slate-300">
           <div class="flex items-center gap-2">
-            <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-            <span id="txtHoverInfo" class="font-mono text-emerald-300">Hover over any bubble to inspect coordinates & hex neighbors</span>
+            <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+            <span id="txtHoverInfo" class="font-mono text-slate-300 text-[11px]">Hover over any bubble socket to inspect hex coordinates</span>
           </div>
           <div class="flex items-center gap-4 text-xs font-mono">
-            <span class="text-amber-400">EVEN: 9 Cols</span>
-            <span class="text-purple-400">ODD: 8 Cols (Indented)</span>
-            <span id="txtBoardDimensions" class="text-slate-400">9 Columns • 8 Rows</span>
+            <span class="text-amber-400">EVEN ROW: 9 COLS</span>
+            <span class="text-purple-400">ODD ROW: 8 COLS</span>
+            <span id="txtBoardDimensions" class="text-slate-400 font-semibold">9 Cols × 8 Rows</span>
           </div>
         </div>
 
-        <!-- Hex Grid Scroll Viewport -->
-        <div id="boardViewport" class="flex-1 overflow-auto p-8 flex justify-center items-start">
-          <div class="relative flex flex-col items-center select-none shadow-2xl rounded-2xl bg-slate-900/60 border border-slate-800 p-4">
+        <!-- Hex Grid Viewport -->
+        <div id="boardViewport" class="flex-1 overflow-auto p-6 flex justify-center items-start">
+          <div class="relative flex flex-col items-center select-none shadow-2xl rounded-2xl bg-studio-surface/90 border border-studio-border p-4 my-auto">
             
-            <!-- Ceiling Beam with 9 Sockets -->
-            <div class="w-[396px] h-7 bg-gradient-to-b from-amber-700/80 via-amber-800/90 to-amber-950 rounded-t-lg border-t-2 border-x-2 border-amber-500/70 shadow-lg flex items-center justify-between px-3 relative">
-              <span class="text-[10px] text-amber-200 font-mono tracking-wider font-bold">▲ CEILING ANCHOR BEAM (9 SOCKETS)</span>
-              <span class="text-[9px] text-emerald-400 font-mono">● ATTACHED</span>
-              <!-- Ceiling Socket Ticks -->
+            <!-- Sleek Ceiling Anchor Beam (396px) -->
+            <div class="w-[396px] h-7 bg-gradient-to-r from-amber-900/90 via-amber-800 to-amber-900/90 rounded-t-lg border-t-2 border-x-2 border-amber-500/60 shadow-lg flex items-center justify-between px-3 relative">
+              <span class="text-[10px] text-amber-200 font-mono tracking-wider font-bold flex items-center gap-1.5">
+                <span>▲ CEILING ANCHOR BEAM</span>
+              </span>
+              <span class="text-[9px] text-emerald-300 font-mono bg-emerald-950/60 px-1.5 py-0.5 rounded border border-emerald-500/30">ATTACHED</span>
+              <!-- Ceiling Sockets -->
               <div class="absolute -bottom-1 left-0 w-[396px] h-1.5 pointer-events-none">
                 <span class="absolute w-1.5 h-1.5 bg-amber-400/90 rounded-b -translate-x-1/2" style="left: 22px"></span>
                 <span class="absolute w-1.5 h-1.5 bg-amber-400/90 rounded-b -translate-x-1/2" style="left: 66px"></span>
@@ -401,9 +609,9 @@
             <!-- Playing Field with Row Parity Track -->
             <div class="relative flex items-start">
               <div id="rowBadgesContainer" class="flex flex-col select-none pr-3 pt-[3px]">
-                <!-- Row Badges injected via JS -->
+                <!-- Injected via JS -->
               </div>
-              <div class="relative w-[396px] bg-slate-950/80 rounded-b-xl border-x-2 border-b-2 border-slate-700/80 shadow-inner overflow-hidden">
+              <div class="relative w-[396px] bg-studio-bg rounded-b-xl border-x-2 border-b-2 border-studio-border shadow-inner overflow-hidden">
                 <div class="absolute top-0 bottom-0 left-0 w-0.5 bg-gradient-to-b from-amber-500/40 via-indigo-500/30 to-purple-500/40 pointer-events-none z-10"></div>
                 <div class="absolute top-0 bottom-0 right-0 w-0.5 bg-gradient-to-b from-amber-500/40 via-indigo-500/30 to-purple-500/40 pointer-events-none z-10"></div>
                 <div id="hexContainer" class="flex flex-col items-center select-none">
@@ -412,135 +620,196 @@
               </div>
             </div>
 
-            <!-- Danger Line -->
-            <div class="w-[396px] mt-4 pt-2 border-t border-dashed border-slate-700 flex items-center justify-between text-[10px] text-slate-400 font-mono">
-              <span>▼ DANGER LINE</span>
+            <!-- Slingshot Danger Line -->
+            <div class="w-[396px] mt-4 pt-2 border-t border-dashed border-studio-border flex items-center justify-between text-[10px] text-slate-400 font-mono">
+              <span class="text-rose-400/80 font-bold">▼ DANGER LINE</span>
               <span>SLINGSHOT LAUNCH ZONE</span>
             </div>
 
           </div>
         </div>
 
-        <!-- Footer Status Bar -->
-        <div class="h-10 bg-slate-900 border-t border-slate-800 px-6 flex items-center justify-between text-xs shrink-0">
+        <!-- Bottom Footer Status Bar -->
+        <div class="h-9 bg-studio-panel border-t border-studio-border px-5 flex items-center justify-between text-xs shrink-0">
           <div class="flex items-center gap-4 text-slate-300">
-            <span>Total Bubbles: <strong id="lblTotalBubbles" class="text-emerald-400 font-mono font-bold">0</strong></span>
+            <span>Bubbles: <strong id="lblTotalBubbles" class="text-indigo-400 font-mono font-bold">0</strong></span>
             <span class="text-slate-600">|</span>
             <div id="pillsColorBreakdown" class="flex items-center gap-1.5 font-mono text-[11px]">
               <!-- Color breakdown badges -->
             </div>
           </div>
-          <div id="lblConnectionStatus" class="flex items-center gap-1.5 text-emerald-400 font-medium text-[11px]">
-            <span>✓ All bubbles properly anchored to ceiling</span>
+          <div class="flex items-center gap-4">
+            <span id="badgeLevelAutosave" class="text-[11px] text-emerald-400 font-mono flex items-center gap-1 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">⚡ Auto-Saved</span>
+            <div id="lblConnectionStatus" class="flex items-center gap-1.5 text-emerald-400 font-medium text-[11px]">
+              <span>✓ All bubbles anchored</span>
+            </div>
           </div>
         </div>
       </main>
 
-      <!-- Right Panel: Level Parameters & Save -->
-      <aside class="w-80 bg-slate-900/90 border-l border-slate-800 flex flex-col p-4 space-y-4 overflow-y-auto shrink-0 text-xs">
+      <!-- RIGHT INSPECTOR & LEVEL PARAMETERS (320px) -->
+      <aside class="w-[320px] bg-studio-panel border-l border-studio-border flex flex-col p-3 space-y-3 overflow-y-auto overflow-x-hidden shrink-0 text-xs pb-20">
         
-        <div class="flex items-center justify-between border-b border-slate-800 pb-2">
-          <span class="font-bold text-sm text-white">Level Configuration</span>
-          <button id="btnSaveLevelDirect" class="bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold px-3 py-1.5 rounded-lg shadow-md shadow-emerald-900/30 transition flex items-center gap-1.5 active:scale-95">
-            <span>💾</span>
-            <span>Save to Project</span>
+        <div class="flex items-center justify-between border-b border-studio-border pb-2">
+          <span class="font-bold text-sm text-white">Level Inspector</span>
+          <button id="btnSaveLevelDirect" class="studio-btn studio-btn-success text-xs px-3 py-1.5 gap-1.5">
+            <span>💾 Save Level</span>
           </button>
         </div>
 
-        <!-- Shots Allowed -->
-        <div class="bg-slate-800/80 p-3 rounded-xl border border-slate-700/80 space-y-2">
-          <div class="flex items-center justify-between">
-            <label for="inputShots" class="font-bold text-slate-200">Shots Allowed:</label>
-            <input type="number" id="inputShots" value="20" min="5" max="99" class="w-16 bg-slate-900 border border-slate-600 rounded px-2 py-1 text-center font-bold text-amber-300 font-mono text-sm" />
+        <!-- Level Analyzer & Complexity Dashboard -->
+        <div class="studio-card border-indigo-500/30 bg-gradient-to-b from-indigo-950/20 to-studio-card">
+          <div class="studio-card-header border-indigo-500/20">
+            <span class="font-bold text-slate-200 flex items-center gap-1.5">
+              <span>🔬 Analyzer & Solver</span>
+            </span>
+            <span id="badgeComplexityRating" class="px-2 py-0.5 rounded-md text-[10px] font-bold bg-amber-500/15 text-amber-300 border border-amber-500/30 font-mono">Normal</span>
+          </div>
+
+          <div class="p-3 space-y-2.5">
+            <!-- Metrics Grid -->
+            <div class="grid grid-cols-2 gap-2 text-[11px] font-mono">
+              <div class="bg-studio-bg p-2 rounded-lg border border-studio-border">
+                <span class="text-[10px] text-slate-400 block font-sans">Min Balls Needed</span>
+                <strong id="lblMinBallsRequired" class="text-sky-400 text-sm font-bold">🎯 0</strong>
+              </div>
+              <div class="bg-studio-bg p-2 rounded-lg border border-studio-border">
+                <span class="text-[10px] text-slate-400 block font-sans">Target Shots</span>
+                <strong id="lblRealisticShots" class="text-emerald-400 text-sm font-bold">🎱 0</strong>
+              </div>
+            </div>
+
+            <!-- Auto-Tuner Difficulty Selector -->
+            <div class="space-y-1">
+              <div class="flex items-center justify-between text-[10px] text-slate-400">
+                <span>Tuning Intensity:</span>
+                <span class="text-amber-400 font-semibold font-mono">Tight / Pro</span>
+              </div>
+              <select id="selectTuningDifficulty" class="studio-input w-full px-2 py-1 text-slate-200 text-xs font-semibold">
+                <option value="tight" selected>🔥 Challenging / Pro (Tight shots)</option>
+                <option value="standard">⚡ Standard (Balanced margin)</option>
+                <option value="casual">🎈 Casual (Generous extra shots)</option>
+              </select>
+            </div>
+
+            <div class="flex items-center justify-between text-[10px] text-slate-300 bg-studio-bg px-2.5 py-1.5 rounded-lg border border-studio-border">
+              <span class="text-slate-400">Balance:</span>
+              <span id="lblShotBalanceVerdict" class="font-semibold text-emerald-400">Balanced (20 Shots)</span>
+            </div>
+
+            <div class="grid grid-cols-2 gap-1.5 pt-0.5">
+              <button id="btnAutoBalance" class="studio-btn studio-btn-primary py-1.5 text-[11px] gap-1" title="Auto-tune shots and star thresholds based on mathematical level complexity">
+                <span>⚡ Auto-Tune</span>
+              </button>
+              <button id="btnOpenAnalyzerModal" class="studio-btn studio-btn-secondary py-1.5 text-[11px] gap-1" title="Open in-depth complexity breakdown and solver simulation">
+                <span>📊 Deep Solver</span>
+              </button>
+            </div>
           </div>
         </div>
 
-        <!-- Objective Configuration -->
-        <div class="bg-slate-800/80 p-3 rounded-xl border border-slate-700/80 space-y-2.5">
-          <span class="font-bold text-slate-200 block">Game Objective:</span>
-          <div>
-            <select id="selectObjectiveType" class="w-full bg-slate-900 border border-slate-600 rounded px-2 py-1.5 text-white text-xs font-semibold">
+        <!-- Shots Allowed -->
+        <div class="studio-card">
+          <div class="p-3 flex items-center justify-between">
+            <div>
+              <label for="inputShots" class="font-bold text-slate-200 block text-xs">Shots Allowed:</label>
+              <span class="text-[10px] text-slate-400">Total shooter balls given</span>
+            </div>
+            <input type="number" id="inputShots" value="20" min="5" max="99" class="studio-input w-16 px-2 py-1 text-center font-bold text-amber-300 font-mono text-sm" />
+          </div>
+        </div>
+
+        <!-- Level Objective -->
+        <div class="studio-card">
+          <div class="studio-card-header">
+            <span class="font-bold text-slate-200">Game Objective</span>
+          </div>
+          <div class="p-3 space-y-2.5">
+            <select id="selectObjectiveType" class="studio-input w-full px-2.5 py-1.5 text-white font-semibold text-xs">
               <option value="CLEAR_ALL">🎯 CLEAR_ALL (Clear all bubbles)</option>
               <option value="SCORE_TARGET">🏆 SCORE_TARGET (Reach target score)</option>
               <option value="POP_COLOR">🎨 POP_COLOR (Pop N bubbles of color)</option>
               <option value="DROP_COUNT">💧 DROP_COUNT (Drop N hanging bubbles)</option>
             </select>
-          </div>
-          <div id="boxObjectiveTarget" class="space-y-1 hidden">
-            <label id="lblObjectiveTarget" class="text-[10px] text-slate-400 block">Target Value</label>
-            <input type="number" id="inputObjectiveTarget" value="5000" class="w-full bg-slate-900 border border-slate-600 rounded px-2 py-1 text-white font-mono text-xs" />
-          </div>
-          <div id="boxObjectiveColor" class="space-y-1 hidden">
-            <label class="text-[10px] text-slate-400 block">Target Color</label>
-            <select id="selectObjectiveColor" class="w-full bg-slate-900 border border-slate-600 rounded px-2 py-1 text-white text-xs font-semibold">
-              <option value="RED">🔴 RED</option>
-              <option value="GREEN">🟢 GREEN</option>
-              <option value="BLUE">🔵 BLUE</option>
-              <option value="YELLOW">🟡 YELLOW</option>
-              <option value="PURPLE">🟣 PURPLE</option>
-              <option value="ORANGE">🟠 ORANGE</option>
-            </select>
+
+            <div id="boxObjectiveTarget" class="space-y-1 hidden">
+              <label id="lblObjectiveTarget" class="text-[10px] text-slate-400 block">Target Value</label>
+              <input type="number" id="inputObjectiveTarget" value="5000" class="studio-input w-full px-2.5 py-1 text-white font-mono text-xs" />
+            </div>
+            <div id="boxObjectiveColor" class="space-y-1 hidden">
+              <label class="text-[10px] text-slate-400 block">Target Color</label>
+              <select id="selectObjectiveColor" class="studio-input w-full px-2 py-1 text-white text-xs font-semibold">
+                <option value="RED">🔴 RED</option>
+                <option value="GREEN">🟢 GREEN</option>
+                <option value="BLUE">🔵 BLUE</option>
+                <option value="YELLOW">🟡 YELLOW</option>
+                <option value="PURPLE">🟣 PURPLE</option>
+                <option value="ORANGE">🟠 ORANGE</option>
+              </select>
+            </div>
           </div>
         </div>
 
-        <!-- Playable Shooter Colors -->
-        <div class="bg-slate-800/80 p-3 rounded-xl border border-slate-700/80 space-y-2">
-          <div class="flex items-center justify-between">
-            <span class="font-bold text-slate-200">Shooter Bubble Colors:</span>
+        <!-- Shooter Playable Colors (Auto-Detect) -->
+        <div class="studio-card">
+          <div class="studio-card-header">
+            <span class="font-bold text-slate-200">Shooter Colors</span>
             <button id="btnAutoColors" class="text-[10px] text-indigo-400 hover:text-indigo-300 font-semibold">⚡ Auto-Detect</button>
           </div>
-          <div class="grid grid-cols-2 gap-2 text-[11px]">
-            <label class="flex items-center gap-1.5 cursor-pointer text-red-300">
-              <input type="checkbox" id="chkColRED" value="RED" checked class="rounded bg-slate-900 border-slate-700 text-red-600" />
-              <span>🔴 RED</span>
-            </label>
-            <label class="flex items-center gap-1.5 cursor-pointer text-emerald-300">
-              <input type="checkbox" id="chkColGREEN" value="GREEN" checked class="rounded bg-slate-900 border-slate-700 text-emerald-600" />
-              <span>🟢 GREEN</span>
-            </label>
-            <label class="flex items-center gap-1.5 cursor-pointer text-sky-300">
-              <input type="checkbox" id="chkColBLUE" value="BLUE" checked class="rounded bg-slate-900 border-slate-700 text-sky-600" />
-              <span>🔵 BLUE</span>
-            </label>
-            <label class="flex items-center gap-1.5 cursor-pointer text-amber-300">
-              <input type="checkbox" id="chkColYELLOW" value="YELLOW" checked class="rounded bg-slate-900 border-slate-700 text-amber-600" />
-              <span>🟡 YELLOW</span>
-            </label>
-            <label class="flex items-center gap-1.5 cursor-pointer text-purple-300">
-              <input type="checkbox" id="chkColPURPLE" value="PURPLE" checked class="rounded bg-slate-900 border-slate-700 text-purple-600" />
-              <span>🟣 PURPLE</span>
-            </label>
-            <label class="flex items-center gap-1.5 cursor-pointer text-orange-300">
-              <input type="checkbox" id="chkColORANGE" value="ORANGE" checked class="rounded bg-slate-900 border-slate-700 text-orange-600" />
-              <span>🟠 ORANGE</span>
-            </label>
+          <div class="p-3">
+            <div class="grid grid-cols-2 gap-2 text-[11px]">
+              <label class="flex items-center gap-1.5 cursor-pointer text-red-300">
+                <input type="checkbox" id="chkColRED" value="RED" checked class="rounded bg-studio-bg border-studio-border text-indigo-600" />
+                <span>🔴 RED</span>
+              </label>
+              <label class="flex items-center gap-1.5 cursor-pointer text-emerald-300">
+                <input type="checkbox" id="chkColGREEN" value="GREEN" checked class="rounded bg-studio-bg border-studio-border text-indigo-600" />
+                <span>🟢 GREEN</span>
+              </label>
+              <label class="flex items-center gap-1.5 cursor-pointer text-sky-300">
+                <input type="checkbox" id="chkColBLUE" value="BLUE" checked class="rounded bg-studio-bg border-studio-border text-indigo-600" />
+                <span>🔵 BLUE</span>
+              </label>
+              <label class="flex items-center gap-1.5 cursor-pointer text-amber-300">
+                <input type="checkbox" id="chkColYELLOW" value="YELLOW" checked class="rounded bg-studio-bg border-studio-border text-indigo-600" />
+                <span>🟡 YELLOW</span>
+              </label>
+              <label class="flex items-center gap-1.5 cursor-pointer text-purple-300">
+                <input type="checkbox" id="chkColPURPLE" value="PURPLE" checked class="rounded bg-studio-bg border-studio-border text-indigo-600" />
+                <span>🟣 PURPLE</span>
+              </label>
+              <label class="flex items-center gap-1.5 cursor-pointer text-orange-300">
+                <input type="checkbox" id="chkColORANGE" value="ORANGE" checked class="rounded bg-studio-bg border-studio-border text-indigo-600" />
+                <span>🟠 ORANGE</span>
+              </label>
+            </div>
           </div>
         </div>
 
-        <!-- Star Thresholds -->
-        <div class="bg-slate-800/80 p-3 rounded-xl border border-slate-700/80 space-y-2">
-          <div class="flex items-center justify-between">
-            <span class="font-bold text-slate-200">Star Thresholds:</span>
-            <button id="btnAutoStars" class="text-[10px] text-amber-400 hover:text-amber-300 font-semibold">⚡ Auto-Calculate</button>
+        <!-- Star Score Thresholds -->
+        <div class="studio-card">
+          <div class="studio-card-header">
+            <span class="font-bold text-slate-200">Star Thresholds</span>
+            <button id="btnAutoStars" class="text-[10px] text-amber-400 hover:text-amber-300 font-semibold">⚡ Auto-Calc</button>
           </div>
-          <div class="space-y-1.5 font-mono text-[11px]">
+          <div class="p-3 space-y-1.5 font-mono text-[11px]">
             <div class="flex items-center justify-between">
               <span class="text-amber-400">★ 1 Star:</span>
-              <input type="number" id="inputStar1" value="2000" class="w-20 bg-slate-900 border border-slate-600 rounded px-1.5 py-0.5 text-right text-white" />
+              <input type="number" id="inputStar1" value="2000" class="studio-input w-20 px-2 py-0.5 text-right font-mono" />
             </div>
             <div class="flex items-center justify-between">
               <span class="text-amber-400">★★ 2 Stars:</span>
-              <input type="number" id="inputStar2" value="4500" class="w-20 bg-slate-900 border border-slate-600 rounded px-1.5 py-0.5 text-right text-white" />
+              <input type="number" id="inputStar2" value="4500" class="studio-input w-20 px-2 py-0.5 text-right font-mono" />
             </div>
             <div class="flex items-center justify-between">
               <span class="text-amber-400">★★★ 3 Stars:</span>
-              <input type="number" id="inputStar3" value="8000" class="w-20 bg-slate-900 border border-slate-600 rounded px-1.5 py-0.5 text-right text-white" />
+              <input type="number" id="inputStar3" value="8000" class="studio-input w-20 px-2 py-0.5 text-right font-mono" />
             </div>
           </div>
         </div>
 
         <!-- Raw JSON Inspector -->
-        <button id="btnOpenRawJson" class="w-full py-2 bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded-lg text-slate-300 font-semibold text-xs transition">
+        <button id="btnOpenRawJson" class="studio-btn studio-btn-secondary w-full py-2 text-xs gap-1.5">
           <span>🔍 View / Copy Raw JSON</span>
         </button>
 
@@ -548,157 +817,190 @@
     </section>
 
 
-    <!-- ============================================================== -->
+    <!-- ======================================================================== -->
     <!-- TAB 2: SAGA MAP PIN POSITIONER -->
-    <!-- ============================================================== -->
+    <!-- ======================================================================== -->
     <section id="viewPinPositioner" class="flex-1 flex overflow-hidden hidden">
       <!-- Left Controls Panel -->
-      <aside class="w-80 bg-slate-900/90 border-r border-slate-800 flex flex-col p-4 space-y-4 overflow-y-auto shrink-0 text-xs">
+      <aside class="w-[340px] bg-studio-panel border-r border-studio-border flex flex-col p-3 space-y-3 overflow-y-auto overflow-x-hidden shrink-0 text-xs pb-20">
         
-        <div class="flex items-center justify-between border-b border-slate-800 pb-2">
+        <div class="flex items-center justify-between border-b border-studio-border pb-2 shrink-0">
           <span class="font-bold text-sm text-white">Saga World Selector</span>
-          <button id="btnSavePinsDirect" class="bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold px-3 py-1.5 rounded-lg shadow-md shadow-emerald-900/30 transition flex items-center gap-1.5 active:scale-95">
-            <span>💾</span>
-            <span>Save Pins</span>
-          </button>
+          <div class="flex items-center gap-2">
+            <span id="badgePinAutosave" class="text-[10px] text-emerald-400 font-mono bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">⚡ Auto-Saved</span>
+            <button id="btnSavePinsDirect" class="studio-btn studio-btn-success text-xs px-2.5 py-1 gap-1">
+              <span>💾 Save</span>
+            </button>
+          </div>
         </div>
 
         <!-- World Dropdown & Navigation -->
-        <div class="bg-slate-800/80 p-3 rounded-xl border border-slate-700/80 space-y-2">
-          <label class="font-bold text-slate-300 block">Select Active World:</label>
-          <div class="flex items-center gap-1.5">
-            <button id="btnPrevWorld" class="w-8 h-8 flex items-center justify-center bg-slate-700 hover:bg-slate-600 rounded-lg text-slate-200 font-bold transition shrink-0 active:scale-95" title="Previous World">◀</button>
-            <select id="selectPinWorld" class="flex-1 bg-slate-900 border border-slate-600 rounded px-2 py-1.5 text-white font-semibold text-xs focus:ring-1 focus:ring-indigo-500">
-              <!-- Populated via JS: World 1..49 -->
-            </select>
-            <button id="btnNextWorld" class="w-8 h-8 flex items-center justify-center bg-slate-700 hover:bg-slate-600 rounded-lg text-slate-200 font-bold transition shrink-0 active:scale-95" title="Next World">▶</button>
+        <div class="studio-card shrink-0">
+          <div class="studio-card-header">
+            <label class="font-bold text-slate-300 block">Select Active World:</label>
+            <button id="btnOpenEditWorldModal" class="text-[10px] text-indigo-400 hover:text-indigo-300 font-semibold flex items-center gap-1 hover:underline">
+              <span>⚙️ Edit World / BG</span>
+            </button>
           </div>
-          <div class="flex items-center justify-between text-[11px] text-slate-400 pt-1">
-            <span>Levels Range:</span>
-            <strong id="lblWorldLevelRange" class="text-amber-300 font-mono">1 – 10</strong>
-          </div>
-          <div class="flex items-center justify-between text-[11px] text-slate-400">
-            <span>Background Asset:</span>
-            <span id="lblWorldDrawableName" class="text-indigo-300 font-mono text-[10px] truncate max-w-[140px]">bg_map_world_1</span>
+          <div class="p-3 space-y-2">
+            <div class="flex items-center gap-1.5 w-full">
+              <button id="btnPrevWorld" class="w-8 h-8 studio-btn studio-btn-secondary font-bold text-sm shrink-0" title="Previous World (← Left Arrow)">◀</button>
+              <select id="selectPinWorld" class="studio-input flex-1 min-w-0 w-full px-2 py-1.5 text-white font-semibold text-xs truncate">
+                <!-- Populated via JS: World 1..49 -->
+              </select>
+              <button id="btnNextWorld" class="w-8 h-8 studio-btn studio-btn-secondary font-bold text-sm shrink-0" title="Next World (→ Right Arrow)">▶</button>
+            </div>
+            <div class="flex items-center justify-between text-[11px] text-slate-400 pt-1">
+              <span>Levels Range:</span>
+              <strong id="lblWorldLevelRange" class="text-amber-300 font-mono">1 – 10</strong>
+            </div>
+            <div class="flex items-center justify-between text-[11px] text-slate-400">
+              <span>Map BG Asset:</span>
+              <span id="lblWorldDrawableName" class="text-indigo-300 font-mono text-[10px] truncate max-w-[140px]">bg_map_world_1</span>
+            </div>
+            <div class="flex items-center justify-between text-[11px] text-slate-400">
+              <span>Game BG Asset:</span>
+              <span id="lblWorldGameDrawableName" class="text-emerald-300 font-mono text-[10px] truncate max-w-[140px]">bg_game_world_1</span>
+            </div>
           </div>
         </div>
 
-        <!-- Selected Item Inspector (Node Pin or Mystery Gift) -->
-        <div class="bg-slate-800/80 p-3 rounded-xl border border-slate-700/80 space-y-2.5">
-          <div class="flex items-center justify-between">
-            <span class="font-bold text-slate-200">Selected Item:</span>
-            <span id="badgeSelectedPinLevel" class="bg-amber-900/60 text-amber-300 px-2 py-0.5 rounded font-mono text-xs font-bold">Level 1</span>
+        <!-- Selected Item Inspector -->
+        <div class="studio-card shrink-0">
+          <div class="studio-card-header">
+            <span class="font-bold text-slate-200">Selected Item</span>
+            <span id="badgeSelectedPinLevel" class="bg-amber-500/15 text-amber-300 border border-amber-500/30 px-2 py-0.5 rounded font-mono text-xs font-bold">Level 1</span>
           </div>
-          <div class="grid grid-cols-2 gap-2 font-mono">
-            <div>
-              <label class="text-[10px] text-slate-400 block mb-1">X Position (%)</label>
-              <input type="number" id="inputPinX" step="0.1" min="0" max="100" class="w-full bg-slate-900 border border-slate-600 rounded px-2 py-1 text-white text-xs" />
+          <div class="p-3 space-y-2">
+            <div class="grid grid-cols-2 gap-2 font-mono">
+              <div>
+                <label class="text-[10px] text-slate-400 block mb-1">X Position (%)</label>
+                <input type="number" id="inputPinX" step="0.1" min="0" max="100" class="studio-input w-full px-2 py-1 text-xs" />
+              </div>
+              <div>
+                <label class="text-[10px] text-slate-400 block mb-1">Y Position (%)</label>
+                <input type="number" id="inputPinY" step="0.1" min="0" max="100" class="studio-input w-full px-2 py-1 text-xs" />
+              </div>
             </div>
-            <div>
-              <label class="text-[10px] text-slate-400 block mb-1">Y Position (%)</label>
-              <input type="number" id="inputPinY" step="0.1" min="0" max="100" class="w-full bg-slate-900 border border-slate-600 rounded px-2 py-1 text-white text-xs" />
-            </div>
+            <p class="text-[10px] text-slate-400 leading-relaxed">Drag any pin or chest directly on the map viewport to position in real-time.</p>
           </div>
-          <p class="text-[10px] text-slate-400 leading-relaxed">Click or drag any pin or gift chest on the map to position it in real-time.</p>
         </div>
 
         <!-- Gift Chest Specific Settings -->
-        <div id="boxGiftDetails" class="bg-slate-800/80 p-3 rounded-xl border border-amber-500/40 space-y-2 hidden">
-          <span class="font-bold text-amber-300 block text-xs">🎁 Mystery Gift Settings:</span>
-          <div>
-            <label class="text-[10px] text-slate-400 block mb-0.5">Chest Name</label>
-            <input type="text" id="inputGiftName" class="w-full bg-slate-900 border border-slate-600 rounded px-2 py-1 text-white text-xs font-semibold" />
+        <div id="boxGiftDetails" class="studio-card border-amber-500/30 shrink-0 hidden">
+          <div class="studio-card-header border-amber-500/20">
+            <span class="font-bold text-amber-300 text-xs">🎁 Mystery Gift Settings</span>
           </div>
-          <div class="grid grid-cols-2 gap-2">
+          <div class="p-3 space-y-2">
             <div>
-              <label class="text-[10px] text-slate-400 block mb-0.5">Level Offset (+)</label>
-              <input type="number" id="inputGiftOffset" min="1" max="10" class="w-full bg-slate-900 border border-slate-600 rounded px-2 py-1 text-white text-xs font-mono" />
+              <label class="text-[10px] text-slate-400 block mb-0.5">Chest Name</label>
+              <input type="text" id="inputGiftName" class="studio-input w-full px-2 py-1 text-xs font-semibold" />
             </div>
-            <div>
-              <label class="text-[10px] text-slate-400 block mb-0.5">Reward (Coins)</label>
-              <input type="number" id="inputGiftCoins" step="50" min="0" class="w-full bg-slate-900 border border-slate-600 rounded px-2 py-1 text-amber-300 text-xs font-mono font-bold" />
+            <div class="grid grid-cols-2 gap-2">
+              <div>
+                <label class="text-[10px] text-slate-400 block mb-0.5">Level Offset (+)</label>
+                <input type="number" id="inputGiftOffset" min="1" max="10" class="studio-input w-full px-2 py-1 text-xs font-mono" />
+              </div>
+              <div>
+                <label class="text-[10px] text-slate-400 block mb-0.5">Reward (Coins)</label>
+                <input type="number" id="inputGiftCoins" step="50" min="0" class="studio-input w-full px-2 py-1 text-amber-300 text-xs font-mono font-bold" />
+              </div>
             </div>
           </div>
         </div>
 
         <!-- Viewport Zoom Controls -->
-        <div class="bg-slate-800/80 p-3 rounded-xl border border-slate-700/80 space-y-2">
-          <span class="font-bold text-slate-300 block">Map Viewport:</span>
-          <div class="flex items-center gap-2">
-            <button id="btnZoomOut" class="flex-1 py-1.5 bg-slate-700 hover:bg-slate-600 rounded text-slate-200 font-bold transition">🔍 -</button>
-            <button id="btnZoomFit" class="flex-1 py-1.5 bg-slate-700 hover:bg-slate-600 rounded text-slate-200 font-semibold text-[11px] transition">Fit</button>
-            <button id="btnZoomIn" class="flex-1 py-1.5 bg-slate-700 hover:bg-slate-600 rounded text-slate-200 font-bold transition">🔍 +</button>
+        <div class="studio-card shrink-0">
+          <div class="studio-card-header">
+            <span class="font-bold text-slate-300">Map Viewport</span>
+            <span class="text-[10px] text-slate-400 font-mono" id="lblZoomLevel">100%</span>
           </div>
-          <div class="text-center text-[10px] text-slate-400 font-mono">
-            <span>Zoom: </span><span id="lblZoomLevel">100%</span>
+          <div class="p-2.5">
+            <div class="flex items-center gap-2">
+              <button id="btnZoomOut" class="studio-btn studio-btn-secondary flex-1 py-1 text-xs font-bold">🔍 -</button>
+              <button id="btnZoomFit" class="studio-btn studio-btn-secondary flex-1 py-1 text-[11px] font-semibold">Fit</button>
+              <button id="btnZoomIn" class="studio-btn studio-btn-secondary flex-1 py-1 text-xs font-bold">🔍 +</button>
+            </div>
           </div>
         </div>
 
         <!-- Mystery Gifts List -->
-        <div class="bg-slate-800/80 p-3 rounded-xl border border-amber-500/30 space-y-1.5 shrink-0">
-          <div class="flex items-center justify-between">
-            <span class="font-bold text-amber-300 text-xs flex items-center gap-1.5">
-              <span>🎁</span>
-              <span>World Mystery Gifts (2)</span>
+        <div class="studio-card shrink-0">
+          <div class="studio-card-header">
+            <span class="font-bold text-amber-300 flex items-center gap-1.5">
+              <span>🎁 World Gifts (2)</span>
             </span>
-            <span class="text-[10px] text-amber-400/80 font-mono">Drag or Click</span>
+            <span class="text-[10px] text-slate-400 font-mono">Drag or click</span>
           </div>
-          <div id="listWorldGifts" class="space-y-1 font-mono text-[11px]">
-            <!-- Injected via JS -->
+          <div class="p-2">
+            <div id="listWorldGifts" class="space-y-1 font-mono text-[11px] max-h-44 overflow-y-auto pr-0.5">
+              <!-- Injected via JS -->
+            </div>
           </div>
         </div>
 
         <!-- Node List Table -->
-        <div class="bg-slate-800/80 p-3 rounded-xl border border-slate-700/80 space-y-2 flex-1 flex flex-col min-h-0">
-          <span class="font-bold text-slate-300 block shrink-0">World Level Pins (10):</span>
-          <div id="listWorldNodes" class="space-y-1 overflow-y-auto flex-1 font-mono text-[11px]">
-            <!-- Injected via JS -->
+        <div class="studio-card shrink-0">
+          <div class="studio-card-header">
+            <span class="font-bold text-slate-300">World Level Pins (10)</span>
+            <span class="text-[10px] text-slate-400 font-mono">10 Nodes</span>
+          </div>
+          <div class="p-2">
+            <div id="listWorldNodes" class="space-y-1 font-mono text-[11px] max-h-64 overflow-y-auto pr-0.5">
+              <!-- Injected via JS -->
+            </div>
           </div>
         </div>
 
       </aside>
 
       <!-- Center Interactive Map Canvas -->
-      <main class="flex-1 bg-slate-950 relative flex items-center justify-center overflow-auto p-4 select-none" id="mapScrollContainer">
-        <!-- Floating Prev World Button -->
-        <button id="btnFloatingPrevWorld" class="absolute left-6 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full bg-slate-800/90 hover:bg-indigo-600 text-white font-bold flex items-center justify-center border border-slate-700 shadow-2xl transition z-30 active:scale-90" title="Previous World">
+      <main class="flex-1 bg-studio-bg canvas-ambient-glow relative flex items-center justify-center overflow-auto p-4 select-none" id="mapScrollContainer">
+        
+        <!-- Floating Navigation -->
+        <button id="btnFloatingPrevWorld" class="absolute left-6 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full studio-btn studio-btn-secondary text-white font-bold flex items-center justify-center shadow-2xl z-30" title="Previous World (← Left Arrow)">
           ◀
         </button>
 
-        <div id="mapWrapper" class="relative shadow-2xl rounded-2xl overflow-hidden border-2 border-slate-700/80 shrink-0">
+        <div id="mapWrapper" class="relative shadow-2xl rounded-2xl overflow-hidden border-2 border-studio-border shrink-0">
           <img id="imgMapBackground" alt="World Map" class="block pointer-events-none" style="width: 450px; height: 800px; object-fit: fill;" />
           <div id="pinsOverlay" class="absolute inset-0">
             <!-- Pins dynamically positioned via JS -->
           </div>
         </div>
 
-        <!-- Floating Next World Button -->
-        <button id="btnFloatingNextWorld" class="absolute right-6 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full bg-slate-800/90 hover:bg-indigo-600 text-white font-bold flex items-center justify-center border border-slate-700 shadow-2xl transition z-30 active:scale-90" title="Next World">
+        <button id="btnFloatingNextWorld" class="absolute right-6 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full studio-btn studio-btn-secondary text-white font-bold flex items-center justify-center shadow-2xl z-30" title="Next World (→ Right Arrow)">
           ▶
         </button>
       </main>
     </section>
 
 
-    <!-- ============================================================== -->
+    <!-- ======================================================================== -->
     <!-- TAB 3: CAMPAIGN WORLDS EXPLORER -->
-    <!-- ============================================================== -->
+    <!-- ======================================================================== -->
     <section id="viewWorldsExplorer" class="flex-1 flex flex-col p-6 overflow-y-auto hidden">
       <div class="max-w-6xl mx-auto w-full space-y-6">
-        <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+        
+        <!-- Explorer Header -->
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-studio-border pb-4">
           <div>
             <h2 class="text-lg font-bold text-white flex items-center gap-2">
               <span>Campaign Worlds Directory</span>
-              <span class="text-xs bg-indigo-900/60 text-indigo-300 px-2.5 py-0.5 rounded-full border border-indigo-500/40 font-mono">49 Total Worlds</span>
+              <span id="badgeWorldsCount" class="text-xs bg-indigo-500/15 text-indigo-300 border border-indigo-500/30 px-2.5 py-0.5 rounded-full font-mono">49 Total Worlds</span>
             </h2>
-            <p class="text-xs text-slate-400">All 49 worlds spanning levels 1 through 490 with paired map & gameplay backgrounds.</p>
+            <p class="text-xs text-slate-400">Comprehensive campaign progression with paired map & gameplay backgrounds.</p>
           </div>
-          <div class="text-xs text-slate-400 font-mono">
-            <span>10 Levels per World • 490 Levels Total</span>
+
+          <div class="flex items-center gap-3">
+            <input type="text" id="inputSearchWorlds" placeholder="🔍 Search world name or level..." class="studio-input px-3 py-1.5 text-xs w-60" />
+            <button id="btnOpenCreateWorldModal" class="studio-btn studio-btn-success px-3.5 py-1.5 text-xs font-bold gap-1.5">
+              <span>➕ Create World</span>
+            </button>
           </div>
         </div>
 
-        <!-- Worlds Grid -->
+        <!-- Worlds Responsive Grid -->
         <div id="gridWorldsList" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
           <!-- Populated via JS -->
         </div>
@@ -707,46 +1009,362 @@
 
   </div>
 
-  <!-- RAW JSON MODAL -->
-  <div id="modalRawJson" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-    <div class="bg-slate-800 border border-slate-700 rounded-2xl max-w-2xl w-full p-5 space-y-4 shadow-2xl flex flex-col max-h-[85vh]">
-      <div class="flex justify-between items-center border-b border-slate-700 pb-2">
-        <h3 class="font-bold text-sm text-white flex items-center gap-2">
-          <span>Level Raw JSON</span>
-          <span id="lblModalLevelFilename" class="text-xs text-emerald-400 font-mono">level_01.json</span>
-        </h3>
-        <button id="btnCloseRawJson" class="text-slate-400 hover:text-white font-bold text-xl">&times;</button>
+
+  <!-- ============================================================================ -->
+  <!-- 4. MODALS SYSTEM -->
+  <!-- ============================================================================ -->
+
+  <!-- EDIT EXISTING WORLD MODAL -->
+  <div id="modalEditExistingWorld" class="fixed inset-0 bg-black/80 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-studio-panel border border-studio-border rounded-2xl max-w-2xl w-full p-6 space-y-4 shadow-2xl flex flex-col max-h-[90vh] overflow-y-auto">
+      <div class="flex justify-between items-center border-b border-studio-border pb-3">
+        <div>
+          <h3 class="font-bold text-base text-white flex items-center gap-2">
+            <span>⚙️ Edit World Info & Backgrounds</span>
+            <span id="lblEditWorldNumBadge" class="text-xs bg-amber-500/15 text-amber-300 border border-amber-500/30 px-2.5 py-0.5 rounded-full font-mono">World 1</span>
+          </h3>
+          <p class="text-xs text-slate-400">Update world name, subtitle banner, and map or gameplay background art.</p>
+        </div>
+        <button id="btnCloseEditWorld" class="text-slate-400 hover:text-white font-bold text-2xl leading-none">&times;</button>
       </div>
-      <textarea id="txtRawJsonContent" readonly class="flex-1 w-full bg-slate-950 border border-slate-700 rounded-xl p-3 font-mono text-xs text-emerald-300 leading-relaxed resize-none focus:outline-none"></textarea>
-      <div class="flex justify-end gap-2 pt-1">
-        <button id="btnCopyRawJson" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg text-xs font-semibold">📋 Copy to Clipboard</button>
+
+      <div class="space-y-4 text-xs">
+        <!-- World Name & Subtitle -->
+        <div class="space-y-3">
+          <div>
+            <div class="flex items-center justify-between mb-1">
+              <label class="font-bold text-slate-300">World Name:</label>
+              <button id="btnRandomEditWorldName" class="text-[10px] text-amber-400 hover:text-amber-300 font-semibold flex items-center gap-1">
+                <span>🎲 Randomize Name</span>
+              </button>
+            </div>
+            <input type="text" id="inputEditWorldName" class="studio-input w-full px-3 py-2 text-white font-semibold" />
+          </div>
+
+          <div>
+            <label class="block font-bold text-slate-300 mb-1">Subtitle Banner Text:</label>
+            <input type="text" id="inputEditWorldSubtitle" class="studio-input w-full px-3 py-1.5 text-slate-200 font-mono text-[11px]" />
+          </div>
+        </div>
+
+        <!-- Background Assets Selection -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-1">
+          <!-- Map Background -->
+          <div class="bg-studio-bg p-3.5 rounded-xl border border-studio-border space-y-2.5">
+            <div class="flex items-center justify-between">
+              <label class="font-bold text-slate-200 flex items-center gap-1">
+                <span>📍 Map Background:</span>
+              </label>
+              <button id="btnBrowseEditMapImg" class="studio-btn studio-btn-secondary text-[10px] px-2 py-0.5">
+                📂 Browse...
+              </button>
+            </div>
+            <select id="selectEditWorldMapBg" class="studio-input w-full px-2.5 py-1.5 text-white font-mono text-[11px]">
+              <!-- Injected via JS -->
+            </select>
+            <div class="h-32 rounded-lg bg-studio-surface border border-studio-border overflow-hidden relative flex items-center justify-center">
+              <img id="previewEditWorldMapBg" class="w-full h-full object-cover" alt="Map Preview" />
+              <span id="txtNoEditMapPreview" class="text-slate-500 text-[10px]">No Image Selected</span>
+            </div>
+          </div>
+
+          <!-- Gameplay Background -->
+          <div class="bg-studio-bg p-3.5 rounded-xl border border-studio-border space-y-2.5">
+            <div class="flex items-center justify-between">
+              <label class="font-bold text-slate-200 flex items-center gap-1">
+                <span>🎮 Game Background:</span>
+              </label>
+              <button id="btnBrowseEditGameBg" class="studio-btn studio-btn-secondary text-[10px] px-2 py-0.5">
+                📂 Browse...
+              </button>
+            </div>
+            <select id="selectEditWorldGameBg" class="studio-input w-full px-2.5 py-1.5 text-white font-mono text-[11px]">
+              <!-- Injected via JS -->
+            </select>
+            <div class="h-32 rounded-lg bg-studio-surface border border-studio-border overflow-hidden relative flex items-center justify-center">
+              <img id="previewEditWorldGameBg" class="w-full h-full object-cover" alt="Game Preview" />
+              <span id="txtNoEditGamePreview" class="text-slate-500 text-[10px]">No Image Selected</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="flex justify-end gap-2.5 pt-3 border-t border-studio-border">
+        <button id="btnCancelEditWorld" class="studio-btn studio-btn-secondary px-4 py-2 text-xs">Cancel</button>
+        <button id="btnConfirmEditWorld" class="studio-btn studio-btn-success px-5 py-2 text-xs font-bold gap-1.5">
+          <span>✓ Save World Changes</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- CREATE NEW WORLD MODAL -->
+  <div id="modalCreateWorld" class="fixed inset-0 bg-black/80 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-studio-panel border border-studio-border rounded-2xl max-w-2xl w-full p-6 space-y-4 shadow-2xl flex flex-col max-h-[90vh] overflow-y-auto">
+      <div class="flex justify-between items-center border-b border-studio-border pb-3">
+        <div>
+          <h3 class="font-bold text-base text-white flex items-center gap-2">
+            <span>🗺️ Create New Campaign World</span>
+            <span id="lblNewWorldNumBadge" class="text-xs bg-indigo-500/15 text-indigo-300 border border-indigo-500/30 px-2.5 py-0.5 rounded-full font-mono">World 50</span>
+          </h3>
+          <p class="text-xs text-slate-400">Specify world backgrounds and auto-generate playable levels with saga map pins.</p>
+        </div>
+        <button id="btnCloseCreateWorld" class="text-slate-400 hover:text-white font-bold text-2xl leading-none">&times;</button>
+      </div>
+
+      <div class="space-y-4 text-xs">
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <div>
+            <label class="block font-bold text-slate-300 mb-1">World Number:</label>
+            <input type="number" id="inputNewWorldNumber" min="1" max="999" class="studio-input w-full px-3 py-2 text-white font-mono font-bold" />
+          </div>
+          <div class="sm:col-span-2">
+            <div class="flex items-center justify-between mb-1">
+              <label class="font-bold text-slate-300">World Name:</label>
+              <button id="btnRandomWorldName" class="text-[10px] text-amber-400 hover:text-amber-300 font-semibold flex items-center gap-1">
+                <span>🎲 Randomize</span>
+              </button>
+            </div>
+            <input type="text" id="inputNewWorldName" placeholder="e.g. Starlight Sanctuary" class="studio-input w-full px-3 py-2 text-white font-semibold" />
+          </div>
+        </div>
+
+        <div>
+          <label class="block font-bold text-slate-300 mb-1">Subtitle Banner Text:</label>
+          <input type="text" id="inputNewWorldSubtitle" placeholder="e.g. WORLD 50 • STARLIGHT SANCTUARY" class="studio-input w-full px-3 py-1.5 text-slate-200 font-mono text-[11px]" />
+        </div>
+
+        <!-- Backgrounds -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-1">
+          <div class="bg-studio-bg p-3.5 rounded-xl border border-studio-border space-y-2.5">
+            <div class="flex items-center justify-between">
+              <label class="font-bold text-slate-200 flex items-center gap-1">
+                <span>📍 Map Background:</span>
+              </label>
+              <button id="btnBrowseMapImg" class="studio-btn studio-btn-secondary text-[10px] px-2 py-0.5">📂 Browse...</button>
+            </div>
+            <select id="selectNewWorldMapBg" class="studio-input w-full px-2.5 py-1.5 text-white font-mono text-[11px]"></select>
+            <div class="h-32 rounded-lg bg-studio-surface border border-studio-border overflow-hidden relative flex items-center justify-center">
+              <img id="previewNewWorldMapBg" class="w-full h-full object-cover" alt="Map Preview" />
+              <span id="txtNoMapPreview" class="text-slate-500 text-[10px]">No Image Selected</span>
+            </div>
+          </div>
+
+          <div class="bg-studio-bg p-3.5 rounded-xl border border-studio-border space-y-2.5">
+            <div class="flex items-center justify-between">
+              <label class="font-bold text-slate-200 flex items-center gap-1">
+                <span>🎮 Game Background:</span>
+              </label>
+              <button id="btnBrowseGameBg" class="studio-btn studio-btn-secondary text-[10px] px-2 py-0.5">📂 Browse...</button>
+            </div>
+            <select id="selectNewWorldGameBg" class="studio-input w-full px-2.5 py-1.5 text-white font-mono text-[11px]"></select>
+            <div class="h-32 rounded-lg bg-studio-surface border border-studio-border overflow-hidden relative flex items-center justify-center">
+              <img id="previewNewWorldGameBg" class="w-full h-full object-cover" alt="Game Preview" />
+              <span id="txtNoGamePreview" class="text-slate-500 text-[10px]">No Image Selected</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Auto-Generation Options -->
+        <div class="studio-card border-indigo-500/30 bg-indigo-950/15 p-4 space-y-3">
+          <div class="flex items-center justify-between">
+            <span class="font-bold text-amber-300 text-xs flex items-center gap-1.5">
+              <span>⚡ Level Generator & Pin Path Synthesizer</span>
+            </span>
+            <label class="flex items-center gap-1.5 text-[11px] text-emerald-300 font-semibold cursor-pointer">
+              <input type="checkbox" id="chkAutoGenerateLevels" checked class="rounded bg-studio-bg border-studio-border text-emerald-600" />
+              <span>Auto-generate levels & pins</span>
+            </label>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1">
+            <div>
+              <label class="block text-[11px] font-semibold text-slate-300 mb-1">Levels Count:</label>
+              <input type="number" id="inputNewWorldLevelsCount" value="10" min="5" max="30" class="studio-input w-full px-2.5 py-1 text-white font-mono text-xs" />
+            </div>
+            <div>
+              <label class="block text-[11px] font-semibold text-slate-300 mb-1">Level Style:</label>
+              <select id="selectNewWorldProgression" class="studio-input w-full px-2 py-1 text-white text-xs">
+                <option value="balanced">Balanced Progression</option>
+                <option value="geometric">Geometric & Patterns</option>
+                <option value="tactical">Tactical Choke Points</option>
+                <option value="casual">Casual & Relaxed</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-[11px] font-semibold text-slate-300 mb-1">Color Depth:</label>
+              <select id="selectNewWorldColors" class="studio-input w-full px-2 py-1 text-white text-xs">
+                <option value="4">4 Colors (Standard)</option>
+                <option value="5">5 Colors (Challenging)</option>
+                <option value="6">6 Colors (Expert)</option>
+                <option value="3">3 Colors (Introductory)</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="flex justify-end gap-2.5 pt-3 border-t border-studio-border">
+        <button id="btnCancelCreateWorld" class="studio-btn studio-btn-secondary px-4 py-2 text-xs">Cancel</button>
+        <button id="btnConfirmCreateWorld" class="studio-btn studio-btn-success px-5 py-2 text-xs font-bold gap-1.5">
+          <span>🚀 Create World & Generate Levels</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- LEVEL ANALYZER & SOLVER MODAL -->
+  <div id="modalLevelAnalyzer" class="fixed inset-0 bg-black/80 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-studio-panel border border-studio-border rounded-2xl max-w-3xl w-full p-6 space-y-4 shadow-2xl flex flex-col max-h-[90vh] overflow-y-auto">
+      <div class="flex justify-between items-center border-b border-studio-border pb-3">
+        <div>
+          <h3 class="font-bold text-base text-white flex items-center gap-2">
+            <span>🔬 Level Complexity & Deep Solver</span>
+            <span id="lblAnalyzerLevelBadge" class="text-xs bg-indigo-500/15 text-indigo-300 border border-indigo-500/30 px-2.5 py-0.5 rounded-full font-mono">Level 1</span>
+          </h3>
+          <p class="text-xs text-slate-400">Board graph decomposition, cluster connectivity & shots balance simulation.</p>
+        </div>
+        <button id="btnCloseAnalyzerModal" class="text-slate-400 hover:text-white font-bold text-2xl leading-none">&times;</button>
+      </div>
+
+      <div class="space-y-4 text-xs">
+        <!-- Top Metrics Cards -->
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+          <div class="bg-studio-bg p-3 rounded-xl border border-studio-border">
+            <span class="text-slate-400 block text-[11px]">Complexity Rating</span>
+            <div class="flex items-center gap-1.5 mt-1">
+              <span id="lblModalComplexityBadge" class="font-bold text-amber-400 text-sm">Challenging</span>
+            </div>
+          </div>
+          <div class="bg-studio-bg p-3 rounded-xl border border-studio-border">
+            <span class="text-slate-400 block text-[11px]">Theoretical Min</span>
+            <span id="lblModalMinBalls" class="font-bold text-sky-400 text-sm mt-1 block font-mono">14 Balls</span>
+          </div>
+          <div class="bg-studio-bg p-3 rounded-xl border border-studio-border">
+            <span class="text-slate-400 block text-[11px]">Recommended Shots</span>
+            <span id="lblModalRealisticShots" class="font-bold text-emerald-400 text-sm mt-1 block font-mono">18 Shots</span>
+          </div>
+          <div class="bg-studio-bg p-3 rounded-xl border border-studio-border">
+            <span class="text-slate-400 block text-[11px]">Difficulty Margin</span>
+            <span id="lblModalShotsMargin" class="font-bold text-indigo-400 text-sm mt-1 block font-mono">+4 (Tight)</span>
+          </div>
+        </div>
+
+        <!-- Complexity Progress -->
+        <div class="bg-studio-bg p-3 rounded-xl border border-studio-border space-y-1.5">
+          <div class="flex justify-between items-center text-[11px]">
+            <span class="text-slate-300 font-semibold">Graph Complexity Index</span>
+            <span id="lblModalComplexityPercent" class="font-mono text-amber-400 font-bold">64 / 100</span>
+          </div>
+          <div class="w-full bg-studio-surface rounded-full h-2 overflow-hidden border border-studio-border">
+            <div id="barComplexityProgress" class="bg-gradient-to-r from-emerald-500 via-amber-500 to-rose-500 h-full rounded-full transition-all duration-300" style="width: 64%"></div>
+          </div>
+        </div>
+
+        <!-- Graph Topology Grid -->
+        <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
+          <div class="bg-studio-bg p-2.5 rounded-lg border border-studio-border flex justify-between items-center font-mono">
+            <span class="text-slate-400">Total Bubbles:</span>
+            <strong id="lblModalTotalBubbles" class="text-white">48</strong>
+          </div>
+          <div class="bg-studio-bg p-2.5 rounded-lg border border-studio-border flex justify-between items-center font-mono">
+            <span class="text-slate-400">Color Palette:</span>
+            <strong id="lblModalColorCount" class="text-indigo-400">4 Colors</strong>
+          </div>
+          <div class="bg-studio-bg p-2.5 rounded-lg border border-studio-border flex justify-between items-center font-mono">
+            <span class="text-slate-400">Color Clusters:</span>
+            <strong id="lblModalClusterCount" class="text-amber-400">12</strong>
+          </div>
+          <div class="bg-studio-bg p-2.5 rounded-lg border border-studio-border flex justify-between items-center font-mono">
+            <span class="text-slate-400">Ceiling Anchors:</span>
+            <strong id="lblModalCeilingAnchors" class="text-emerald-400">9 Anchors</strong>
+          </div>
+          <div class="bg-studio-bg p-2.5 rounded-lg border border-studio-border flex justify-between items-center font-mono">
+            <span class="text-slate-400">Hanging Bubbles:</span>
+            <strong id="lblModalHangingCount" class="text-sky-400">18</strong>
+          </div>
+          <div class="bg-studio-bg p-2.5 rounded-lg border border-studio-border flex justify-between items-center font-mono">
+            <span class="text-slate-400">Special Bubbles:</span>
+            <strong id="lblModalSpecialCount" class="text-purple-400">2</strong>
+          </div>
+        </div>
+
+        <!-- Solver Insights Narrative -->
+        <div class="bg-studio-bg p-3.5 rounded-xl border border-studio-border space-y-1.5">
+          <span class="font-bold text-slate-300 block text-xs">Solver Simulation Insight:</span>
+          <div id="boxSolverInsightText" class="text-slate-300 font-mono text-[11px] leading-relaxed space-y-1">
+            <!-- Populated via JS -->
+          </div>
+        </div>
+
+        <!-- Recommendations Pill Box -->
+        <div class="p-3 rounded-xl bg-indigo-950/20 border border-indigo-500/30 flex items-center justify-between">
+          <div class="space-y-0.5">
+            <span class="text-white font-bold block">Recommended Configuration:</span>
+            <div class="flex items-center gap-3 text-slate-300 text-[11px] font-mono">
+              <span>Shots: <strong id="lblRecShots" class="text-emerald-400">18</strong></span>
+              <span>•</span>
+              <span>Stars: <strong id="lblRecStars" class="text-amber-400">1,800 / 3,900 / 6,800</strong></span>
+            </div>
+          </div>
+          <button id="btnApplyAutoBalanceFromModal" class="studio-btn studio-btn-primary px-4 py-2 text-xs font-bold gap-1.5">
+            <span>⚡ Apply Auto-Tune</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="flex justify-end pt-3 border-t border-studio-border">
+        <button id="btnCloseAnalyzerModalBtn" class="studio-btn studio-btn-secondary px-5 py-2 text-xs">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- PRESET PATTERNS FULL CATALOG MODAL -->
+  <div id="modalPresetPatterns" class="fixed inset-0 bg-black/80 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-studio-panel border border-studio-border rounded-2xl max-w-4xl w-full p-6 space-y-4 shadow-2xl flex flex-col max-h-[90vh]">
+      <div class="flex justify-between items-center border-b border-studio-border pb-3">
+        <div>
+          <h3 class="font-bold text-base text-white flex items-center gap-2">
+            <span>🧩 Preset Patterns Catalog</span>
+            <span class="text-xs bg-indigo-500/15 text-indigo-300 border border-indigo-500/30 px-2.5 py-0.5 rounded-full font-mono font-semibold">14 Patterns</span>
+          </h3>
+          <p class="text-xs text-slate-400">Click any pattern to stamp it directly onto the current board, or drag and drop.</p>
+        </div>
+        <button id="btnClosePatternsModal" class="text-slate-400 hover:text-white font-bold text-2xl leading-none">&times;</button>
+      </div>
+
+      <div id="gridFullPatternsCatalog" class="flex-1 overflow-y-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 p-1">
+        <!-- Rendered via JS -->
+      </div>
+
+      <div class="flex justify-end pt-3 border-t border-studio-border">
+        <button id="btnClosePatternsModalBtn" class="studio-btn studio-btn-secondary px-5 py-2 text-xs">Close</button>
       </div>
     </div>
   </div>
 
   <!-- CREATE NEW LEVEL MODAL -->
-  <div id="modalNewLevel" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-    <div class="bg-slate-800 border border-slate-700 rounded-2xl max-w-md w-full p-5 space-y-4 shadow-2xl flex flex-col">
-      <div class="flex justify-between items-center border-b border-slate-700 pb-2">
+  <div id="modalNewLevel" class="fixed inset-0 bg-black/80 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-studio-panel border border-studio-border rounded-2xl max-w-md w-full p-5 space-y-4 shadow-2xl flex flex-col">
+      <div class="flex justify-between items-center border-b border-studio-border pb-2">
         <h3 class="font-bold text-sm text-white flex items-center gap-2">
           <span>➕ Create New Level</span>
         </h3>
         <button id="btnCloseNewLevel" class="text-slate-400 hover:text-white font-bold text-xl">&times;</button>
       </div>
 
-      <div class="space-y-3.5 text-xs">
+      <div class="space-y-3 text-xs">
         <div>
           <label class="block font-semibold text-slate-300 mb-1">Target Level Number:</label>
           <div class="flex items-center gap-2">
-            <input type="number" id="inputNewLevelNum" min="1" max="999" class="w-24 bg-slate-900 border border-slate-600 rounded px-2.5 py-1.5 text-white font-mono font-bold text-sm" />
-            <span id="lblNewLevelWorldHint" class="text-emerald-400 font-mono text-[11px] bg-slate-900/60 px-2 py-1 rounded border border-slate-700">World 50</span>
+            <input type="number" id="inputNewLevelNum" min="1" max="999" class="studio-input w-24 px-2.5 py-1.5 font-mono font-bold text-sm" />
+            <span id="lblNewLevelWorldHint" class="text-emerald-400 font-mono text-[11px] bg-studio-bg px-2 py-1 rounded border border-studio-border">World 50</span>
           </div>
-          <span class="text-[10px] text-slate-400">Next available level in project is auto-filled.</span>
         </div>
 
         <div>
           <label class="block font-semibold text-slate-300 mb-1">Starter Template:</label>
-          <select id="selectNewLevelTemplate" class="w-full bg-slate-900 border border-slate-600 rounded px-2 py-1.5 text-white font-semibold text-xs">
+          <select id="selectNewLevelTemplate" class="studio-input w-full px-2.5 py-1.5 font-semibold text-xs">
             <option value="blank">Empty Board (Ready to Paint)</option>
             <option value="clone">Clone Currently Open Level</option>
             <option value="diamond">Symmetric Diamond Layout</option>
@@ -757,11 +1375,11 @@
         <div class="grid grid-cols-2 gap-3">
           <div>
             <label class="block font-semibold text-slate-300 mb-1">Initial Shots:</label>
-            <input type="number" id="inputNewLevelShots" value="20" min="5" max="99" class="w-full bg-slate-900 border border-slate-600 rounded px-2 py-1.5 text-white font-mono text-xs" />
+            <input type="number" id="inputNewLevelShots" value="20" min="5" max="99" class="studio-input w-full px-2.5 py-1.5 font-mono text-xs" />
           </div>
           <div>
             <label class="block font-semibold text-slate-300 mb-1">Objective:</label>
-            <select id="selectNewLevelObjective" class="w-full bg-slate-900 border border-slate-600 rounded px-2 py-1.5 text-white font-semibold text-xs">
+            <select id="selectNewLevelObjective" class="studio-input w-full px-2.5 py-1.5 font-semibold text-xs">
               <option value="CLEAR_ALL">🎯 CLEAR_ALL</option>
               <option value="SCORE_TARGET">🏆 SCORE_TARGET</option>
               <option value="DROP_COUNT">💧 DROP_COUNT</option>
@@ -770,19 +1388,79 @@
         </div>
       </div>
 
-      <div class="flex justify-end gap-2 pt-2 border-t border-slate-700">
-        <button id="btnCancelNewLevel" class="px-3 py-1.5 bg-slate-700 hover:bg-slate-600 text-slate-300 rounded-lg text-xs font-semibold">Cancel</button>
-        <button id="btnConfirmCreateLevel" class="px-4 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg text-xs font-bold flex items-center gap-1.5 shadow active:scale-95">
-          <span>✓</span>
-          <span>Create & Open Level</span>
+      <div class="flex justify-end gap-2 pt-2 border-t border-studio-border">
+        <button id="btnCancelNewLevel" class="studio-btn studio-btn-secondary px-3 py-1.5 text-xs">Cancel</button>
+        <button id="btnConfirmCreateLevel" class="studio-btn studio-btn-success px-4 py-1.5 text-xs font-bold gap-1.5">
+          <span>✓ Create & Open</span>
         </button>
       </div>
     </div>
   </div>
 
+  <!-- RAW JSON MODAL -->
+  <div id="modalRawJson" class="fixed inset-0 bg-black/80 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-studio-panel border border-studio-border rounded-2xl max-w-2xl w-full p-5 space-y-4 shadow-2xl flex flex-col max-h-[85vh]">
+      <div class="flex justify-between items-center border-b border-studio-border pb-2">
+        <h3 class="font-bold text-sm text-white flex items-center gap-2">
+          <span>Level Raw JSON</span>
+          <span id="lblModalLevelFilename" class="text-xs text-emerald-400 font-mono">level_01.json</span>
+        </h3>
+        <button id="btnCloseRawJson" class="text-slate-400 hover:text-white font-bold text-xl">&times;</button>
+      </div>
+      <textarea id="txtRawJsonContent" readonly class="flex-1 w-full bg-studio-bg border border-studio-border rounded-xl p-3 font-mono text-xs text-emerald-300 leading-relaxed resize-none focus:outline-none"></textarea>
+      <div class="flex justify-end gap-2 pt-1">
+        <button id="btnCopyRawJson" class="studio-btn studio-btn-primary px-4 py-2 text-xs font-semibold">📋 Copy to Clipboard</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- KEYBOARD SHORTCUTS CHEAT-SHEET MODAL -->
+  <div id="modalShortcuts" class="fixed inset-0 bg-black/80 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-studio-panel border border-studio-border rounded-2xl max-w-lg w-full p-5 space-y-4 shadow-2xl flex flex-col">
+      <div class="flex justify-between items-center border-b border-studio-border pb-2">
+        <h3 class="font-bold text-sm text-white flex items-center gap-2">
+          <span>⌨️ Studio Keyboard Shortcuts</span>
+        </h3>
+        <button id="btnCloseShortcuts" class="text-slate-400 hover:text-white font-bold text-xl">&times;</button>
+      </div>
+
+      <div class="space-y-3 text-xs">
+        <div class="bg-studio-bg p-3 rounded-xl border border-studio-border space-y-2">
+          <span class="font-bold text-indigo-300 block">Navigation:</span>
+          <div class="grid grid-cols-2 gap-2 text-slate-300">
+            <div class="flex items-center justify-between"><kbd class="bg-studio-panel px-1.5 py-0.5 rounded font-mono text-white border border-studio-border">← Left Arrow</kbd><span>Prev Level / World</span></div>
+            <div class="flex items-center justify-between"><kbd class="bg-studio-panel px-1.5 py-0.5 rounded font-mono text-white border border-studio-border">→ Right Arrow</kbd><span>Next Level / World</span></div>
+          </div>
+        </div>
+
+        <div class="bg-studio-bg p-3 rounded-xl border border-studio-border space-y-2">
+          <span class="font-bold text-amber-300 block">Drawing Tools & Painting:</span>
+          <div class="grid grid-cols-2 gap-2 text-slate-300">
+            <div class="flex items-center justify-between"><kbd class="bg-studio-panel px-1.5 py-0.5 rounded font-mono text-white border border-studio-border">B</kbd><span>Brush Tool</span></div>
+            <div class="flex items-center justify-between"><kbd class="bg-studio-panel px-1.5 py-0.5 rounded font-mono text-white border border-studio-border">G</kbd><span>Flood Fill Tool</span></div>
+            <div class="flex items-center justify-between"><kbd class="bg-studio-panel px-1.5 py-0.5 rounded font-mono text-white border border-studio-border">E</kbd><span>Eraser Tool</span></div>
+            <div class="flex items-center justify-between"><kbd class="bg-studio-panel px-1.5 py-0.5 rounded font-mono text-white border border-studio-border">M</kbd><span>Toggle Mirror</span></div>
+          </div>
+        </div>
+
+        <div class="bg-studio-bg p-3 rounded-xl border border-studio-border space-y-2">
+          <span class="font-bold text-emerald-300 block">Color Keys:</span>
+          <div class="grid grid-cols-2 gap-2 text-slate-300">
+            <div class="flex items-center justify-between"><kbd class="bg-studio-panel px-1.5 py-0.5 rounded font-mono text-white border border-studio-border">1 .. 7</kbd><span>Red, Green, Blue, ...</span></div>
+            <div class="flex items-center justify-between"><kbd class="bg-studio-panel px-1.5 py-0.5 rounded font-mono text-white border border-studio-border">0 / Del</kbd><span>Empty Socket</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="flex justify-end pt-2 border-t border-studio-border">
+        <button id="btnCloseShortcutsBtn" class="studio-btn studio-btn-secondary px-4 py-1.5 text-xs">Got it</button>
+      </div>
+    </div>
+  </div>
+
   <!-- TOAST NOTIFICATION -->
-  <div id="toastNotification" class="fixed bottom-6 left-1/2 -translate-x-1/2 bg-emerald-600 text-white font-semibold text-xs px-5 py-3 rounded-xl shadow-2xl z-50 transition transform duration-200 opacity-0 pointer-events-none">
-    Notification message
+  <div id="toastNotification" class="fixed bottom-6 left-1/2 -translate-x-1/2 bg-emerald-600 text-white font-semibold text-xs px-5 py-2.5 rounded-xl shadow-2xl z-50 transition-all transform duration-200 opacity-0 pointer-events-none">
+    Notification
   </div>
 
   <script src="app.js"></script>

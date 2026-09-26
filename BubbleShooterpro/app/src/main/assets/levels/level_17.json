@@ -1,10 +1,11 @@
 {
+  "level": 17,
   "shots": 17,
   "colors": [
     "RED",
+    "GREEN",
     "BLUE",
-    "YELLOW",
-    "GREEN"
+    "YELLOW"
   ],
   "objective": {
     "type": "SCORE_TARGET",
@@ -16,12 +17,11 @@
     4831
   ],
   "rows": [
-    "R..B..Y..",
-    "RRBBYYRR",
-    "RBBYYYBBR",
-    "BBRYYRBB",
-    "YYGGGGGYY",
-    ".GGGGGG."
-  ],
-  "level": 17
+    "YYTRYYRYB",
+    "RRRGBYRR",
+    "RBYGRTGBB",
+    "BTBBRRYY",
+    "GGGBYYTGY",
+    "RGGBGGTY"
+  ]
 }
