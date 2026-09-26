@@ -20,8 +20,11 @@ import com.redcodersgroup.bubbleshooter.game.GameEngine;
 import com.redcodersgroup.bubbleshooter.level.Level;
 import com.redcodersgroup.bubbleshooter.level.LevelManager;
 import com.redcodersgroup.bubbleshooter.analytics.AnalyticsManager;
+import com.redcodersgroup.bubbleshooter.audio.SoundManager;
+import com.redcodersgroup.bubbleshooter.ui.dialogs.BoosterIntroDialog;
 import com.redcodersgroup.bubbleshooter.ui.dialogs.GameOverDialog;
 import com.redcodersgroup.bubbleshooter.ui.dialogs.LowShotsWarningDialog;
+import com.redcodersgroup.bubbleshooter.ui.dialogs.NoticeDialog;
 import com.redcodersgroup.bubbleshooter.ui.dialogs.PauseDialog;
 import com.redcodersgroup.bubbleshooter.ui.dialogs.VictoryDialog;
 
@@ -35,6 +38,7 @@ public class GameActivity extends BaseActivity implements GameEngine.GameEventLi
     private ProgressRepository repository;
     private PreferencesManager prefs;
     private LevelManager levelManager;
+    private SoundManager soundManager;
 
     private int currentLevelNumber = 1;
     private boolean isEndlessMode = false;
@@ -74,6 +78,7 @@ public class GameActivity extends BaseActivity implements GameEngine.GameEventLi
         repository = ProgressRepository.getInstance(this);
         prefs = repository.getPreferences();
         levelManager = LevelManager.getInstance(this);
+        soundManager = SoundManager.getInstance(this);
 
         initViews();
         setupGame();
@@ -117,31 +122,96 @@ public class GameActivity extends BaseActivity implements GameEngine.GameEventLi
             }
         });
 
-        binding.btnBoosterRainbow.setOnClickListener(v -> {
-            playBoosterTapFeedback(binding.layoutBoosterRainbow);
-            gameEngine.equipBooster(BubbleType.RAINBOW);
-            updateBoosterCounts();
-        });
-
-        binding.btnBoosterFireball.setOnClickListener(v -> {
-            playBoosterTapFeedback(binding.layoutBoosterFireball);
-            gameEngine.equipBooster(BubbleType.FIREBALL);
-            updateBoosterCounts();
-        });
-
-        binding.btnBoosterLightning.setOnClickListener(v -> {
-            playBoosterTapFeedback(binding.layoutBoosterLightning);
-            gameEngine.equipBooster(BubbleType.LIGHTNING);
-            updateBoosterCounts();
-        });
-
-        binding.btnBoosterBomb.setOnClickListener(v -> {
-            playBoosterTapFeedback(binding.layoutBoosterBomb);
-            gameEngine.equipBooster(BubbleType.BOMB);
-            updateBoosterCounts();
-        });
+        binding.btnBoosterRainbow.setOnClickListener(v -> handleBoosterClick(BubbleType.RAINBOW));
+        binding.btnBoosterFireball.setOnClickListener(v -> handleBoosterClick(BubbleType.FIREBALL));
+        binding.btnBoosterLightning.setOnClickListener(v -> handleBoosterClick(BubbleType.LIGHTNING));
+        binding.btnBoosterBomb.setOnClickListener(v -> handleBoosterClick(BubbleType.BOMB));
 
         updateBoosterCounts();
+    }
+
+    private boolean isBoosterUnlockedForGame(BubbleType type) {
+        if (isEndlessMode) {
+            return prefs.isBoosterUnlockedGlobally(type);
+        } else {
+            return prefs.isBoosterUnlocked(type, currentLevelNumber);
+        }
+    }
+
+    private void handleBoosterClick(BubbleType type) {
+        if (!isBoosterUnlockedForGame(type)) {
+            soundManager.playClick();
+            String worldName;
+            int reqLevel;
+            switch (type) {
+                case BOMB:
+                    worldName = "World 2 (Levels 21-40)";
+                    reqLevel = PreferencesManager.UNLOCK_LEVEL_BOMB;
+                    break;
+                case RAINBOW:
+                    worldName = "World 3 (Levels 41-60)";
+                    reqLevel = PreferencesManager.UNLOCK_LEVEL_RAINBOW;
+                    break;
+                case FIREBALL:
+                    worldName = "World 4 (Levels 61-80)";
+                    reqLevel = PreferencesManager.UNLOCK_LEVEL_FIREBALL;
+                    break;
+                case LIGHTNING:
+                    worldName = "World 5 (Levels 81-100)";
+                    reqLevel = PreferencesManager.UNLOCK_LEVEL_LIGHTNING;
+                    break;
+                default:
+                    worldName = "Later Worlds";
+                    reqLevel = 1;
+                    break;
+            }
+            NoticeDialog.showWarning(
+                    this,
+                    "BOOSTER LOCKED",
+                    "UNLOCKS AT LEVEL " + reqLevel,
+                    "LOCKED POWER-UP",
+                    "Advance to " + worldName + " to unlock and use this booster!"
+            );
+            return;
+        }
+
+        boolean consumed = false;
+        View targetLayout = null;
+        switch (type) {
+            case BOMB:
+                consumed = prefs.consumeBombBooster();
+                targetLayout = binding.layoutBoosterBomb;
+                break;
+            case RAINBOW:
+                consumed = prefs.consumeRainbowBooster();
+                targetLayout = binding.layoutBoosterRainbow;
+                break;
+            case FIREBALL:
+                consumed = prefs.consumeFireballBooster();
+                targetLayout = binding.layoutBoosterFireball;
+                break;
+            case LIGHTNING:
+                consumed = prefs.consumeLightningBooster();
+                targetLayout = binding.layoutBoosterLightning;
+                break;
+            default:
+                break;
+        }
+
+        if (consumed) {
+            playBoosterTapFeedback(targetLayout);
+            gameEngine.equipBooster(type);
+            updateBoosterCounts();
+        } else {
+            soundManager.playClick();
+            NoticeDialog.showWarning(
+                    this,
+                    "OUT OF BOOSTERS",
+                    "NO " + type.name() + "S LEFT",
+                    type.name() + " BOOSTER EMPTY",
+                    "Visit the Shop to acquire more " + type.name().toLowerCase(java.util.Locale.ROOT) + " power-ups!"
+            );
+        }
     }
 
     private void playBoosterTapFeedback(View view) {
@@ -158,10 +228,47 @@ public class GameActivity extends BaseActivity implements GameEngine.GameEventLi
     }
 
     private void updateBoosterCounts() {
-        binding.tvCountRainbow.setText("∞");
-        binding.tvCountFireball.setText("∞");
-        binding.tvCountLightning.setText("∞");
-        binding.tvCountBomb.setText("∞");
+        boolean bombUnlocked = isBoosterUnlockedForGame(BubbleType.BOMB);
+        boolean rainbowUnlocked = isBoosterUnlockedForGame(BubbleType.RAINBOW);
+        boolean fireballUnlocked = isBoosterUnlockedForGame(BubbleType.FIREBALL);
+        boolean lightningUnlocked = isBoosterUnlockedForGame(BubbleType.LIGHTNING);
+
+        int bomb = prefs.getBombBoosters();
+        int rainbow = prefs.getRainbowBoosters();
+        int fireball = prefs.getFireballBoosters();
+        int lightning = prefs.getLightningBoosters();
+
+        if (bombUnlocked) {
+            binding.tvCountBomb.setText(String.valueOf(bomb));
+            binding.layoutBoosterBomb.setAlpha(bomb > 0 ? 1.0f : 0.45f);
+        } else {
+            binding.tvCountBomb.setText("🔒");
+            binding.layoutBoosterBomb.setAlpha(0.35f);
+        }
+
+        if (rainbowUnlocked) {
+            binding.tvCountRainbow.setText(String.valueOf(rainbow));
+            binding.layoutBoosterRainbow.setAlpha(rainbow > 0 ? 1.0f : 0.45f);
+        } else {
+            binding.tvCountRainbow.setText("🔒");
+            binding.layoutBoosterRainbow.setAlpha(0.35f);
+        }
+
+        if (fireballUnlocked) {
+            binding.tvCountFireball.setText(String.valueOf(fireball));
+            binding.layoutBoosterFireball.setAlpha(fireball > 0 ? 1.0f : 0.45f);
+        } else {
+            binding.tvCountFireball.setText("🔒");
+            binding.layoutBoosterFireball.setAlpha(0.35f);
+        }
+
+        if (lightningUnlocked) {
+            binding.tvCountLightning.setText(String.valueOf(lightning));
+            binding.layoutBoosterLightning.setAlpha(lightning > 0 ? 1.0f : 0.45f);
+        } else {
+            binding.tvCountLightning.setText("🔒");
+            binding.layoutBoosterLightning.setAlpha(0.35f);
+        }
     }
 
     private void setupGame() {
@@ -200,6 +307,37 @@ public class GameActivity extends BaseActivity implements GameEngine.GameEventLi
         resetStarProgressNodes(level != null ? level.getStarThresholds() : new int[]{1000, 2000, 3000});
         gameEngine.loadLevel(level);
         AnalyticsManager.getInstance(this).logLevelStart(currentLevelNumber, theme != null ? theme.title : "World");
+        updateBoosterCounts();
+        checkBoosterIntroOnLevelStart();
+    }
+
+    private void checkBoosterIntroOnLevelStart() {
+        if (isEndlessMode) return;
+
+        BubbleType introType = null;
+        String worldName = "";
+        if (currentLevelNumber >= PreferencesManager.UNLOCK_LEVEL_LIGHTNING && !prefs.hasSeenBoosterIntro("LIGHTNING")) {
+            introType = BubbleType.LIGHTNING;
+            worldName = "World 5 • Neon Cyberland";
+        } else if (currentLevelNumber >= PreferencesManager.UNLOCK_LEVEL_FIREBALL && !prefs.hasSeenBoosterIntro("FIREBALL")) {
+            introType = BubbleType.FIREBALL;
+            worldName = "World 4 • Volcanic Forge";
+        } else if (currentLevelNumber >= PreferencesManager.UNLOCK_LEVEL_RAINBOW && !prefs.hasSeenBoosterIntro("RAINBOW")) {
+            introType = BubbleType.RAINBOW;
+            worldName = "World 3 • Celestial Cosmos";
+        } else if (currentLevelNumber >= PreferencesManager.UNLOCK_LEVEL_BOMB && !prefs.hasSeenBoosterIntro("BOMB")) {
+            introType = BubbleType.BOMB;
+            worldName = "World 2 • Crystal Caverns";
+        }
+
+        if (introType != null) {
+            final BubbleType typeToUnlock = introType;
+            prefs.setSeenBoosterIntro(typeToUnlock.name(), true);
+            prefs.grantBoosterUnlockReward(typeToUnlock);
+            updateBoosterCounts();
+
+            BoosterIntroDialog.show(this, typeToUnlock, worldName, this::updateBoosterCounts);
+        }
     }
 
     private void loadEndlessMode() {
@@ -242,6 +380,7 @@ public class GameActivity extends BaseActivity implements GameEngine.GameEventLi
         }
 
         resetStarProgressNodes(thresholds);
+        updateBoosterCounts();
         gameEngine.loadEndlessMode(personalBest, thresholds, null);
     }
 
@@ -693,6 +832,7 @@ public class GameActivity extends BaseActivity implements GameEngine.GameEventLi
         if (binding != null && binding.bubbleGameView != null) {
             binding.bubbleGameView.resume();
         }
+        updateBoosterCounts();
 
         // Only auto-show pause dialog if the app was actively sent to background during gameplay
         if (wasBackgrounded) {

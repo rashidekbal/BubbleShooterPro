@@ -878,9 +878,9 @@
                     android:shadowRadius="3"
                     android:layout_marginBottom="@dimen/dp_8" />
 
-                <!-- Bomb Booster Card -->
+                <!-- 1a. Bomb Booster (+1) -->
                 <LinearLayout
-                    android:id="@+id/cardShopBuyBomb"
+                    android:id="@+id/cardShopBuyBomb1"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
@@ -921,13 +921,13 @@
                     </LinearLayout>
 
                     <androidx.appcompat.widget.AppCompatButton
-                        android:id="@+id/btnShopBuyBomb"
+                        android:id="@+id/btnShopBuyBomb1"
                         android:layout_width="@dimen/dp_96"
                         android:layout_height="@dimen/dp_40"
                         android:background="@drawable/btn_pill_blank_yellow"
                         app:backgroundTint="@null"
                         android:paddingBottom="@dimen/dp_4"
-                        android:text="💎 40"
+                        android:text="💎 15"
                         android:textColor="#FFFFFF"
                         android:textSize="@dimen/sp_14"
                         android:textStyle="bold"
@@ -937,9 +937,68 @@
                         android:shadowRadius="2" />
                 </LinearLayout>
 
-                <!-- Fireball Booster Card -->
+                <!-- 1b. Bomb Booster Pack (+3) -->
                 <LinearLayout
-                    android:id="@+id/cardShopBuyFireball"
+                    android:id="@+id/cardShopBuyBomb3"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:background="@drawable/bg_store_item_card"
+                    android:padding="@dimen/dp_12"
+                    android:layout_marginBottom="@dimen/dp_10"
+                    android:clickable="true"
+                    android:focusable="true">
+
+                    <ImageView
+                        android:layout_width="@dimen/dp_48"
+                        android:layout_height="@dimen/dp_48"
+                        android:src="@drawable/bomb_bubble" />
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_marginStart="@dimen/dp_12"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Bomb Pack (+3)"
+                            android:textColor="#1E293B"
+                            android:textSize="@dimen/sp_15"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="3x Bomb Boosters • Best Value"
+                            android:textColor="#059669"
+                            android:textSize="@dimen/sp_12"
+                            android:textStyle="bold" />
+                    </LinearLayout>
+
+                    <androidx.appcompat.widget.AppCompatButton
+                        android:id="@+id/btnShopBuyBomb3"
+                        android:layout_width="@dimen/dp_96"
+                        android:layout_height="@dimen/dp_40"
+                        android:background="@drawable/btn_pill_blank_green"
+                        app:backgroundTint="@null"
+                        android:paddingBottom="@dimen/dp_4"
+                        android:text="💎 40"
+                        android:textColor="#FFFFFF"
+                        android:textSize="@dimen/sp_14"
+                        android:textStyle="bold"
+                        android:shadowColor="#60000000"
+                        android:shadowDx="1"
+                        android:shadowDy="2"
+                        android:shadowRadius="2" />
+                </LinearLayout>
+
+                <!-- 2a. Fireball Booster (+1) -->
+                <LinearLayout
+                    android:id="@+id/cardShopBuyFireball1"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
@@ -980,13 +1039,13 @@
                     </LinearLayout>
 
                     <androidx.appcompat.widget.AppCompatButton
-                        android:id="@+id/btnShopBuyFireball"
+                        android:id="@+id/btnShopBuyFireball1"
                         android:layout_width="@dimen/dp_96"
                         android:layout_height="@dimen/dp_40"
                         android:background="@drawable/btn_pill_blank_yellow"
                         app:backgroundTint="@null"
                         android:paddingBottom="@dimen/dp_4"
-                        android:text="💎 40"
+                        android:text="💎 15"
                         android:textColor="#FFFFFF"
                         android:textSize="@dimen/sp_14"
                         android:textStyle="bold"
@@ -996,15 +1055,75 @@
                         android:shadowRadius="2" />
                 </LinearLayout>
 
-                <!-- Rainbow Booster Card -->
+                <!-- 2b. Fireball Booster Pack (+3) -->
                 <LinearLayout
-                    android:id="@+id/cardShopBuyRainbow"
+                    android:id="@+id/cardShopBuyFireball3"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
                     android:gravity="center_vertical"
                     android:background="@drawable/bg_store_item_card"
                     android:padding="@dimen/dp_12"
+                    android:layout_marginBottom="@dimen/dp_10"
+                    android:clickable="true"
+                    android:focusable="true">
+
+                    <ImageView
+                        android:layout_width="@dimen/dp_48"
+                        android:layout_height="@dimen/dp_48"
+                        android:src="@drawable/fireball_bubble" />
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_marginStart="@dimen/dp_12"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Fireball Pack (+3)"
+                            android:textColor="#1E293B"
+                            android:textSize="@dimen/sp_15"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="3x Fireball Boosters • Best Value"
+                            android:textColor="#059669"
+                            android:textSize="@dimen/sp_12"
+                            android:textStyle="bold" />
+                    </LinearLayout>
+
+                    <androidx.appcompat.widget.AppCompatButton
+                        android:id="@+id/btnShopBuyFireball3"
+                        android:layout_width="@dimen/dp_96"
+                        android:layout_height="@dimen/dp_40"
+                        android:background="@drawable/btn_pill_blank_green"
+                        app:backgroundTint="@null"
+                        android:paddingBottom="@dimen/dp_4"
+                        android:text="💎 40"
+                        android:textColor="#FFFFFF"
+                        android:textSize="@dimen/sp_14"
+                        android:textStyle="bold"
+                        android:shadowColor="#60000000"
+                        android:shadowDx="1"
+                        android:shadowDy="2"
+                        android:shadowRadius="2" />
+                </LinearLayout>
+
+                <!-- 3a. Rainbow Booster (+1) -->
+                <LinearLayout
+                    android:id="@+id/cardShopBuyRainbow1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:background="@drawable/bg_store_item_card"
+                    android:padding="@dimen/dp_12"
+                    android:layout_marginBottom="@dimen/dp_10"
                     android:clickable="true"
                     android:focusable="true">
 
@@ -1038,17 +1157,193 @@
                     </LinearLayout>
 
                     <androidx.appcompat.widget.AppCompatButton
-                        android:id="@+id/btnShopBuyRainbow"
+                        android:id="@+id/btnShopBuyRainbow1"
                         android:layout_width="@dimen/dp_96"
                         android:layout_height="@dimen/dp_40"
                         android:background="@drawable/btn_pill_blank_yellow"
+                        app:backgroundTint="@null"
+                        android:paddingBottom="@dimen/dp_4"
+                        android:text="💎 20"
+                        android:textColor="#FFFFFF"
+                        android:textSize="@dimen/sp_14"
+                        android:textStyle="bold"
+                        android:shadowColor="#805B210B"
+                        android:shadowDx="1"
+                        android:shadowDy="2"
+                        android:shadowRadius="2" />
+                </LinearLayout>
+
+                <!-- 3b. Rainbow Booster Pack (+3) -->
+                <LinearLayout
+                    android:id="@+id/cardShopBuyRainbow3"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:background="@drawable/bg_store_item_card"
+                    android:padding="@dimen/dp_12"
+                    android:layout_marginBottom="@dimen/dp_10"
+                    android:clickable="true"
+                    android:focusable="true">
+
+                    <ImageView
+                        android:layout_width="@dimen/dp_48"
+                        android:layout_height="@dimen/dp_48"
+                        android:src="@drawable/rainbow_bubble" />
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_marginStart="@dimen/dp_12"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Rainbow Pack (+3)"
+                            android:textColor="#1E293B"
+                            android:textSize="@dimen/sp_15"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="3x Rainbow Wildcards • Best Value"
+                            android:textColor="#059669"
+                            android:textSize="@dimen/sp_12"
+                            android:textStyle="bold" />
+                    </LinearLayout>
+
+                    <androidx.appcompat.widget.AppCompatButton
+                        android:id="@+id/btnShopBuyRainbow3"
+                        android:layout_width="@dimen/dp_96"
+                        android:layout_height="@dimen/dp_40"
+                        android:background="@drawable/btn_pill_blank_green"
                         app:backgroundTint="@null"
                         android:paddingBottom="@dimen/dp_4"
                         android:text="💎 50"
                         android:textColor="#FFFFFF"
                         android:textSize="@dimen/sp_14"
                         android:textStyle="bold"
+                        android:shadowColor="#60000000"
+                        android:shadowDx="1"
+                        android:shadowDy="2"
+                        android:shadowRadius="2" />
+                </LinearLayout>
+
+                <!-- 4a. Lightning Booster (+1) -->
+                <LinearLayout
+                    android:id="@+id/cardShopBuyLightning1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:background="@drawable/bg_store_item_card"
+                    android:padding="@dimen/dp_12"
+                    android:layout_marginBottom="@dimen/dp_10"
+                    android:clickable="true"
+                    android:focusable="true">
+
+                    <ImageView
+                        android:layout_width="@dimen/dp_48"
+                        android:layout_height="@dimen/dp_48"
+                        android:src="@drawable/lightning_bubble" />
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_marginStart="@dimen/dp_12"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Lightning Booster (+1)"
+                            android:textColor="#1E293B"
+                            android:textSize="@dimen/sp_15"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/tvShopInventoryLightning"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Clears full row • In bag: 0"
+                            android:textColor="#64748B"
+                            android:textSize="@dimen/sp_12" />
+                    </LinearLayout>
+
+                    <androidx.appcompat.widget.AppCompatButton
+                        android:id="@+id/btnShopBuyLightning1"
+                        android:layout_width="@dimen/dp_96"
+                        android:layout_height="@dimen/dp_40"
+                        android:background="@drawable/btn_pill_blank_yellow"
+                        app:backgroundTint="@null"
+                        android:paddingBottom="@dimen/dp_4"
+                        android:text="💎 20"
+                        android:textColor="#FFFFFF"
+                        android:textSize="@dimen/sp_14"
+                        android:textStyle="bold"
                         android:shadowColor="#805B210B"
+                        android:shadowDx="1"
+                        android:shadowDy="2"
+                        android:shadowRadius="2" />
+                </LinearLayout>
+
+                <!-- 4b. Lightning Booster Pack (+3) -->
+                <LinearLayout
+                    android:id="@+id/cardShopBuyLightning3"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:background="@drawable/bg_store_item_card"
+                    android:padding="@dimen/dp_12"
+                    android:clickable="true"
+                    android:focusable="true">
+
+                    <ImageView
+                        android:layout_width="@dimen/dp_48"
+                        android:layout_height="@dimen/dp_48"
+                        android:src="@drawable/lightning_bubble" />
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_marginStart="@dimen/dp_12"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Lightning Pack (+3)"
+                            android:textColor="#1E293B"
+                            android:textSize="@dimen/sp_15"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="3x Lightning Strikes • Best Value"
+                            android:textColor="#059669"
+                            android:textSize="@dimen/sp_12"
+                            android:textStyle="bold" />
+                    </LinearLayout>
+
+                    <androidx.appcompat.widget.AppCompatButton
+                        android:id="@+id/btnShopBuyLightning3"
+                        android:layout_width="@dimen/dp_96"
+                        android:layout_height="@dimen/dp_40"
+                        android:background="@drawable/btn_pill_blank_green"
+                        app:backgroundTint="@null"
+                        android:paddingBottom="@dimen/dp_4"
+                        android:text="💎 50"
+                        android:textColor="#FFFFFF"
+                        android:textSize="@dimen/sp_14"
+                        android:textStyle="bold"
+                        android:shadowColor="#60000000"
                         android:shadowDx="1"
                         android:shadowDy="2"
                         android:shadowRadius="2" />

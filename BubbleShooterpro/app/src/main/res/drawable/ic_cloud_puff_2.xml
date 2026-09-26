@@ -1,0 +1,36 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
+    android:width="220dp"
+    android:height="130dp"
+    android:viewportWidth="220"
+    android:viewportHeight="130">
+
+    <!-- Soft Cloud Shadow -->
+    <path
+        android:pathData="M30,110 C13.4,110 0,96.6 0,80 C0,65.2 10.7,52.8 25,50.4 C29.4,26.2 50.4,8 76,8 C93.6,8 109.1,17.7 117.8,32.2 C125.2,26.1 134.8,22.4 145.2,22.4 C166.7,22.4 184.5,38.2 187.2,59.3 C205.8,61.5 220,77.4 220,96.8 C220,115.1 205.1,130 186.8,130 L30,130 Z"
+        android:fillColor="#3094A3B8" />
+
+    <!-- Main Cloud Body Gradient -->
+    <path
+        android:pathData="M30,102 C14.5,102 2,89.5 2,74 C2,60.2 12,48.6 25.3,46.4 C29.5,23.8 49.2,6.8 73.1,6.8 C89.6,6.8 104.1,15.9 112.2,29.5 C119.2,23.8 128.2,20.4 138,20.4 C158.1,20.4 174.8,35.2 177.3,55 C194.7,57 208,71.9 208,90 C208,107.1 194.1,121 177,121 L30,121 Z">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:startX="105"
+                android:startY="7"
+                android:endX="105"
+                android:endY="121"
+                android:type="linear">
+                <item android:offset="0.0" android:color="#F8FFFFFF" />
+                <item android:offset="0.45" android:color="#EFF8FAFC" />
+                <item android:offset="0.8" android:color="#D0E2E8F0" />
+                <item android:offset="1.0" android:color="#A0CBD5E1" />
+            </gradient>
+        </aapt:attr>
+    </path>
+
+    <!-- Fluffy Highlight -->
+    <path
+        android:fillColor="#70FFFFFF"
+        android:pathData="M73,9 C52,9 34,24 28,45 C32,46 36,47 40,47 C62,47 80,33 86,14 C82,10 77.5,9 73,9 Z" />
+
+</vector>

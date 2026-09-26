@@ -15,10 +15,16 @@ public class TrajectoryCalculator {
     public static class TrajectoryResult {
         public final List<PointF> points;
         public final boolean bounceLimitExceeded;
+        public final int bounceCount;
 
-        public TrajectoryResult(List<PointF> points, boolean bounceLimitExceeded) {
+        public TrajectoryResult(List<PointF> points, boolean bounceLimitExceeded, int bounceCount) {
             this.points = points;
             this.bounceLimitExceeded = bounceLimitExceeded;
+            this.bounceCount = bounceCount;
+        }
+
+        public TrajectoryResult(List<PointF> points, boolean bounceLimitExceeded) {
+            this(points, bounceLimitExceeded, 0);
         }
     }
 
@@ -142,6 +148,6 @@ public class TrajectoryCalculator {
             points.add(new PointF(rx, ry));
         }
 
-        return new TrajectoryResult(points, bounceLimitExceeded);
+        return new TrajectoryResult(points, bounceLimitExceeded, bounces);
     }
 }

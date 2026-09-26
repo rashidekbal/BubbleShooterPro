@@ -84,6 +84,11 @@ public class GameEngine {
     private float aimAngleRad = (float) (-Math.PI / 2.0); // straight up
     private List<PointF> trajectoryPoints = new ArrayList<>();
     private final Path laserPath = new Path();
+    private int trajectoryBounces = 0;
+    private PointF projectedLandingPoint = null;
+    private GridPosition projectedLandingPos = null;
+    private final List<GridPosition> projectedPoppedPositions = new ArrayList<>();
+    private float aimPulseTimer = 0f;
 
     private Bubble currentBubble;
     private Bubble nextBubble;
@@ -765,6 +770,10 @@ public class GameEngine {
                 trajectoryPoints.clear();
             }
             isFireballBlocked = false;
+            trajectoryBounces = 0;
+            projectedLandingPoint = null;
+            projectedLandingPos = null;
+            projectedPoppedPositions.clear();
             return;
         }
 
@@ -781,6 +790,27 @@ public class GameEngine {
 
         this.trajectoryPoints = result.points;
         this.isFireballBlocked = isFireball && result.bounceLimitExceeded;
+        this.trajectoryBounces = result.bounceCount;
+
+        this.projectedLandingPoint = null;
+        this.projectedLandingPos = null;
+        this.projectedPoppedPositions.clear();
+
+        // Landing circle & pop highlights only activate for direct aim (0 bounce) or 1st indirect (1 bounce)
+        if (trajectoryBounces <= 1 && trajectoryPoints != null && !trajectoryPoints.isEmpty() && !isFireballBlocked) {
+            PointF hitPt = trajectoryPoints.get(trajectoryPoints.size() - 1);
+            GridPosition snapPos = board.findNearestSnapPosition(hitPt.x, hitPt.y);
+            if (snapPos != null) {
+                this.projectedLandingPos = snapPos;
+                this.projectedLandingPoint = new PointF(grid.getCenterX(snapPos.row, snapPos.col), grid.getCenterY(snapPos.row));
+                List<GridPosition> matches = board.previewMatches(snapPos, currentBubble.getColor(), currentBubble.getType());
+                if (matches != null && !matches.isEmpty()) {
+                    this.projectedPoppedPositions.addAll(matches);
+                }
+            } else if (hitPt.y <= boardTop + bubbleRadius * 1.5f) {
+                this.projectedLandingPoint = new PointF(hitPt.x, boardTop + bubbleRadius);
+            }
+        }
     }
 
     private void shoot() {
@@ -860,6 +890,7 @@ public class GameEngine {
         }
 
         dangerPulseTimer += dt;
+        aimPulseTimer += dt;
 
         // 0. Update launcher reload jump & pop-in animation
         if (isLauncherReloading) {
@@ -1529,6 +1560,12 @@ public class GameEngine {
             }
         }
 
+        // 2b. Draw Pop Cluster Highlight Circles (Targeted matching bubbles on direct or 1st indirect aim)
+        drawPopClusterHighlights(canvas, paint);
+
+        // 2c. Draw Aiming Landing Ghost Circle
+        drawAimingLandingCircle(canvas, paint);
+
         // 3. Draw Popping and Falling Bubbles
         for (Bubble b : poppingBubbles) {
             b.draw(canvas, paint);
@@ -1551,6 +1588,125 @@ public class GameEngine {
         // 7. Draw Floating Texts
         for (FloatingText ft : floatingTexts) {
             ft.draw(canvas, paint);
+        }
+    }
+
+    private void drawAimingLandingCircle(Canvas canvas, Paint paint) {
+        if (state != GameState.AIMING || isAimCancelled || isFireballBlocked
+                || trajectoryBounces > 1 || projectedLandingPoint == null || currentBubble == null) {
+            return;
+        }
+
+        float lx = projectedLandingPoint.x;
+        float ly = projectedLandingPoint.y;
+        float pulse = (float) (0.94 + 0.06 * Math.sin(aimPulseTimer * 8.0));
+        float curRadius = bubbleRadius * pulse;
+
+        int primaryColor = (currentBubble.getColor() != null) ? currentBubble.getColor().primaryColor : Color.WHITE;
+        int lightColor = (currentBubble.getColor() != null) ? currentBubble.getColor().lightColor : Color.WHITE;
+
+        // 1. Subtle Translucent Fill
+        paint.setStyle(Paint.Style.FILL);
+        paint.setColor(primaryColor);
+        paint.setAlpha(45);
+        canvas.drawCircle(lx, ly, curRadius * 0.92f, paint);
+
+        // 2. Outer Glowing Halo
+        paint.setStyle(Paint.Style.STROKE);
+        paint.setStrokeCap(Paint.Cap.ROUND);
+        paint.setColor(lightColor);
+        paint.setAlpha(85);
+        paint.setStrokeWidth(bubbleRadius * 0.28f);
+        canvas.drawCircle(lx, ly, curRadius, paint);
+
+        // 3. Crisp Dashed Targeting Ring (rotates smoothly with aimPulseTimer)
+        DashPathEffect dashEffect = new DashPathEffect(new float[]{12f, 8f}, aimPulseTimer * 18f);
+        paint.setPathEffect(dashEffect);
+        paint.setColor(Color.WHITE);
+        paint.setAlpha(240);
+        paint.setStrokeWidth(3.5f);
+        canvas.drawCircle(lx, ly, curRadius, paint);
+        paint.setPathEffect(null);
+
+        // 4. Center Aiming Pip / Crosshair
+        paint.setStyle(Paint.Style.FILL);
+        paint.setColor(Color.WHITE);
+        paint.setAlpha(230);
+        canvas.drawCircle(lx, ly, bubbleRadius * 0.16f, paint);
+
+        // Reticle ticks
+        paint.setStyle(Paint.Style.STROKE);
+        paint.setColor(Color.WHITE);
+        paint.setAlpha(220);
+        paint.setStrokeWidth(2.5f);
+        float tickLen = bubbleRadius * 0.24f;
+        canvas.drawLine(lx - curRadius * 0.88f, ly, lx - curRadius * 0.88f + tickLen, ly, paint);
+        canvas.drawLine(lx + curRadius * 0.88f, ly, lx + curRadius * 0.88f - tickLen, ly, paint);
+        canvas.drawLine(lx, ly - curRadius * 0.88f, lx, ly - curRadius * 0.88f + tickLen, paint);
+        canvas.drawLine(lx, ly + curRadius * 0.88f, lx, ly + curRadius * 0.88f - tickLen, paint);
+    }
+
+    private void drawPopClusterHighlights(Canvas canvas, Paint paint) {
+        if (state != GameState.AIMING || isAimCancelled || isFireballBlocked
+                || trajectoryBounces > 1 || projectedPoppedPositions.isEmpty()) {
+            return;
+        }
+
+        for (GridPosition pos : projectedPoppedPositions) {
+            Bubble b = grid.getBubble(pos);
+            if (b == null || b.isPopping() || b.isFalling()) continue;
+
+            float bx = b.getX();
+            float by = b.getY();
+            float phaseOffset = (pos.row * 7 + pos.col * 3) * 0.4f;
+            float pulse = (float) (1.0 + 0.08 * Math.sin(aimPulseTimer * 9.0 + phaseOffset));
+            float ringRadius = bubbleRadius * pulse;
+
+            int popGlow = (b.getColor() != null) ? b.getColor().lightColor : Color.WHITE;
+
+            // 1. Pulsing Outer Glow Aura
+            paint.setStyle(Paint.Style.STROKE);
+            paint.setStrokeCap(Paint.Cap.ROUND);
+            paint.setColor(popGlow);
+            paint.setAlpha((int) (80 + 35 * Math.sin(aimPulseTimer * 9.0 + phaseOffset)));
+            paint.setStrokeWidth(bubbleRadius * 0.32f);
+            canvas.drawCircle(bx, by, ringRadius, paint);
+
+            // 2. Crisp Solid White/Gold Targeting Ring
+            paint.setColor(Color.WHITE);
+            paint.setAlpha(255);
+            paint.setStrokeWidth(3.8f);
+            canvas.drawCircle(bx, by, ringRadius, paint);
+
+            // 3. Subtle translucent inner pulse highlight
+            paint.setStyle(Paint.Style.FILL);
+            paint.setColor(popGlow);
+            paint.setAlpha(38);
+            canvas.drawCircle(bx, by, ringRadius * 0.90f, paint);
+
+            // 4. Modern arcade targeting bracket ticks around the bubble
+            paint.setStyle(Paint.Style.STROKE);
+            paint.setColor(Color.WHITE);
+            paint.setAlpha(220);
+            paint.setStrokeWidth(3.0f);
+            float cornerDist = ringRadius * 0.92f;
+            float bracketSize = bubbleRadius * 0.22f;
+
+            // Top-Left bracket
+            canvas.drawLine(bx - cornerDist, by - cornerDist + bracketSize, bx - cornerDist, by - cornerDist, paint);
+            canvas.drawLine(bx - cornerDist, by - cornerDist, bx - cornerDist + bracketSize, by - cornerDist, paint);
+
+            // Top-Right bracket
+            canvas.drawLine(bx + cornerDist, by - cornerDist + bracketSize, bx + cornerDist, by - cornerDist, paint);
+            canvas.drawLine(bx + cornerDist, by - cornerDist, bx + cornerDist - bracketSize, by - cornerDist, paint);
+
+            // Bottom-Left bracket
+            canvas.drawLine(bx - cornerDist, by + cornerDist - bracketSize, bx - cornerDist, by + cornerDist, paint);
+            canvas.drawLine(bx - cornerDist, by + cornerDist, bx - cornerDist + bracketSize, by + cornerDist, paint);
+
+            // Bottom-Right bracket
+            canvas.drawLine(bx + cornerDist, by + cornerDist - bracketSize, bx + cornerDist, by + cornerDist, paint);
+            canvas.drawLine(bx + cornerDist, by + cornerDist, bx + cornerDist - bracketSize, by + cornerDist, paint);
         }
     }
 

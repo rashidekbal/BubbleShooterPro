@@ -1,0 +1,85 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
+    android:width="72dp"
+    android:height="72dp"
+    android:viewportWidth="96"
+    android:viewportHeight="96">
+
+    <!-- Outer Glow / Shadow -->
+    <path
+        android:fillColor="#50000000"
+        android:pathData="M48,16 C34.7,16 24,26.7 24,40 L24,48 C19.6,48 16,51.6 16,56 L16,84 C16,88.4 19.6,92 24,92 L72,92 C76.4,92 80,88.4 80,84 L80,56 C80,51.6 76.4,48 72,48 L72,40 C72,26.7 61.3,16 48,16 Z" />
+
+    <!-- Shackle (Arch) Shadow -->
+    <path
+        android:fillColor="#475569"
+        android:pathData="M48,12 C34.7,12 24,22.7 24,36 L24,50 L34,50 L34,36 C34,28.3 40.3,22 48,22 C55.7,22 62,28.3 62,36 L62,50 L72,50 L72,36 C72,22.7 61.3,12 48,12 Z" />
+
+    <!-- Shackle (Arch) Chrome/Silver Gradient -->
+    <path
+        android:pathData="M48,14 C35.8,14 26,23.8 26,36 L26,48 L34,48 L34,36 C34,28.3 40.3,22 48,22 C55.7,22 62,28.3 62,36 L62,48 L70,48 L70,36 C70,23.8 60.2,14 48,14 Z">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:startX="26"
+                android:startY="14"
+                android:endX="70"
+                android:endY="48"
+                android:type="linear">
+                <item android:offset="0.0" android:color="#FFF8FAFC" />
+                <item android:offset="0.35" android:color="#FFE2E8F0" />
+                <item android:offset="0.7" android:color="#FF94A3B8" />
+                <item android:offset="1.0" android:color="#FF64748B" />
+            </gradient>
+        </aapt:attr>
+    </path>
+
+    <!-- Lock Body (3D Gold Rounded Rectangle) -->
+    <path
+        android:pathData="M22,46 L74,46 A6,6 0 0,1 80,52 L80,84 A8,8 0 0,1 72,92 L24,92 A8,8 0 0,1 16,84 L16,52 A6,6 0 0,1 22,46 Z">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:startX="48"
+                android:startY="46"
+                android:endX="48"
+                android:endY="92"
+                android:type="linear">
+                <item android:offset="0.0" android:color="#FFFFF085" />
+                <item android:offset="0.25" android:color="#FFFBBF24" />
+                <item android:offset="0.65" android:color="#FFF59E0B" />
+                <item android:offset="0.9" android:color="#FFD97706" />
+                <item android:offset="1.0" android:color="#FF92400E" />
+            </gradient>
+        </aapt:attr>
+    </path>
+
+    <!-- Lock Body Rim / Bevel Highlight (Top glossy edge) -->
+    <path
+        android:fillColor="#FFFFFBEB"
+        android:pathData="M22,47 L74,47 A5,5 0 0,1 79,52 L79,54 L17,54 L17,52 A5,5 0 0,1 22,47 Z" />
+
+    <!-- Lock Body Dark Bottom Rim -->
+    <path
+        android:fillColor="#78350F"
+        android:pathData="M16,83 L80,83 L80,85 A7,7 0 0,1 73,92 L23,92 A7,7 0 0,1 16,85 Z" />
+
+    <!-- Center Keyhole Inset Shadow Circle -->
+    <path
+        android:fillColor="#451A03"
+        android:pathData="M48,64m-9,0a9,9 0 1,1 18,0a9,9 0 1,1 -18,0" />
+
+    <!-- Keyhole Slot -->
+    <path
+        android:fillColor="#1E1B4B"
+        android:pathData="M48,58 A5,5 0 0,0 43,63 C43,65.2 44.5,67.1 46.5,67.7 L45,78 L51,78 L49.5,67.7 C51.5,67.1 53,65.2 53,63 A5,5 0 0,0 48,58 Z" />
+
+    <!-- Keyhole Glint -->
+    <path
+        android:fillColor="#93C5FD"
+        android:pathData="M47,60 A2,2 0 0,0 45,62 A1,1 0 0,0 47,62 A1,1 0 0,0 47,60 Z" />
+
+    <!-- Specular Highlight Star (Top-Left of Gold Body) -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M26,50 L27.5,54.5 L32,56 L27.5,57.5 L26,62 L24.5,57.5 L20,56 L24.5,54.5 Z" />
+
+</vector>

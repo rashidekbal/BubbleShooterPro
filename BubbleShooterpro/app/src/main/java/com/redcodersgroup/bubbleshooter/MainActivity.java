@@ -199,8 +199,10 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         binding.viewPagerWorldMaps.setAdapter(worldMapAdapter);
-        // Start at World 1 (which is the LAST page in reversed order)
-        int initialPagerPos = worldMapAdapter.toPagerPosition(0);
+        // Start at player's current world
+        int startLevel = prefs.getHighestUnlockedLevel();
+        int initialWorldIndex = worldConfigManager.getWorldIndexForLevel(startLevel);
+        int initialPagerPos = worldMapAdapter.toPagerPosition(initialWorldIndex);
         binding.viewPagerWorldMaps.setCurrentItem(initialPagerPos, false);
 
         binding.viewPagerWorldMaps.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
@@ -214,7 +216,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
         // Initial world title update
-        updateWorldSwitcherUI(0);
+        updateWorldSwitcherUI(initialWorldIndex);
         updateProfileUI();
         updateDiamondsUI();
         updateLivesUI();
@@ -257,7 +259,13 @@ public class MainActivity extends AppCompatActivity {
     private void updateWorldSwitcherUI(int worldIndex) {
         WorldModel world = worldConfigManager.getWorldByIndex(worldIndex);
         if (world != null && binding.tvCurrentWorldTitle != null) {
-            binding.tvCurrentWorldTitle.setText(world.subtitle);
+            int currentLevel = prefs.getHighestUnlockedLevel();
+            int highestUnlockedWorldIndex = worldConfigManager.getWorldIndexForLevel(currentLevel);
+            if (worldIndex > highestUnlockedWorldIndex) {
+                binding.tvCurrentWorldTitle.setText("🔒 " + world.subtitle + " (Locked)");
+            } else {
+                binding.tvCurrentWorldTitle.setText(world.subtitle);
+            }
         }
     }
 
@@ -273,15 +281,15 @@ public class MainActivity extends AppCompatActivity {
         binding.tvFloatingLevelNumber.setText(String.valueOf(currentLevel));
         binding.tvStarChestProgress.setText((totalStars % 20) + "/20");
 
+        if (worldMapAdapter != null) {
+            worldMapAdapter.notifyDataSetChanged();
+        }
+
         int targetWorldIndex = worldConfigManager.getWorldIndexForLevel(currentLevel);
         int pagerPos = worldMapAdapter.toPagerPosition(targetWorldIndex);
         android.util.Log.d("MainActivity", "onResume: highestUnlockedLevel=" + currentLevel + " -> worldIndex=" + targetWorldIndex + " -> pagerPos=" + pagerPos);
         binding.viewPagerWorldMaps.setCurrentItem(pagerPos, false);
         updateWorldSwitcherUI(targetWorldIndex);
-
-        if (worldMapAdapter != null) {
-            worldMapAdapter.notifyDataSetChanged();
-        }
 
         int endlessHigh = prefs.getEndlessHighScore();
         if (endlessHigh > 0) {

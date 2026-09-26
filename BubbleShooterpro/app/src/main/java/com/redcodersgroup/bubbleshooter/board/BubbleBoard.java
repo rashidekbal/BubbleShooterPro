@@ -26,6 +26,37 @@ public class BubbleBoard {
     }
 
     /**
+     * Previews what existing grid bubbles would be popped if a bubble of (color, type) landed at snapPos.
+     * Does NOT mutate the grid permanently.
+     */
+    public List<GridPosition> previewMatches(GridPosition snapPos, BubbleColor color, BubbleType type) {
+        if (snapPos == null || color == null) return new ArrayList<>();
+
+        // If cell is already occupied, cannot snap here
+        if (grid.getBubble(snapPos) != null) return new ArrayList<>();
+
+        // Temporarily place simulated bubble
+        Bubble tempBubble = new Bubble(color, type != null ? type : BubbleType.NORMAL, snapPos);
+        grid.setBubble(snapPos, tempBubble);
+
+        List<GridPosition> matches;
+        try {
+            matches = findMatches(snapPos);
+        } finally {
+            grid.removeBubble(snapPos);
+        }
+
+        // Return only existing board bubbles that would pop (excluding snapPos itself)
+        List<GridPosition> existingPopped = new ArrayList<>();
+        for (GridPosition pos : matches) {
+            if (!pos.equals(snapPos)) {
+                existingPopped.add(pos);
+            }
+        }
+        return existingPopped;
+    }
+
+    /**
      * Finds matching connected bubbles of the same color starting at startPos.
      * Special handling for Fireball (incinerate blast), Lightning (row vaporize), Bomb (radius burst, direct hits, chain explosions),
      * Rainbow (wildcard), and Stone (unbreakable by normal/rainbow, crushed only by powers).

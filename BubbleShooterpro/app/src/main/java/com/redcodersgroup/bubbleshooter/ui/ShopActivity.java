@@ -125,15 +125,30 @@ public class ShopActivity extends BaseActivity {
         binding.cardShopBuyChest.setOnClickListener(v -> handleDiamondPackPurchase(1500, "Royal Chest"));
         binding.btnShopBuyChest.setOnClickListener(v -> handleDiamondPackPurchase(1500, "Royal Chest"));
 
-        // 9. Boosters
-        binding.cardShopBuyBomb.setOnClickListener(v -> handleBoosterPurchase("BOMB", 40));
-        binding.btnShopBuyBomb.setOnClickListener(v -> handleBoosterPurchase("BOMB", 40));
+        // 9. Boosters (Individual +1 Single & +3 Pack Cards)
+        binding.cardShopBuyBomb1.setOnClickListener(v -> handleBoosterPurchase("BOMB", 1, 15));
+        binding.btnShopBuyBomb1.setOnClickListener(v -> handleBoosterPurchase("BOMB", 1, 15));
 
-        binding.cardShopBuyFireball.setOnClickListener(v -> handleBoosterPurchase("FIREBALL", 40));
-        binding.btnShopBuyFireball.setOnClickListener(v -> handleBoosterPurchase("FIREBALL", 40));
+        binding.cardShopBuyBomb3.setOnClickListener(v -> handleBoosterPurchase("BOMB", 3, 40));
+        binding.btnShopBuyBomb3.setOnClickListener(v -> handleBoosterPurchase("BOMB", 3, 40));
 
-        binding.cardShopBuyRainbow.setOnClickListener(v -> handleBoosterPurchase("RAINBOW", 50));
-        binding.btnShopBuyRainbow.setOnClickListener(v -> handleBoosterPurchase("RAINBOW", 50));
+        binding.cardShopBuyFireball1.setOnClickListener(v -> handleBoosterPurchase("FIREBALL", 1, 15));
+        binding.btnShopBuyFireball1.setOnClickListener(v -> handleBoosterPurchase("FIREBALL", 1, 15));
+
+        binding.cardShopBuyFireball3.setOnClickListener(v -> handleBoosterPurchase("FIREBALL", 3, 40));
+        binding.btnShopBuyFireball3.setOnClickListener(v -> handleBoosterPurchase("FIREBALL", 3, 40));
+
+        binding.cardShopBuyRainbow1.setOnClickListener(v -> handleBoosterPurchase("RAINBOW", 1, 20));
+        binding.btnShopBuyRainbow1.setOnClickListener(v -> handleBoosterPurchase("RAINBOW", 1, 20));
+
+        binding.cardShopBuyRainbow3.setOnClickListener(v -> handleBoosterPurchase("RAINBOW", 3, 50));
+        binding.btnShopBuyRainbow3.setOnClickListener(v -> handleBoosterPurchase("RAINBOW", 3, 50));
+
+        binding.cardShopBuyLightning1.setOnClickListener(v -> handleBoosterPurchase("LIGHTNING", 1, 20));
+        binding.btnShopBuyLightning1.setOnClickListener(v -> handleBoosterPurchase("LIGHTNING", 1, 20));
+
+        binding.cardShopBuyLightning3.setOnClickListener(v -> handleBoosterPurchase("LIGHTNING", 3, 50));
+        binding.btnShopBuyLightning3.setOnClickListener(v -> handleBoosterPurchase("LIGHTNING", 3, 50));
     }
 
     private void selectTab(String tab, boolean playSound) {
@@ -170,6 +185,7 @@ public class ShopActivity extends BaseActivity {
         int bomb = prefs.getBombBoosters();
         int fireball = prefs.getFireballBoosters();
         int rainbow = prefs.getRainbowBoosters();
+        int lightning = prefs.getLightningBoosters();
 
         binding.tvShopInventoryBomb.setText(
                 android.text.Html.fromHtml("Explodes radius • In bag: <b>" + bomb + "</b>", android.text.Html.FROM_HTML_MODE_LEGACY)
@@ -179,6 +195,9 @@ public class ShopActivity extends BaseActivity {
         );
         binding.tvShopInventoryRainbow.setText(
                 android.text.Html.fromHtml("Matches any color • In bag: <b>" + rainbow + "</b>", android.text.Html.FROM_HTML_MODE_LEGACY)
+        );
+        binding.tvShopInventoryLightning.setText(
+                android.text.Html.fromHtml("Clears full row • In bag: <b>" + lightning + "</b>", android.text.Html.FROM_HTML_MODE_LEGACY)
         );
     }
 
@@ -367,26 +386,30 @@ public class ShopActivity extends BaseActivity {
         NoticeDialog.showReward(this, "VAULT", "PURCHASE SUCCESS", "+" + diamonds + " DIAMONDS", "Diamonds successfully added to your vault!");
     }
 
-    private void handleBoosterPurchase(String type, int cost) {
+    private void handleBoosterPurchase(String type, int count, int cost) {
         if (prefs.spendDiamonds(cost)) {
             soundManager.playWin();
             String name = "";
             switch (type) {
                 case "BOMB":
-                    prefs.addBombBoosters(3);
-                    name = "3x BOMB BOOSTERS";
+                    prefs.addBombBoosters(count);
+                    name = count + "x BOMB BOOSTER" + (count > 1 ? "S" : "");
                     break;
                 case "FIREBALL":
-                    prefs.addFireballBoosters(3);
-                    name = "3x FIREBALL BOOSTERS";
+                    prefs.addFireballBoosters(count);
+                    name = count + "x FIREBALL BOOSTER" + (count > 1 ? "S" : "");
                     break;
                 case "RAINBOW":
-                    prefs.addRainbowBoosters(3);
-                    name = "3x RAINBOW BOOSTERS";
+                    prefs.addRainbowBoosters(count);
+                    name = count + "x RAINBOW BOOSTER" + (count > 1 ? "S" : "");
+                    break;
+                case "LIGHTNING":
+                    prefs.addLightningBoosters(count);
+                    name = count + "x LIGHTNING BOOSTER" + (count > 1 ? "S" : "");
                     break;
             }
             updateAllUI();
-            NoticeDialog.showReward(this, "STORE", "POWER-UP UNLOCKED", name, "3 boosters added to your battle arsenal!");
+            NoticeDialog.showReward(this, "STORE", "PURCHASE SUCCESS", "+" + count + " " + type + " BOOSTER" + (count > 1 ? "S" : ""), count + " booster" + (count > 1 ? "s" : "") + " added to your battle arsenal!");
         } else {
             soundManager.playClick();
             NoticeDialog.showWarning(this, "WARNING", "INSUFFICIENT DIAMONDS", "NEED MORE DIAMONDS", "You do not have enough diamonds to purchase this booster.");

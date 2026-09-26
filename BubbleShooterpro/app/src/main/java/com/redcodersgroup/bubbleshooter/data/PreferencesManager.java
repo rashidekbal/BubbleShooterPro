@@ -85,36 +85,93 @@ public class PreferencesManager {
         }
     }
 
+    public static final int UNLOCK_LEVEL_BOMB = 21;
+    public static final int UNLOCK_LEVEL_RAINBOW = 41;
+    public static final int UNLOCK_LEVEL_FIREBALL = 61;
+    public static final int UNLOCK_LEVEL_LIGHTNING = 81;
+
+    public static final int FREE_BOOSTERS_ON_UNLOCK = 5;
+
     public int getBombBoosters() {
-        return prefs.getInt(KEY_BOOSTER_BOMB, 99);
+        return prefs.getInt(KEY_BOOSTER_BOMB, 0);
     }
 
     public void setBombBoosters(int count) {
-        prefs.edit().putInt(KEY_BOOSTER_BOMB, count).apply();
+        prefs.edit().putInt(KEY_BOOSTER_BOMB, Math.max(0, count)).apply();
     }
 
     public int getRainbowBoosters() {
-        return prefs.getInt(KEY_BOOSTER_RAINBOW, 99);
+        return prefs.getInt(KEY_BOOSTER_RAINBOW, 0);
     }
 
     public void setRainbowBoosters(int count) {
-        prefs.edit().putInt(KEY_BOOSTER_RAINBOW, count).apply();
+        prefs.edit().putInt(KEY_BOOSTER_RAINBOW, Math.max(0, count)).apply();
     }
 
     public int getLightningBoosters() {
-        return prefs.getInt(KEY_BOOSTER_LIGHTNING, 99);
+        return prefs.getInt(KEY_BOOSTER_LIGHTNING, 0);
     }
 
     public void setLightningBoosters(int count) {
-        prefs.edit().putInt(KEY_BOOSTER_LIGHTNING, count).apply();
+        prefs.edit().putInt(KEY_BOOSTER_LIGHTNING, Math.max(0, count)).apply();
     }
 
     public int getFireballBoosters() {
-        return prefs.getInt(KEY_BOOSTER_FIREBALL, 99);
+        return prefs.getInt(KEY_BOOSTER_FIREBALL, 0);
     }
 
     public void setFireballBoosters(int count) {
-        prefs.edit().putInt(KEY_BOOSTER_FIREBALL, count).apply();
+        prefs.edit().putInt(KEY_BOOSTER_FIREBALL, Math.max(0, count)).apply();
+    }
+
+    public boolean isBoosterUnlocked(com.redcodersgroup.bubbleshooter.bubble.BubbleType type, int levelNumber) {
+        if (type == null) return true;
+        switch (type) {
+            case BOMB:
+                return levelNumber >= UNLOCK_LEVEL_BOMB;
+            case RAINBOW:
+                return levelNumber >= UNLOCK_LEVEL_RAINBOW;
+            case FIREBALL:
+                return levelNumber >= UNLOCK_LEVEL_FIREBALL;
+            case LIGHTNING:
+                return levelNumber >= UNLOCK_LEVEL_LIGHTNING;
+            default:
+                return true;
+        }
+    }
+
+    public boolean isBoosterUnlockedGlobally(com.redcodersgroup.bubbleshooter.bubble.BubbleType type) {
+        return isBoosterUnlocked(type, getHighestUnlockedLevel());
+    }
+
+    public boolean hasSeenBoosterIntro(String boosterType) {
+        if (boosterType == null) return true;
+        return prefs.getBoolean("seen_booster_intro_" + boosterType.toUpperCase(java.util.Locale.ROOT), false);
+    }
+
+    public void setSeenBoosterIntro(String boosterType, boolean seen) {
+        if (boosterType == null) return;
+        prefs.edit().putBoolean("seen_booster_intro_" + boosterType.toUpperCase(java.util.Locale.ROOT), seen).apply();
+    }
+
+    public void grantBoosterUnlockReward(com.redcodersgroup.bubbleshooter.bubble.BubbleType type) {
+        if (type == null) return;
+        switch (type) {
+            case BOMB:
+                addBombBoosters(FREE_BOOSTERS_ON_UNLOCK);
+                break;
+            case RAINBOW:
+                addRainbowBoosters(FREE_BOOSTERS_ON_UNLOCK);
+                break;
+            case FIREBALL:
+                addFireballBoosters(FREE_BOOSTERS_ON_UNLOCK);
+                break;
+            case LIGHTNING:
+                addLightningBoosters(FREE_BOOSTERS_ON_UNLOCK);
+                break;
+            default:
+                break;
+        }
     }
 
     public int getEndlessHighScore() {
@@ -260,6 +317,42 @@ public class PreferencesManager {
 
     public void addFireballBoosters(int count) {
         setFireballBoosters(getFireballBoosters() + count);
+    }
+
+    public boolean consumeBombBooster() {
+        int current = getBombBoosters();
+        if (current > 0) {
+            setBombBoosters(current - 1);
+            return true;
+        }
+        return false;
+    }
+
+    public boolean consumeRainbowBooster() {
+        int current = getRainbowBoosters();
+        if (current > 0) {
+            setRainbowBoosters(current - 1);
+            return true;
+        }
+        return false;
+    }
+
+    public boolean consumeLightningBooster() {
+        int current = getLightningBoosters();
+        if (current > 0) {
+            setLightningBoosters(current - 1);
+            return true;
+        }
+        return false;
+    }
+
+    public boolean consumeFireballBooster() {
+        int current = getFireballBoosters();
+        if (current > 0) {
+            setFireballBoosters(current - 1);
+            return true;
+        }
+        return false;
     }
 
     public boolean canClaimDailyFreeDiamonds() {

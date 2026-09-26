@@ -60,26 +60,47 @@ public class WorldMapPagerAdapter extends RecyclerView.Adapter<WorldMapPagerAdap
 
     @Override
     public void onBindViewHolder(@NonNull WorldViewHolder holder, int position) {
-        // Reversed: page 0 = last world (top of vertical pager), last page = World 1 (bottom)
-        // So scrolling DOWN from the last world reaches World 1
+        // Reversed: page 0 = top locked world, last page = World 1 (bottom)
+        // So scrolling DOWN from locked worlds reaches World 1
         int worldIndex = toWorldIndex(position);
         WorldModel world = worldConfigManager.getWorldByIndex(worldIndex);
-        holder.bind(world);
+        holder.bind(world, worldIndex);
+    }
+
+    public int getHighestUnlockedWorldIndex() {
+        int highestUnlockedLevel = prefs.getHighestUnlockedLevel();
+        return worldConfigManager.getWorldIndexForLevel(highestUnlockedLevel);
+    }
+
+    public int getVisibleWorldCount() {
+        int highestWorld = getHighestUnlockedWorldIndex();
+        int maxVisible = highestWorld + 1 + 3; // Unlocked worlds + max 3 locked worlds ahead
+        return Math.min(maxVisible, worldConfigManager.getTotalWorlds());
     }
 
     @Override
     public int getItemCount() {
-        return worldConfigManager.getTotalWorlds();
+        return getVisibleWorldCount();
     }
 
     /** Convert ViewPager position to world index (reversed) */
     public int toWorldIndex(int pagerPosition) {
-        return worldConfigManager.getTotalWorlds() - 1 - pagerPosition;
+        int visibleCount = getVisibleWorldCount();
+        int worldIndex = visibleCount - 1 - pagerPosition;
+        if (worldIndex < 0) return 0;
+        if (worldIndex >= worldConfigManager.getTotalWorlds()) {
+            return worldConfigManager.getTotalWorlds() - 1;
+        }
+        return worldIndex;
     }
 
     /** Convert world index to ViewPager position (reversed) */
     public int toPagerPosition(int worldIndex) {
-        return worldConfigManager.getTotalWorlds() - 1 - worldIndex;
+        int visibleCount = getVisibleWorldCount();
+        int pos = visibleCount - 1 - worldIndex;
+        if (pos < 0) return 0;
+        if (pos >= visibleCount) return visibleCount - 1;
+        return pos;
     }
 
     public class WorldViewHolder extends RecyclerView.ViewHolder {
@@ -90,7 +111,7 @@ public class WorldMapPagerAdapter extends RecyclerView.Adapter<WorldMapPagerAdap
             this.binding = binding;
         }
 
-        public void bind(WorldModel world) {
+        public void bind(WorldModel world, int worldIndex) {
             // 1. Set World Map Background from config
             int mapRes = context.getResources().getIdentifier(world.mapBackground, "drawable", context.getPackageName());
             if (mapRes == 0) {
@@ -98,8 +119,44 @@ public class WorldMapPagerAdapter extends RecyclerView.Adapter<WorldMapPagerAdap
             }
             binding.ivWorldBackground.setImageResource(mapRes);
 
-            // 2. Measure & layout level and gift nodes
-            binding.layoutWorldContent.post(() -> populateNodes(world));
+            int highestUnlockedWorld = getHighestUnlockedWorldIndex();
+            boolean isLockedWorld = worldIndex > highestUnlockedWorld;
+
+            if (isLockedWorld) {
+                // 2a. Darkened locked world overlay with floating gold lock
+                binding.layoutWorldLockedOverlay.setVisibility(View.VISIBLE);
+                binding.layoutNodesOverlay.removeAllViews();
+
+                binding.tvLockedWorldTitle.setText("WORLD " + world.worldNumber);
+                binding.tvLockedWorldSubtitle.setText(world.subtitle);
+                binding.tvLockedUnlockRequirement.setText("UNLOCK AT LEVEL " + world.startLevel);
+
+                // Add subtle floating animation to the padlock
+                binding.ivLockedBigPadlock.clearAnimation();
+                android.animation.ObjectAnimator bobAnim = android.animation.ObjectAnimator.ofFloat(
+                        binding.ivLockedBigPadlock, "translationY", 0f, -8f, 0f
+                );
+                bobAnim.setDuration(2400);
+                bobAnim.setRepeatCount(android.animation.ValueAnimator.INFINITE);
+                bobAnim.setRepeatMode(android.animation.ValueAnimator.RESTART);
+                bobAnim.setInterpolator(new android.view.animation.AccelerateDecelerateInterpolator());
+                bobAnim.start();
+
+                binding.layoutWorldLockedOverlay.setOnClickListener(v -> {
+                    soundManager.playClick();
+                    NoticeDialog.showWarning(
+                            context,
+                            "LOCKED REALM",
+                            "WORLD " + world.worldNumber + " LOCKED",
+                            world.subtitle.toUpperCase(),
+                            "Reach Level " + world.startLevel + " to unlock and explore this realm!"
+                    );
+                });
+            } else {
+                // 2b. Unlocked world: hide locked overlay and populate playable level nodes
+                binding.layoutWorldLockedOverlay.setVisibility(View.GONE);
+                binding.layoutWorldContent.post(() -> populateNodes(world));
+            }
         }
 
         private void populateNodes(WorldModel world) {
