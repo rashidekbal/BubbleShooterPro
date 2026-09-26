@@ -796,8 +796,8 @@ public class GameEngine {
         this.projectedLandingPos = null;
         this.projectedPoppedPositions.clear();
 
-        // Landing circle & pop highlights only activate for direct aim (0 bounce) or 1st indirect (1 bounce)
-        if (trajectoryBounces <= 1 && trajectoryPoints != null && !trajectoryPoints.isEmpty() && !isFireballBlocked) {
+        // Landing circle & pop highlights activate for direct aim (0 bounce), 1st indirect (1 bounce), and 2nd indirect (2 bounces)
+        if (trajectoryBounces <= 2 && trajectoryPoints != null && !trajectoryPoints.isEmpty() && !isFireballBlocked) {
             PointF hitPt = trajectoryPoints.get(trajectoryPoints.size() - 1);
             GridPosition snapPos = board.findNearestSnapPosition(hitPt.x, hitPt.y);
             if (snapPos != null) {
@@ -1593,7 +1593,7 @@ public class GameEngine {
 
     private void drawAimingLandingCircle(Canvas canvas, Paint paint) {
         if (state != GameState.AIMING || isAimCancelled || isFireballBlocked
-                || trajectoryBounces > 1 || projectedLandingPoint == null || currentBubble == null) {
+                || trajectoryBounces > 2 || projectedLandingPoint == null || currentBubble == null) {
             return;
         }
 
@@ -1648,7 +1648,7 @@ public class GameEngine {
 
     private void drawPopClusterHighlights(Canvas canvas, Paint paint) {
         if (state != GameState.AIMING || isAimCancelled || isFireballBlocked
-                || trajectoryBounces > 1 || projectedPoppedPositions.isEmpty()) {
+                || trajectoryBounces > 2 || projectedPoppedPositions.isEmpty()) {
             return;
         }
 
