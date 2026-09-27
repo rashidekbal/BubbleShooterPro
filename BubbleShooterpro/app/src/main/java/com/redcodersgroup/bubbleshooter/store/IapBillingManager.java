@@ -13,6 +13,7 @@ import com.android.billingclient.api.BillingFlowParams;
 import com.android.billingclient.api.BillingResult;
 import com.android.billingclient.api.ConsumeParams;
 import com.android.billingclient.api.ConsumeResponseListener;
+import com.android.billingclient.api.PendingPurchasesParams;
 import com.android.billingclient.api.ProductDetails;
 import com.android.billingclient.api.ProductDetailsResponseListener;
 import com.android.billingclient.api.Purchase;
@@ -79,9 +80,13 @@ public class IapBillingManager implements PurchasesUpdatedListener {
     }
 
     private void initializeBillingClient() {
+        PendingPurchasesParams pendingPurchasesParams = PendingPurchasesParams.newBuilder()
+                .enableOneTimeProducts()
+                .build();
+
         billingClient = BillingClient.newBuilder(context)
                 .setListener(this)
-                .enablePendingPurchases()
+                .enablePendingPurchases(pendingPurchasesParams)
                 .build();
         startConnection();
     }
@@ -137,13 +142,16 @@ public class IapBillingManager implements PurchasesUpdatedListener {
                 .setProductList(productList)
                 .build();
 
-        billingClient.queryProductDetailsAsync(params, (billingResult, productDetailsList) -> {
-            if (billingResult.getResponseCode() == BillingClient.BillingResponseCode.OK) {
+        billingClient.queryProductDetailsAsync(params, (billingResult, result) -> {
+            if (billingResult.getResponseCode() == BillingClient.BillingResponseCode.OK && result != null) {
                 productDetailsMap.clear();
-                for (ProductDetails details : productDetailsList) {
-                    productDetailsMap.put(details.getProductId(), details);
-                    Log.d(TAG, "Fetched Product: " + details.getProductId() + " -> " +
-                            (details.getOneTimePurchaseOfferDetails() != null ? details.getOneTimePurchaseOfferDetails().getFormattedPrice() : "N/A"));
+                List<ProductDetails> detailsList = result.getProductDetailsList();
+                if (detailsList != null) {
+                    for (ProductDetails details : detailsList) {
+                        productDetailsMap.put(details.getProductId(), details);
+                        Log.d(TAG, "Fetched Product: " + details.getProductId() + " -> " +
+                                (details.getOneTimePurchaseOfferDetails() != null ? details.getOneTimePurchaseOfferDetails().getFormattedPrice() : "N/A"));
+                    }
                 }
                 mainHandler.post(() -> {
                     for (BillingListener listener : listeners) {
