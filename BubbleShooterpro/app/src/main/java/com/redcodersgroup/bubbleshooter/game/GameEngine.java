@@ -26,6 +26,7 @@ import com.redcodersgroup.bubbleshooter.physics.WallBounceCalculator;
 import com.redcodersgroup.bubbleshooter.scoring.ComboManager;
 import com.redcodersgroup.bubbleshooter.scoring.ScoreManager;
 import com.redcodersgroup.bubbleshooter.visual.ConfettiSystem;
+import com.redcodersgroup.bubbleshooter.visual.FireworkRocket;
 import com.redcodersgroup.bubbleshooter.visual.FloatingText;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -174,6 +175,15 @@ public class GameEngine {
     private float boosterEquipTimer = 0f;
     private static final float BOOSTER_EQUIP_DURATION = 0.22f;
 
+    // Victory Launcher Fireworks Celebration
+    private final List<FireworkRocket> fireworkRockets = new ArrayList<>();
+    private float fireworkTimer = 0f;
+    private static final float FIREWORK_INTERVAL = 0.13f;
+    private float fireworkEndDelay = 0.45f;
+    private int celebratoryInitialShots = 0;
+    private int celebratoryTotalBonus = 0;
+    private int celebratoryStreak = 0;
+
     public GameEngine(Context context) {
         this.context = context.getApplicationContext();
         this.soundManager = SoundManager.getInstance(context);
@@ -277,6 +287,7 @@ public class GameEngine {
         this.fallingBubbles.clear();
         this.floatingTexts.clear();
         this.confettiSystem.clear();
+        this.fireworkRockets.clear();
         this.grid.clear();
         this.state = GameState.READY;
         this.isLauncherReloading = false;
@@ -383,6 +394,7 @@ public class GameEngine {
         this.fallingBubbles.clear();
         this.floatingTexts.clear();
         this.confettiSystem.clear();
+        this.fireworkRockets.clear();
         this.pregeneratedRowQueue.clear();
         this.grid.clear();
         this.state = GameState.READY;
@@ -1106,6 +1118,100 @@ public class GameEngine {
                 finishResolution();
             }
         }
+
+        // 4. Launcher Fireworks Celebration Update
+        if (state == GameState.CELEBRATING) {
+            // Update active in-flight firework rockets
+            Iterator<FireworkRocket> rIt = fireworkRockets.iterator();
+            while (rIt.hasNext()) {
+                FireworkRocket rocket = rIt.next();
+                rocket.update(dt, confettiSystem);
+                if (rocket.isExploded()) {
+                    rIt.remove();
+                    // Explode!
+                    int pColor = (rocket.getBubbleColor() != null && rocket.getBubbleColor().primaryColor != 0)
+                            ? rocket.getBubbleColor().primaryColor : Color.parseColor("#FEF08A");
+                    confettiSystem.spawnFireworkBurst(rocket.getX(), rocket.getY(), pColor, 36);
+                    soundManager.playPop(celebratoryStreak++);
+
+                    // Add points and show score feedback
+                    scoreManager.addScore(ScoreManager.REMAINING_SHOT_BONUS);
+                    int currentScore = scoreManager.getScore();
+                    int liveStars = scoreManager.calculateStars(shotsRemaining, initialShots);
+                    if (listener != null) {
+                        listener.onScoreUpdated(currentScore, liveStars, scoreManager.getStarProgress());
+                    }
+
+                    floatingTexts.add(new FloatingText("+" + ScoreManager.REMAINING_SHOT_BONUS,
+                            rocket.getX(), rocket.getY() - bubbleRadius * 0.8f,
+                            pColor, 38f, 1.2f));
+                }
+            }
+
+            // Launch new rockets while shots remain
+            if (shotsRemaining > 0) {
+                fireworkTimer -= dt;
+                if (fireworkTimer <= 0f) {
+                    fireworkTimer = FIREWORK_INTERVAL;
+
+                    // Choose bubble color from currentBubble or next or fallback
+                    BubbleColor bColor = (currentBubble != null && currentBubble.getColor() != null && currentBubble.getColor() != BubbleColor.NONE)
+                            ? currentBubble.getColor()
+                            : (nextBubble != null && nextBubble.getColor() != null ? nextBubble.getColor() : BubbleColor.YELLOW);
+
+                    // Pick random explosion target in upper 60% of board
+                    float minX = boardLeft + bubbleRadius * 1.5f;
+                    float maxX = boardRight - bubbleRadius * 1.5f;
+                    float targetX = minX + (float) Math.random() * Math.max(1f, maxX - minX);
+
+                    float minY = boardTop + bubbleRadius * 1.5f;
+                    float maxY = boardTop + (boardBottom - boardTop) * 0.55f;
+                    float targetY = minY + (float) Math.random() * Math.max(1f, maxY - minY);
+
+                    float duration = 0.32f + (float) Math.random() * 0.10f;
+                    FireworkRocket rocket = new FireworkRocket(launcherX, launcherY, targetX, targetY, duration, bColor, bubbleRadius);
+                    fireworkRockets.add(rocket);
+                    soundManager.playShoot();
+
+                    shotsRemaining--;
+                    if (listener != null) {
+                        listener.onShotsUpdated(shotsRemaining);
+                    }
+
+                    // Cycle next bubble into launcher
+                    if (nextBubble != null) {
+                        currentBubble = nextBubble;
+                        currentBubble.setX(launcherX);
+                        currentBubble.setY(launcherY);
+                        currentBubble.setScale(1.0f);
+                        if (shotsRemaining > 1) {
+                            nextBubble = new Bubble(pickSmartLauncherColor(currentBubble.getColor()), BubbleType.NORMAL, null);
+                            nextBubble.setRadius(bubbleRadius * 0.75f);
+                            nextBubble.setX(previewX);
+                            nextBubble.setY(previewY);
+                        } else {
+                            nextBubble = null;
+                        }
+                    } else if (shotsRemaining <= 0) {
+                        currentBubble = null;
+                    }
+                }
+            } else if (fireworkRockets.isEmpty()) {
+                // All rockets have finished bursting, wait brief pause then show victory dialog
+                fireworkEndDelay -= dt;
+                if (fireworkEndDelay <= 0f) {
+                    state = GameState.WIN;
+                    soundManager.playWin();
+                    confettiSystem.spawnCelebrationBurst(boardRight, boardBottom, 70);
+                    int finalScore = scoreManager.getScore();
+                    int finalStars = scoreManager.calculateStars(0, initialShots);
+                    if (listener != null) {
+                        listener.onScoreUpdated(finalScore, finalStars, scoreManager.getStarProgress());
+                        listener.onGameWon(finalScore, finalStars, getObjectiveCompletedSummary(), celebratoryInitialShots, celebratoryTotalBonus);
+                    }
+                }
+            }
+        }
     }
 
     private void resolveCollision(GridPosition snapPos) {
@@ -1447,24 +1553,33 @@ public class GameEngine {
         }
 
         if (won) {
-            state = GameState.WIN;
-            soundManager.playWin();
-            confettiSystem.spawnCelebrationBurst(boardRight, boardBottom, 70);
             int shotsLeft = Math.max(0, shotsRemaining);
             int shotBonus = shotsLeft * ScoreManager.REMAINING_SHOT_BONUS;
-            int victoryBonus = scoreManager.addVictoryBonus(shotsRemaining);
-            int finalScore = scoreManager.getScore();
-            int starsEarned = isEndlessMode
-                    ? Math.max(1, scoreManager.getStarsEarned())
-                    : scoreManager.calculateStars(shotsRemaining, initialShots);
+            scoreManager.addScore(ScoreManager.VICTORY_CLEAR_BONUS);
+            floatingTexts.add(new FloatingText("+500 LEVEL CLEAR!", launcherX, (boardTop + boardBottom) * 0.45f, Color.parseColor("#FFD54F"), 46f, 1.8f));
+
             if (shotsLeft > 0 && !isEndlessMode) {
-                floatingTexts.add(new FloatingText("+" + shotBonus + " SHOT BONUS!", launcherX, launcherY - bubbleRadius * 1.6f, Color.parseColor("#FFD54F"), 44f, 2.2f));
+                state = GameState.CELEBRATING;
+                celebratoryInitialShots = shotsLeft;
+                celebratoryTotalBonus = shotBonus;
+                celebratoryStreak = 0;
+                fireworkTimer = 0.05f;
+                fireworkEndDelay = 0.45f;
+                return;
+            } else {
+                state = GameState.WIN;
+                soundManager.playWin();
+                confettiSystem.spawnCelebrationBurst(boardRight, boardBottom, 70);
+                int finalScore = scoreManager.getScore();
+                int starsEarned = isEndlessMode
+                        ? Math.max(1, scoreManager.getStarsEarned())
+                        : scoreManager.calculateStars(shotsRemaining, initialShots);
+                if (listener != null) {
+                    listener.onScoreUpdated(finalScore, starsEarned, scoreManager.getStarProgress());
+                    listener.onGameWon(finalScore, starsEarned, getObjectiveCompletedSummary(), shotsLeft, shotBonus);
+                }
+                return;
             }
-            if (listener != null) {
-                listener.onScoreUpdated(finalScore, starsEarned, scoreManager.getStarProgress());
-                listener.onGameWon(finalScore, starsEarned, getObjectiveCompletedSummary(), shotsLeft, shotBonus);
-            }
-            return;
         }
 
         // Check lose condition 1: Bubbles crossed or touched bottom deadline line
@@ -1577,6 +1692,11 @@ public class GameEngine {
         // 4. Draw Projectile
         if (activeProjectile != null) {
             activeProjectile.draw(canvas, paint);
+        }
+
+        // 4b. Draw Launcher Firework Rockets
+        for (FireworkRocket rocket : fireworkRockets) {
+            rocket.draw(canvas, paint);
         }
 
         // 5. Draw Launcher Base & Bubbles

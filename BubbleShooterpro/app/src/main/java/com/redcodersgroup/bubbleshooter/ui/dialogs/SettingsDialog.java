@@ -2,6 +2,7 @@ package com.redcodersgroup.bubbleshooter.ui.dialogs;
 
 import android.app.Dialog;
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
@@ -66,6 +67,7 @@ public class SettingsDialog extends Dialog {
         updateMusicUI();
         updateHapticUI();
         updatePlayGamesUI();
+        updateVersionUI();
 
         binding.layoutSoundToggle.setOnClickListener(v -> toggleSound());
         binding.btnSettingSound.setOnClickListener(v -> toggleSound());
@@ -199,6 +201,23 @@ public class SettingsDialog extends Dialog {
         } else {
             binding.btnSettingHaptic.setImageResource(R.drawable.btn_vibration_gray);
             binding.btnSettingHaptic.setAlpha(0.65f);
+        }
+    }
+
+    private void updateVersionUI() {
+        if (binding == null) return;
+        try {
+            android.content.pm.PackageInfo pInfo = getContext().getPackageManager()
+                    .getPackageInfo(getContext().getPackageName(), 0);
+            long versionCode;
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.P) {
+                versionCode = pInfo.getLongVersionCode();
+            } else {
+                versionCode = pInfo.versionCode;
+            }
+            binding.tvAppVersion.setText("Version " + pInfo.versionName + " (" + versionCode + ")");
+        } catch (Exception e) {
+            binding.tvAppVersion.setText("Version 1.0 (1)");
         }
     }
 }

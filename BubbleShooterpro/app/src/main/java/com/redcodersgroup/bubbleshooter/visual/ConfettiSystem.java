@@ -35,6 +35,48 @@ public class ConfettiSystem {
         }
     }
 
+    public void spawnFireworkBurst(float x, float y, int mainColor, int count) {
+        // 1. Radial primary sparkling sphere with stars and glows
+        for (int i = 0; i < count; i++) {
+            double angle = Math.random() * Math.PI * 2;
+            float speed = (float) (220 + Math.random() * 580);
+            float vx = (float) (Math.cos(angle) * speed);
+            float vy = (float) (Math.sin(angle) * speed);
+            float size = (float) (9 + Math.random() * 14);
+            float life = (float) (0.55 + Math.random() * 0.55);
+
+            int pColor = (Math.random() < 0.65) ? mainColor :
+                    ((Math.random() < 0.5) ? Color.parseColor("#FEF08A") : Color.WHITE);
+            Particle.ParticleShape shape = (Math.random() < 0.5) ?
+                    Particle.ParticleShape.STAR : Particle.ParticleShape.CIRCLE;
+
+            particles.add(new Particle(x, y, vx, vy, size, pColor, life, shape));
+        }
+
+        // 2. High-speed golden glitter spark ring
+        for (int i = 0; i < 16; i++) {
+            double angle = (i / 16.0) * Math.PI * 2 + (Math.random() * 0.2);
+            float speed = (float) (420 + Math.random() * 240);
+            float vx = (float) (Math.cos(angle) * speed);
+            float vy = (float) (Math.sin(angle) * speed);
+            float size = (float) (8 + Math.random() * 8);
+            float life = (float) (0.65 + Math.random() * 0.4);
+
+            particles.add(new Particle(x, y, vx, vy, size, Color.parseColor("#FDE047"), life, Particle.ParticleShape.STAR));
+        }
+    }
+
+    public void spawnSparkTrail(float x, float y, int color) {
+        for (int i = 0; i < 2; i++) {
+            float vx = (float) ((Math.random() - 0.5) * 80);
+            float vy = (float) (80 + Math.random() * 140);
+            float size = (float) (5 + Math.random() * 7);
+            float life = (float) (0.22 + Math.random() * 0.2);
+            int sparkColor = (Math.random() < 0.5) ? color : Color.parseColor("#FEF08A");
+            particles.add(new Particle(x, y, vx, vy, size, sparkColor, life, Particle.ParticleShape.STAR));
+        }
+    }
+
     public void spawnCelebrationBurst(float width, float height, int count) {
         for (int i = 0; i < count; i++) {
             float x = (float) (width * 0.2 + Math.random() * width * 0.6);

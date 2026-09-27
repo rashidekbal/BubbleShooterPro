@@ -5,6 +5,7 @@ public enum GameState {
     AIMING,
     SHOOTING,
     RESOLVING,
+    CELEBRATING,
     WIN,
     LOSE,
     PAUSED
