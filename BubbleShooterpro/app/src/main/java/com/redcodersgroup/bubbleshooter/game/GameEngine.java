@@ -1126,12 +1126,12 @@ public class GameEngine {
             while (rIt.hasNext()) {
                 FireworkRocket rocket = rIt.next();
                 rocket.update(dt, confettiSystem);
-                if (rocket.isExploded()) {
-                    rIt.remove();
-                    // Explode!
+
+                if (rocket.shouldSpawnBurstEffects()) {
+                    // Detonation burst in air!
                     int pColor = (rocket.getBubbleColor() != null && rocket.getBubbleColor().primaryColor != 0)
                             ? rocket.getBubbleColor().primaryColor : Color.parseColor("#FEF08A");
-                    confettiSystem.spawnFireworkBurst(rocket.getX(), rocket.getY(), pColor, 36);
+                    confettiSystem.spawnFireworkBurst(rocket.getX(), rocket.getY(), pColor, 45);
                     soundManager.playPop(celebratoryStreak++);
 
                     // Add points and show score feedback
@@ -1143,8 +1143,12 @@ public class GameEngine {
                     }
 
                     floatingTexts.add(new FloatingText("+" + ScoreManager.REMAINING_SHOT_BONUS,
-                            rocket.getX(), rocket.getY() - bubbleRadius * 0.8f,
-                            pColor, 38f, 1.2f));
+                            rocket.getX(), rocket.getY() - bubbleRadius * 1.0f,
+                            pColor, 40f, 1.3f));
+                }
+
+                if (rocket.isFinished()) {
+                    rIt.remove();
                 }
             }
 
@@ -1333,6 +1337,7 @@ public class GameEngine {
                 listener.onScoreUpdated(scoreManager.getScore(), getEffectiveStars(), scoreManager.getStarProgress());
                 listener.onShotsUpdated(shotsRemaining);
             }
+            checkLowShotsFloatingWarning();
         }
 
         notifyObjectiveUpdated();
@@ -1468,11 +1473,23 @@ public class GameEngine {
                 listener.onScoreUpdated(scoreManager.getScore(), getEffectiveStars(), scoreManager.getStarProgress());
                 listener.onShotsUpdated(shotsRemaining);
             }
+            checkLowShotsFloatingWarning();
         }
 
         notifyObjectiveUpdated();
         activeProjectile = null;
         fireballPoppedPositions.clear();
+    }
+
+    private void checkLowShotsFloatingWarning() {
+        if (isEndlessMode || state == GameState.CELEBRATING || state == GameState.WIN || state == GameState.LOSE) return;
+        if (shotsRemaining == 5) {
+            floatingTexts.add(new FloatingText("⚠️ 5 SHOTS LEFT!", launcherX, launcherY - bubbleRadius * 1.8f, Color.parseColor("#FF5252"), 44f, 1.4f));
+        } else if (shotsRemaining == 3) {
+            floatingTexts.add(new FloatingText("⚠️ 3 SHOTS LEFT!", launcherX, launcherY - bubbleRadius * 1.8f, Color.parseColor("#FF1744"), 44f, 1.4f));
+        } else if (shotsRemaining == 1) {
+            floatingTexts.add(new FloatingText("⚡ FINAL SHOT!", launcherX, launcherY - bubbleRadius * 1.8f, Color.parseColor("#FFD600"), 48f, 1.6f));
+        }
     }
 
     private void checkEndlessAesthetics() {
@@ -1483,8 +1500,6 @@ public class GameEngine {
             confettiSystem.spawnCelebrationBurst(boardRight, boardBottom, 35);
         }
     }
-
-
 
     private boolean isBubbleVisibleOnBoard(Bubble b) {
         if (b == null) return false;
@@ -1558,7 +1573,8 @@ public class GameEngine {
             scoreManager.addScore(ScoreManager.VICTORY_CLEAR_BONUS);
             floatingTexts.add(new FloatingText("+500 LEVEL CLEAR!", launcherX, (boardTop + boardBottom) * 0.45f, Color.parseColor("#FFD54F"), 46f, 1.8f));
 
-            if (shotsLeft > 0 && !isEndlessMode) {
+            if (shotsLeft >= 3 && !isEndlessMode) {
+                // Only trigger fireworks celebration if at least 3 bubbles are left
                 state = GameState.CELEBRATING;
                 celebratoryInitialShots = shotsLeft;
                 celebratoryTotalBonus = shotBonus;
@@ -1567,6 +1583,8 @@ public class GameEngine {
                 fireworkEndDelay = 0.45f;
                 return;
             } else {
+                // If less than 3 bubbles left (0, 1, or 2), directly grant shot bonus and show victory!
+                scoreManager.addScore(shotBonus);
                 state = GameState.WIN;
                 soundManager.playWin();
                 confettiSystem.spawnCelebrationBurst(boardRight, boardBottom, 70);
@@ -2065,6 +2083,10 @@ public class GameEngine {
 
     public GameState getState() {
         return state;
+    }
+
+    public boolean isWonOrCelebrating() {
+        return state == GameState.WIN || state == GameState.CELEBRATING;
     }
 
     private GameState stateBeforePause = GameState.READY;

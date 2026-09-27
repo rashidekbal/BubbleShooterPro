@@ -35,7 +35,6 @@ import com.redcodersgroup.bubbleshooter.audio.SoundManager;
 import com.redcodersgroup.bubbleshooter.ui.dialogs.BoosterIntroDialog;
 import com.redcodersgroup.bubbleshooter.ui.dialogs.BuyBoosterDialog;
 import com.redcodersgroup.bubbleshooter.ui.dialogs.GameOverDialog;
-import com.redcodersgroup.bubbleshooter.ui.dialogs.LowShotsWarningDialog;
 import com.redcodersgroup.bubbleshooter.ui.dialogs.NoticeDialog;
 import com.redcodersgroup.bubbleshooter.ui.dialogs.PauseDialog;
 import com.redcodersgroup.bubbleshooter.ui.dialogs.VictoryDialog;
@@ -61,9 +60,7 @@ public class GameActivity extends BaseActivity implements GameEngine.GameEventLi
     private PauseDialog activePauseDialog;
     private VictoryDialog activeVictoryDialog;
     private GameOverDialog activeGameOverDialog;
-    private LowShotsWarningDialog activeLowShotsWarningDialog;
     private BuyBoosterDialog activeBuyBoosterDialog;
-    private boolean hasShownLowShotsWarning = false;
     private boolean isGameOverOrWon = false;
     private boolean wasBackgrounded = false;
     private int continueBubblePurchasesCount = 0;
@@ -297,13 +294,8 @@ public class GameActivity extends BaseActivity implements GameEngine.GameEventLi
         continueBubblePurchasesCount = 0;
         isGameOverOrWon = false;
         wasBackgrounded = false;
-        hasShownLowShotsWarning = false;
         if (binding != null && binding.overlayVictory != null) {
             binding.overlayVictory.rootVictoryOverlay.setVisibility(View.GONE);
-        }
-        if (activeLowShotsWarningDialog != null && activeLowShotsWarningDialog.isShowing()) {
-            activeLowShotsWarningDialog.dismissWithAnimation();
-            activeLowShotsWarningDialog = null;
         }
         binding.tvShotsLabel.setText("SHOTS");
         binding.bubbleGameView.setBiomeLevel(currentLevelNumber);
@@ -358,13 +350,8 @@ public class GameActivity extends BaseActivity implements GameEngine.GameEventLi
         AnalyticsManager.getInstance(this).logEndlessStart();
         isGameOverOrWon = false;
         wasBackgrounded = false;
-        hasShownLowShotsWarning = false;
         if (binding != null && binding.overlayVictory != null) {
             binding.overlayVictory.rootVictoryOverlay.setVisibility(View.GONE);
-        }
-        if (activeLowShotsWarningDialog != null && activeLowShotsWarningDialog.isShowing()) {
-            activeLowShotsWarningDialog.dismissWithAnimation();
-            activeLowShotsWarningDialog = null;
         }
 
         binding.bubbleGameView.setEndlessBiome(1);
@@ -448,11 +435,6 @@ public class GameActivity extends BaseActivity implements GameEngine.GameEventLi
     private void showPauseDialog() {
         if (isFinishing() || isDestroyed() || isGameOverOrWon) return;
         if (activePauseDialog != null && activePauseDialog.isShowing()) return;
-
-        if (activeLowShotsWarningDialog != null && activeLowShotsWarningDialog.isShowing()) {
-            activeLowShotsWarningDialog.dismiss();
-            activeLowShotsWarningDialog = null;
-        }
 
         if (gameEngine != null) {
             gameEngine.pause();
@@ -630,41 +612,23 @@ public class GameActivity extends BaseActivity implements GameEngine.GameEventLi
                 String themeTitle = (theme != null) ? theme.title : "Meadows";
                 binding.tvLevelTitle.setText("WAVE " + shotsRemainingOrWave + " • " + themeTitle);
             } else {
-                if (shotsRemainingOrWave <= 5) {
+                boolean isCelebrationOrWon = isGameOverOrWon || (gameEngine != null && gameEngine.isWonOrCelebrating());
+
+                if (shotsRemainingOrWave <= 5 && !isCelebrationOrWon) {
                     binding.layoutShots.setBackgroundResource(R.drawable.bg_button_glossy_red);
                     binding.layoutShots.animate().cancel();
-                    binding.layoutShots.setScaleX(1.15f);
-                    binding.layoutShots.setScaleY(1.15f);
+                    binding.layoutShots.setScaleX(1.16f);
+                    binding.layoutShots.setScaleY(1.16f);
                     binding.layoutShots.animate()
                             .scaleX(1.0f)
                             .scaleY(1.0f)
-                            .setDuration(200)
+                            .setDuration(220)
                             .start();
                 } else {
                     binding.layoutShots.setBackgroundResource(R.drawable.bg_button_glossy_green);
                 }
-
-                // Show auto-hiding warning dialog when less than 5 shots remain
-                if (shotsRemainingOrWave < 5 && shotsRemainingOrWave > 0 && !hasShownLowShotsWarning && !isGameOverOrWon) {
-                    hasShownLowShotsWarning = true;
-                    showLowShotsWarningDialog(shotsRemainingOrWave);
-                }
             }
         });
-    }
-
-    private void showLowShotsWarningDialog(int shotsRemaining) {
-        if (isFinishing() || isDestroyed() || isGameOverOrWon) return;
-        if (activeLowShotsWarningDialog != null && activeLowShotsWarningDialog.isShowing()) {
-            activeLowShotsWarningDialog.dismiss();
-            activeLowShotsWarningDialog = null;
-        }
-        activeLowShotsWarningDialog = new LowShotsWarningDialog(this, shotsRemaining);
-        activeLowShotsWarningDialog.setOnDismissListener(dialog -> {
-            activeLowShotsWarningDialog = null;
-            enableImmersiveStickyMode();
-        });
-        activeLowShotsWarningDialog.show();
     }
 
     @Override
@@ -687,10 +651,6 @@ public class GameActivity extends BaseActivity implements GameEngine.GameEventLi
             if (activePauseDialog != null && activePauseDialog.isShowing()) {
                 activePauseDialog.dismiss();
                 activePauseDialog = null;
-            }
-            if (activeLowShotsWarningDialog != null && activeLowShotsWarningDialog.isShowing()) {
-                activeLowShotsWarningDialog.dismiss();
-                activeLowShotsWarningDialog = null;
             }
 
             int effectiveStars = Math.max(1, Math.min(3, stars));
@@ -915,10 +875,6 @@ public class GameActivity extends BaseActivity implements GameEngine.GameEventLi
                 activePauseDialog.dismiss();
                 activePauseDialog = null;
             }
-            if (activeLowShotsWarningDialog != null && activeLowShotsWarningDialog.isShowing()) {
-                activeLowShotsWarningDialog.dismiss();
-                activeLowShotsWarningDialog = null;
-            }
 
             int personalBest = 0;
             if (isEndlessMode) {
@@ -1050,10 +1006,6 @@ public class GameActivity extends BaseActivity implements GameEngine.GameEventLi
         if (activeGameOverDialog != null && activeGameOverDialog.isShowing()) {
             activeGameOverDialog.dismiss();
             activeGameOverDialog = null;
-        }
-        if (activeLowShotsWarningDialog != null && activeLowShotsWarningDialog.isShowing()) {
-            activeLowShotsWarningDialog.dismiss();
-            activeLowShotsWarningDialog = null;
         }
         if (activeBuyBoosterDialog != null && activeBuyBoosterDialog.isShowing()) {
             activeBuyBoosterDialog.dismiss();

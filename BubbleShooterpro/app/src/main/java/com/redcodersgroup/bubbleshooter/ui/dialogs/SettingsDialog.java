@@ -209,15 +209,9 @@ public class SettingsDialog extends Dialog {
         try {
             android.content.pm.PackageInfo pInfo = getContext().getPackageManager()
                     .getPackageInfo(getContext().getPackageName(), 0);
-            long versionCode;
-            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.P) {
-                versionCode = pInfo.getLongVersionCode();
-            } else {
-                versionCode = pInfo.versionCode;
-            }
-            binding.tvAppVersion.setText("Version " + pInfo.versionName + " (" + versionCode + ")");
+            binding.tvAppVersion.setText("Version " + pInfo.versionName );
         } catch (Exception e) {
-            binding.tvAppVersion.setText("Version 1.0 (1)");
+            binding.tvAppVersion.setText("Version 1.0");
         }
     }
 }
