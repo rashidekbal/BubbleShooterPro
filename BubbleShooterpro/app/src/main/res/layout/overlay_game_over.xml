@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/rootGameOverOverlay"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#E6050814"
+    android:clickable="true"
+    android:focusable="true"
+    android:visibility="gone">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:paddingStart="@dimen/dp_24"
+        android:paddingEnd="@dimen/dp_24"
+        android:paddingTop="@dimen/dp_16"
+        android:paddingBottom="@dimen/dp_20">
+
+        <!-- 1. Top Heartbreak Container -->
+        <FrameLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/dp_4">
+
+            <ImageView
+                android:id="@+id/ivGameOverGlow"
+                android:layout_width="@dimen/dp_240"
+                android:layout_height="@dimen/dp_130"
+                android:layout_gravity="center"
+                android:src="@drawable/bg_circle_red_glow"
+                android:alpha="0.85"
+                android:contentDescription="@null" />
+
+            <ImageView
+                android:id="@+id/ivGameOverHeartBreak"
+                android:layout_width="@dimen/dp_84"
+                android:layout_height="@dimen/dp_84"
+                android:layout_gravity="center"
+                android:src="@drawable/ic_heart_broken"
+                android:contentDescription="Heartbreak" />
+        </FrameLayout>
+
+        <!-- 2. Clean Game Over / Level Failed Title -->
+        <TextView
+            android:id="@+id/tvGameOverTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="LEVEL FAILED"
+            android:textColor="#F87171"
+            android:textSize="@dimen/sp_28"
+            android:textStyle="bold"
+            android:letterSpacing="0.04"
+            android:shadowColor="#C0000000"
+            android:shadowDx="0"
+            android:shadowDy="3"
+            android:shadowRadius="6" />
+
+        <!-- Subtitle Reason -->
+        <TextView
+            android:id="@+id/tvGameOverSubtitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/dp_2"
+            android:text="Out of shots! Don't give up!"
+            android:textColor="#94A3B8"
+            android:textSize="@dimen/sp_13"
+            android:textStyle="bold" />
+
+        <!-- 3. Clean Score & High Score Display -->
+        <TextView
+            android:id="@+id/tvGameOverScore"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/dp_8"
+            android:text="1,200"
+            android:textColor="#FFFFFF"
+            android:textSize="@dimen/sp_40"
+            android:textStyle="bold"
+            android:shadowColor="#A0000000"
+            android:shadowDx="0"
+            android:shadowDy="2"
+            android:shadowRadius="4" />
+
+        <TextView
+            android:id="@+id/tvGameOverHighScore"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/dp_2"
+            android:text="HIGH SCORE: 3,450"
+            android:textColor="#64748B"
+            android:textSize="@dimen/sp_13"
+            android:textStyle="bold"
+            android:letterSpacing="0.05"
+            android:layout_marginBottom="@dimen/dp_16" />
+
+        <!-- 4. Revive with Ad Button (Emerald Glass Ripple Pill matching Double Bonus) -->
+        <TextView
+            android:id="@+id/btnGameOverReviveAd"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_game_over_revive_ad_btn"
+            android:clickable="true"
+            android:focusable="true"
+            android:gravity="center"
+            android:paddingStart="@dimen/dp_24"
+            android:paddingEnd="@dimen/dp_24"
+            android:paddingTop="@dimen/dp_12"
+            android:paddingBottom="@dimen/dp_12"
+            android:text="🎬 FREE REVIVE • +5 EXTRA SHOTS"
+            android:textColor="#34D399"
+            android:textSize="@dimen/sp_15"
+            android:textStyle="bold"
+            android:shadowColor="#80000000"
+            android:shadowDx="0"
+            android:shadowDy="1"
+            android:shadowRadius="2" />
+
+        <!-- 5. Secondary Revive with Diamonds Option -->
+        <TextView
+            android:id="@+id/btnGameOverReviveDiamonds"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_game_over_revive_diamond_btn"
+            android:clickable="true"
+            android:focusable="true"
+            android:gravity="center"
+            android:paddingStart="@dimen/dp_18"
+            android:paddingEnd="@dimen/dp_18"
+            android:paddingTop="@dimen/dp_8"
+            android:paddingBottom="@dimen/dp_8"
+            android:layout_marginTop="@dimen/dp_10"
+            android:layout_marginBottom="@dimen/dp_18"
+            android:text="💎 REVIVE (+5 EXTRA SHOTS • 5 💎)"
+            android:textColor="#38BDF8"
+            android:textSize="@dimen/sp_13"
+            android:textStyle="bold" />
+
+        <!-- 6. Bottom Navigation Row (Matching Circular Buttons Side-by-Side) -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:layout_marginTop="@dimen/dp_4">
+
+            <!-- Home Button -->
+            <ImageButton
+                android:id="@+id/btnGameOverHome"
+                android:layout_width="@dimen/dp_66"
+                android:layout_height="@dimen/dp_66"
+                android:background="@android:color/transparent"
+                android:scaleType="fitCenter"
+                android:src="@drawable/btn_home_yellow"
+                android:contentDescription="Home" />
+
+            <!-- Replay / Retry Button -->
+            <ImageButton
+                android:id="@+id/btnGameOverRetry"
+                android:layout_width="@dimen/dp_66"
+                android:layout_height="@dimen/dp_66"
+                android:layout_marginStart="@dimen/dp_24"
+                android:background="@android:color/transparent"
+                android:scaleType="fitCenter"
+                android:src="@drawable/btn_restart_yellow"
+                android:contentDescription="Retry" />
+        </LinearLayout>
+
+    </LinearLayout>
+
+</FrameLayout>

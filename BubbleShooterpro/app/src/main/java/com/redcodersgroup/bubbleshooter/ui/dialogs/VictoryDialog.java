@@ -84,6 +84,10 @@ public class VictoryDialog extends Dialog {
         animateStar(binding.ivWinStar2, stars >= 2, 450);
         animateStar(binding.ivWinStar3, stars >= 3, 700);
 
+        attachButtonTouchFeedback(binding.btnWinNext);
+        attachButtonTouchFeedback(binding.btnWinRestart);
+        attachButtonTouchFeedback(binding.btnWinHome);
+
         binding.btnWinNext.setOnClickListener(v -> {
             dismiss();
             if (listener != null) listener.onNextLevelClicked();
@@ -97,6 +101,26 @@ public class VictoryDialog extends Dialog {
         binding.btnWinHome.setOnClickListener(v -> {
             dismiss();
             if (listener != null) listener.onHomeClicked();
+        });
+    }
+
+    @android.annotation.SuppressLint("ClickableViewAccessibility")
+    private void attachButtonTouchFeedback(android.view.View view) {
+        if (view == null) return;
+        view.setOnTouchListener((v, event) -> {
+            switch (event.getAction()) {
+                case android.view.MotionEvent.ACTION_DOWN:
+                    v.animate().scaleX(0.92f).scaleY(0.92f).setDuration(80)
+                            .setInterpolator(new android.view.animation.DecelerateInterpolator()).start();
+                    v.performHapticFeedback(android.view.HapticFeedbackConstants.VIRTUAL_KEY);
+                    break;
+                case android.view.MotionEvent.ACTION_UP:
+                case android.view.MotionEvent.ACTION_CANCEL:
+                    v.animate().scaleX(1.0f).scaleY(1.0f).setDuration(160)
+                            .setInterpolator(new OvershootInterpolator(2.5f)).start();
+                    break;
+            }
+            return false;
         });
     }
 

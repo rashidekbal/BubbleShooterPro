@@ -110,6 +110,58 @@ public class SoundEffectGenerator {
         return buffer;
     }
 
+    public static byte[] generatePurchaseSuccess() {
+        int durationMs = 460;
+        int numSamples = (SAMPLE_RATE * durationMs) / 1000;
+        byte[] buffer = new byte[numSamples * 2];
+
+        // Metallic coin clicks + ascending bright chime arpeggio (G5, B5, D6, G6, B6)
+        float[] chimeNotes = {783.99f, 987.77f, 1174.66f, 1567.98f, 1975.53f};
+        int[] noteStartTimesMs = {50, 110, 170, 230, 290};
+
+        for (int i = 0; i < numSamples; i++) {
+            float timeSec = (float) i / SAMPLE_RATE;
+            int timeMs = (int) (timeSec * 1000f);
+            double sampleValue = 0.0;
+
+            // 1. Initial crisp metallic coin clink at t=0ms and t=45ms
+            if (timeMs < 60) {
+                float tCoin1 = timeMs / 60.0f;
+                float envCoin1 = (1.0f - tCoin1) * (1.0f - tCoin1);
+                sampleValue += (Math.sin(2.0 * Math.PI * 2200.0 * timeSec) * 0.6
+                        + Math.sin(2.0 * Math.PI * 4400.0 * timeSec) * 0.4) * 14000 * envCoin1;
+            }
+            if (timeMs >= 40 && timeMs < 110) {
+                float tCoin2 = (timeMs - 40) / 70.0f;
+                float envCoin2 = (1.0f - tCoin2) * (1.0f - tCoin2);
+                sampleValue += (Math.sin(2.0 * Math.PI * 2800.0 * timeSec) * 0.6
+                        + Math.sin(2.0 * Math.PI * 5600.0 * timeSec) * 0.4) * 15000 * envCoin2;
+            }
+
+            // 2. Ascending bell/chime notes with sparkling harmonics
+            for (int n = 0; n < chimeNotes.length; n++) {
+                int startMs = noteStartTimesMs[n];
+                if (timeMs >= startMs) {
+                    float noteElapsed = (timeMs - startMs) / 1000.0f;
+                    float noteDur = 0.22f;
+                    if (noteElapsed < noteDur) {
+                        float noteEnv = (float) Math.exp(-noteElapsed * 14.0f);
+                        double freq = chimeNotes[n];
+                        // Fundamental + sparkle octave harmonic
+                        sampleValue += (Math.sin(2.0 * Math.PI * freq * timeSec) * 0.7
+                                + Math.sin(2.0 * Math.PI * freq * 2.0 * timeSec) * 0.3) * 18000 * noteEnv;
+                    }
+                }
+            }
+
+            // Clamp sample to 16-bit PCM range
+            short sample = (short) Math.max(-32767, Math.min(32767, sampleValue));
+            buffer[2 * i] = (byte) (sample & 0xFF);
+            buffer[2 * i + 1] = (byte) ((sample >> 8) & 0xFF);
+        }
+        return buffer;
+    }
+
     public static byte[] generateClick() {
         int durationMs = 20;
         int numSamples = (SAMPLE_RATE * durationMs) / 1000;

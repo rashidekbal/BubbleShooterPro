@@ -726,7 +726,7 @@
                         android:background="@drawable/btn_pill_blank_blue"
                         app:backgroundTint="@null"
                         android:paddingBottom="@dimen/dp_4"
-                        android:text="$0.99"
+                        android:text="₹75"
                         android:textColor="#FFFFFF"
                         android:textSize="@dimen/sp_13"
                         android:textStyle="bold"
@@ -736,7 +736,7 @@
                         android:shadowRadius="2" />
                 </LinearLayout>
 
-                <!-- Sack of Gems (500 Diamonds - $2.99) -->
+                <!-- Sack of Gems (500 Diamonds - ₹250) -->
                 <LinearLayout
                     android:id="@+id/cardShopBuySack"
                     android:layout_width="match_parent"
@@ -785,7 +785,7 @@
                         android:background="@drawable/btn_pill_blank_blue"
                         app:backgroundTint="@null"
                         android:paddingBottom="@dimen/dp_4"
-                        android:text="$2.99"
+                        android:text="₹250"
                         android:textColor="#FFFFFF"
                         android:textSize="@dimen/sp_13"
                         android:textStyle="bold"
@@ -795,7 +795,7 @@
                         android:shadowRadius="2" />
                 </LinearLayout>
 
-                <!-- Royal Chest (1,500 Diamonds - $6.99) -->
+                <!-- Royal Chest (1,500 Diamonds - ₹750) -->
                 <LinearLayout
                     android:id="@+id/cardShopBuyChest"
                     android:layout_width="match_parent"
@@ -843,7 +843,7 @@
                         android:background="@drawable/btn_pill_blank_green"
                         app:backgroundTint="@null"
                         android:paddingBottom="@dimen/dp_4"
-                        android:text="$6.99"
+                        android:text="₹750"
                         android:textColor="#FFFFFF"
                         android:textSize="@dimen/sp_13"
                         android:textStyle="bold"

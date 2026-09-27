@@ -25,6 +25,8 @@ public class SoundManager {
     private int soundBomb = -1;
     private int soundWin = -1;
     private int soundClick = -1;
+    private int soundPurchase = -1;
+    private int soundFail = -1;
     private final int[] soundPops = new int[6];
 
     private SoundManager(Context context) {
@@ -56,6 +58,8 @@ public class SoundManager {
             soundShoot = soundPool.load(context, R.raw.bubble_shot, 1);
             soundPop = soundPool.load(context, R.raw.bubble_pop, 1);
             soundWin = soundPool.load(context, R.raw.win_sound, 1);
+            soundFail = soundPool.load(context, R.raw.level_fail, 1);
+            soundPurchase = soundPool.load(context, R.raw.purchase_success, 1);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -67,6 +71,9 @@ public class SoundManager {
                 }
                 if (soundWin <= 0) {
                     soundWin = loadSyntheticSound("snd_win.wav", SoundEffectGenerator.generateWin());
+                }
+                if (soundPurchase <= 0) {
+                    soundPurchase = loadSyntheticSound("snd_purchase.wav", SoundEffectGenerator.generatePurchaseSuccess());
                 }
                 soundBounce = loadSyntheticSound("snd_bounce.wav", SoundEffectGenerator.generateBounce());
                 soundBomb = loadSyntheticSound("snd_bomb.wav", SoundEffectGenerator.generateBomb());
@@ -131,10 +138,30 @@ public class SoundManager {
         vibrate(70);
     }
 
+    public void playLevelFail() {
+        if (!prefs.isSoundEnabled()) return;
+        playSound(soundFail, 1.0f);
+        vibrate(60);
+    }
+
+    public void playFail() {
+        playLevelFail();
+    }
+
     public void playClick() {
         if (!prefs.isSoundEnabled()) return;
         playSound(soundClick, 0.7f);
         vibrate(10);
+    }
+
+    public void playPurchase() {
+        if (!prefs.isSoundEnabled()) return;
+        playSound(soundPurchase, 1.0f);
+        vibrate(40);
+    }
+
+    public void playPurchaseSuccess() {
+        playPurchase();
     }
 
     private void playSound(int soundId, float volume) {

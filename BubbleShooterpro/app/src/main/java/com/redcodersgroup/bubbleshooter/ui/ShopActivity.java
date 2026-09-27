@@ -18,6 +18,7 @@ import com.redcodersgroup.bubbleshooter.analytics.AnalyticsManager;
 import com.redcodersgroup.bubbleshooter.audio.SoundManager;
 import com.redcodersgroup.bubbleshooter.data.PreferencesManager;
 import com.redcodersgroup.bubbleshooter.databinding.ActivityShopBinding;
+import com.redcodersgroup.bubbleshooter.store.IapBillingManager;
 import com.redcodersgroup.bubbleshooter.store.StoreManager;
 import com.redcodersgroup.bubbleshooter.ui.dialogs.NoticeDialog;
 
@@ -53,6 +54,27 @@ public class ShopActivity extends BaseActivity {
         return intent;
     }
 
+    private final IapBillingManager.BillingListener billingListener = new IapBillingManager.BillingListener() {
+        @Override
+        public void onProductDetailsUpdated() {
+            runOnUiThread(ShopActivity.this::updateDiamondPricesUI);
+        }
+
+        @Override
+        public void onPurchaseSuccess(String productId, int diamondsAdded) {
+            soundManager.playPurchase();
+            updateAllUI();
+            NoticeDialog.showReward(ShopActivity.this, "VAULT", "PURCHASE SUCCESS", "+" + diamondsAdded + " DIAMONDS", "Diamonds successfully added to your vault!");
+        }
+
+        @Override
+        public void onPurchaseFailed(String productId, String errorMessage) {
+            if (errorMessage != null && !errorMessage.isEmpty()) {
+                NoticeDialog.showWarning(ShopActivity.this, "PURCHASE", "TRANSACTION INCOMPLETE", "PAYMENT NOT COMPLETED", errorMessage);
+            }
+        }
+    };
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -64,6 +86,10 @@ public class ShopActivity extends BaseActivity {
 
         initViews();
         updateAllUI();
+        updateDiamondPricesUI();
+
+        IapBillingManager.getInstance(this).addListener(billingListener);
+        IapBillingManager.getInstance(this).startConnection();
 
         String initialTab = getIntent().getStringExtra(EXTRA_INITIAL_TAB);
         selectTab(initialTab != null ? initialTab : TAB_HEARTS, false);
@@ -74,7 +100,16 @@ public class ShopActivity extends BaseActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        IapBillingManager.getInstance(this).removeListener(billingListener);
         timerHandler.removeCallbacks(timerRunnable);
+    }
+
+    private void updateDiamondPricesUI() {
+        if (binding == null) return;
+        IapBillingManager billing = IapBillingManager.getInstance(this);
+        binding.btnShopBuyPouch.setText(billing.getFormattedPrice(StoreManager.SKU_DIAMONDS_150));
+        binding.btnShopBuySack.setText(billing.getFormattedPrice(StoreManager.SKU_DIAMONDS_500));
+        binding.btnShopBuyChest.setText(billing.getFormattedPrice(StoreManager.SKU_DIAMONDS_1500));
     }
 
     private void initViews() {
@@ -113,17 +148,19 @@ public class ShopActivity extends BaseActivity {
         binding.cardShopWatchAdDiamonds.setOnClickListener(v -> handleWatchAdForDiamonds());
         binding.btnShopWatchAdDiamonds.setOnClickListener(v -> handleWatchAdForDiamonds());
 
-        // 6. Buy Pouch (150 Diamonds - $0.99)
-        binding.cardShopBuyPouch.setOnClickListener(v -> handleDiamondPackPurchase(150, "Handful"));
-        binding.btnShopBuyPouch.setOnClickListener(v -> handleDiamondPackPurchase(150, "Handful"));
+        // 6. Buy Pouch (150 Diamonds - ₹75 / $0.99)
+        binding.cardShopBuyPouch.setOnClickListener(v -> IapBillingManager.getInstance(this).launchPurchaseFlow(this, StoreManager.SKU_DIAMONDS_150));
+        binding.btnShopBuyPouch.setOnClickListener(v -> IapBillingManager.getInstance(this).launchPurchaseFlow(this, StoreManager.SKU_DIAMONDS_150));
 
-        // 7. Buy Sack (500 Diamonds - $2.99)
-        binding.cardShopBuySack.setOnClickListener(v -> handleDiamondPackPurchase(500, "Sack of Gems"));
-        binding.btnShopBuySack.setOnClickListener(v -> handleDiamondPackPurchase(500, "Sack of Gems"));
+        // 7. Buy Sack (500 Diamonds - ₹250 / $2.99)
+        binding.cardShopBuySack.setOnClickListener(v -> IapBillingManager.getInstance(this).launchPurchaseFlow(this, StoreManager.SKU_DIAMONDS_500));
+        binding.btnShopBuySack.setOnClickListener(v -> IapBillingManager.getInstance(this).launchPurchaseFlow(this, StoreManager.SKU_DIAMONDS_500));
 
-        // 8. Buy Chest (1500 Diamonds - $6.99)
-        binding.cardShopBuyChest.setOnClickListener(v -> handleDiamondPackPurchase(1500, "Royal Chest"));
-        binding.btnShopBuyChest.setOnClickListener(v -> handleDiamondPackPurchase(1500, "Royal Chest"));
+        // 8. Buy Chest (1500 Diamonds - ₹750 / $6.99)
+        binding.cardShopBuyChest.setOnClickListener(v -> IapBillingManager.getInstance(this).launchPurchaseFlow(this, StoreManager.SKU_DIAMONDS_1500));
+        binding.btnShopBuyChest.setOnClickListener(v -> IapBillingManager.getInstance(this).launchPurchaseFlow(this, StoreManager.SKU_DIAMONDS_1500));
+
+        updateDiamondPricesUI();
 
         // 9. Boosters (Individual +1 Single & +3 Pack Cards)
         binding.cardShopBuyBomb1.setOnClickListener(v -> handleBoosterPurchase("BOMB", 1, 15));
@@ -269,7 +306,7 @@ public class ShopActivity extends BaseActivity {
         AdManager.getInstance().showRewardedVideo(this, new AdManager.RewardCallback() {
             @Override
             public void onRewardEarned(int amount, String type) {
-                soundManager.playWin();
+                soundManager.playBounce();
                 prefs.addLives(1);
                 AnalyticsManager.getInstance(ShopActivity.this).logHeartRefilled("ad", 1);
                 updateLivesUI();
@@ -290,7 +327,7 @@ public class ShopActivity extends BaseActivity {
         AdManager.getInstance().showRewardedVideo(this, new AdManager.RewardCallback() {
             @Override
             public void onRewardEarned(int amount, String type) {
-                soundManager.playWin();
+                soundManager.playBounce();
                 prefs.addDiamonds(5);
                 Bundle bundle = new Bundle();
                 bundle.putString("reward_type", "diamonds");
@@ -317,7 +354,7 @@ public class ShopActivity extends BaseActivity {
         }
 
         if (prefs.spendDiamonds(5)) {
-            soundManager.playWin();
+            soundManager.playPurchase();
             prefs.addLives(1);
             AnalyticsManager.getInstance(this).logHeartRefilled("diamond", 1);
             updateAllUI();
@@ -336,7 +373,7 @@ public class ShopActivity extends BaseActivity {
         }
 
         if (prefs.spendDiamonds(12)) {
-            soundManager.playWin();
+            soundManager.playPurchase();
             prefs.addLives(3);
             AnalyticsManager.getInstance(this).logHeartRefilled("diamond", 3);
             updateAllUI();
@@ -355,7 +392,7 @@ public class ShopActivity extends BaseActivity {
         }
 
         if (prefs.spendDiamonds(20)) {
-            soundManager.playWin();
+            soundManager.playPurchase();
             prefs.addLives(5);
             AnalyticsManager.getInstance(this).logHeartRefilled("diamond", 5);
             updateAllUI();
@@ -368,9 +405,10 @@ public class ShopActivity extends BaseActivity {
 
     private void handleDailyFreeClaim() {
         if (prefs.canClaimDailyFreeDiamonds()) {
-            soundManager.playWin();
+            soundManager.playPurchase();
             prefs.addDiamonds(StoreManager.DIAMONDS_DAILY_FREE);
             prefs.markDailyFreeDiamondsClaimed();
+            com.redcodersgroup.bubbleshooter.auth.CloudSaveManager.getInstance().saveToCloud(this);
             updateAllUI();
             NoticeDialog.showReward(this, "REWARD", "DAILY GIFT", "+" + StoreManager.DIAMONDS_DAILY_FREE + " FREE DIAMONDS", "Free diamonds added to your vault. Return tomorrow for more!");
         } else {
@@ -380,15 +418,16 @@ public class ShopActivity extends BaseActivity {
     }
 
     private void handleDiamondPackPurchase(int diamonds, String packName) {
-        soundManager.playWin();
+        soundManager.playPurchase();
         prefs.addDiamonds(diamonds);
+        com.redcodersgroup.bubbleshooter.auth.CloudSaveManager.getInstance().saveToCloud(this);
         updateAllUI();
         NoticeDialog.showReward(this, "VAULT", "PURCHASE SUCCESS", "+" + diamonds + " DIAMONDS", "Diamonds successfully added to your vault!");
     }
 
     private void handleBoosterPurchase(String type, int count, int cost) {
         if (prefs.spendDiamonds(cost)) {
-            soundManager.playWin();
+            soundManager.playPurchase();
             String name = "";
             switch (type) {
                 case "BOMB":
@@ -408,6 +447,7 @@ public class ShopActivity extends BaseActivity {
                     name = count + "x LIGHTNING BOOSTER" + (count > 1 ? "S" : "");
                     break;
             }
+            com.redcodersgroup.bubbleshooter.auth.CloudSaveManager.getInstance().saveToCloud(this);
             updateAllUI();
             NoticeDialog.showReward(this, "STORE", "PURCHASE SUCCESS", "+" + count + " " + type + " BOOSTER" + (count > 1 ? "S" : ""), count + " booster" + (count > 1 ? "s" : "") + " added to your battle arsenal!");
         } else {

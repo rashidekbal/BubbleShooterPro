@@ -90,6 +90,10 @@ public class MainActivity extends AppCompatActivity {
                                     if (profileDialog != null && profileDialog.isShowing()) {
                                         profileDialog.onAuthSuccess(player.getDisplayName());
                                     }
+                                    // Sync levels, diamonds, boosters from Google Play Games Cloud
+                                    com.redcodersgroup.bubbleshooter.auth.CloudSaveManager.getInstance().loadAndSyncFromCloud(MainActivity.this, (success, msg) -> {
+                                        runOnUiThread(() -> refreshAllUI());
+                                    });
                                     if (activeAuthCallback != null) {
                                         activeAuthCallback.onSuccess(player);
                                         activeAuthCallback = null;
@@ -185,7 +189,7 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onWorldGiftClaimed(int worldNumber, int giftIndex, int bonusDiamonds) {
-                soundManager.playWin();
+                soundManager.playBounce();
                 prefs.addDiamonds(bonusDiamonds);
                 AnalyticsManager.getInstance(MainActivity.this).logGiftChestClaimed(worldNumber, giftIndex, bonusDiamonds);
                 updateDiamondsUI();
@@ -387,6 +391,10 @@ public class MainActivity extends AppCompatActivity {
                         if (profileDialog != null && profileDialog.isShowing()) {
                             profileDialog.onAuthSuccess(player.getDisplayName());
                         }
+                        // Sync levels, diamonds, boosters from Google Play Games Cloud
+                        com.redcodersgroup.bubbleshooter.auth.CloudSaveManager.getInstance().loadAndSyncFromCloud(MainActivity.this, (success, msg) -> {
+                            runOnUiThread(() -> refreshAllUI());
+                        });
                         if (callback != null) {
                             callback.onSuccess(player);
                         }
@@ -424,6 +432,10 @@ public class MainActivity extends AppCompatActivity {
                                 updateProfileUI();
                             }
                         }
+                        // Sync levels, diamonds, boosters silently on app launch
+                        com.redcodersgroup.bubbleshooter.auth.CloudSaveManager.getInstance().loadAndSyncFromCloud(MainActivity.this, (success, msg) -> {
+                            runOnUiThread(() -> refreshAllUI());
+                        });
                     }
 
                     @Override
@@ -431,5 +443,17 @@ public class MainActivity extends AppCompatActivity {
                         // Silent sign-in not available or cancelled
                     }
                 });
+    }
+
+    public void refreshAllUI() {
+        updateProfileUI();
+        updateDiamondsUI();
+        updateLivesUI();
+        int curLvl = prefs.getHighestUnlockedLevel();
+        int worldIdx = worldConfigManager.getWorldIndexForLevel(curLvl);
+        updateWorldSwitcherUI(worldIdx);
+        if (worldMapAdapter != null) {
+            worldMapAdapter.notifyDataSetChanged();
+        }
     }
 }

@@ -1,5 +1,6 @@
 package com.redcodersgroup.bubbleshooter.ui.dialogs;
 
+import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.graphics.Color;
@@ -14,6 +15,7 @@ import com.redcodersgroup.bubbleshooter.analytics.AnalyticsManager;
 import com.redcodersgroup.bubbleshooter.audio.SoundManager;
 import com.redcodersgroup.bubbleshooter.data.PreferencesManager;
 import com.redcodersgroup.bubbleshooter.databinding.DialogStoreBinding;
+import com.redcodersgroup.bubbleshooter.store.IapBillingManager;
 import com.redcodersgroup.bubbleshooter.store.StoreManager;
 
 public class StoreDialog extends Dialog {
@@ -26,6 +28,33 @@ public class StoreDialog extends Dialog {
     private final SoundManager soundManager;
     private final StoreDialogListener listener;
     private DialogStoreBinding binding;
+
+    private final IapBillingManager.BillingListener billingListener = new IapBillingManager.BillingListener() {
+        @Override
+        public void onProductDetailsUpdated() {
+            if (binding != null && isShowing()) {
+                binding.getRoot().post(() -> updateDiamondPricesUI());
+            }
+        }
+
+        @Override
+        public void onPurchaseSuccess(String productId, int diamondsAdded) {
+            if (binding != null && isShowing()) {
+                binding.getRoot().post(() -> {
+                    soundManager.playPurchase();
+                    updateStoreUI();
+                    NoticeDialog.showReward(getContext(), "VAULT", "PURCHASE SUCCESS", "+" + diamondsAdded + " DIAMONDS", "Diamonds successfully added to your vault!");
+                });
+            }
+        }
+
+        @Override
+        public void onPurchaseFailed(String productId, String errorMessage) {
+            if (errorMessage != null && !errorMessage.isEmpty() && isShowing()) {
+                NoticeDialog.showWarning(getContext(), "PURCHASE", "TRANSACTION INCOMPLETE", "PAYMENT NOT COMPLETED", errorMessage);
+            }
+        }
+    };
 
     public StoreDialog(@NonNull Context context, @Nullable StoreDialogListener listener) {
         super(context);
@@ -50,7 +79,11 @@ public class StoreDialog extends Dialog {
             );
         }
 
+        IapBillingManager.getInstance(getContext()).addListener(billingListener);
+        IapBillingManager.getInstance(getContext()).startConnection();
+
         setOnDismissListener(dialog -> {
+            IapBillingManager.getInstance(getContext()).removeListener(billingListener);
             if (listener != null) {
                 listener.onStoreClosed();
             }
@@ -58,6 +91,7 @@ public class StoreDialog extends Dialog {
 
         initClickListeners();
         updateStoreUI();
+        updateDiamondPricesUI();
     }
 
     private void initClickListeners() {
@@ -70,17 +104,19 @@ public class StoreDialog extends Dialog {
         binding.cardBuyDailyFree.setOnClickListener(v -> handleDailyFreeClaim());
         binding.btnBuyDailyFree.setOnClickListener(v -> handleDailyFreeClaim());
 
-        // 2. Pouch: 150 Diamonds ($0.99)
-        binding.cardBuyPouch.setOnClickListener(v -> handleDiamondPackPurchase(150, "Handful"));
-        binding.btnBuyPouch.setOnClickListener(v -> handleDiamondPackPurchase(150, "Handful"));
+        // 2. Pouch: 150 Diamonds (₹75 / $0.99)
+        binding.cardBuyPouch.setOnClickListener(v -> launchIap(StoreManager.SKU_DIAMONDS_150));
+        binding.btnBuyPouch.setOnClickListener(v -> launchIap(StoreManager.SKU_DIAMONDS_150));
 
-        // 3. Sack: 500 Diamonds ($2.99)
-        binding.cardBuySack.setOnClickListener(v -> handleDiamondPackPurchase(500, "Sack of Gems"));
-        binding.btnBuySack.setOnClickListener(v -> handleDiamondPackPurchase(500, "Sack of Gems"));
+        // 3. Sack: 500 Diamonds (₹250 / $2.99)
+        binding.cardBuySack.setOnClickListener(v -> launchIap(StoreManager.SKU_DIAMONDS_500));
+        binding.btnBuySack.setOnClickListener(v -> launchIap(StoreManager.SKU_DIAMONDS_500));
 
-        // 4. Chest: 1,500 Diamonds ($6.99)
-        binding.cardBuyChest.setOnClickListener(v -> handleDiamondPackPurchase(1500, "Royal Chest"));
-        binding.btnBuyChest.setOnClickListener(v -> handleDiamondPackPurchase(1500, "Royal Chest"));
+        // 4. Chest: 1,500 Diamonds (₹750 / $6.99)
+        binding.cardBuyChest.setOnClickListener(v -> launchIap(StoreManager.SKU_DIAMONDS_1500));
+        binding.btnBuyChest.setOnClickListener(v -> launchIap(StoreManager.SKU_DIAMONDS_1500));
+
+        updateDiamondPricesUI();
 
         // 5. Mega Bundle (120 Diamonds)
         binding.cardBuyMegaBundle.setOnClickListener(v -> handleMegaBundlePurchase());
@@ -109,7 +145,7 @@ public class StoreDialog extends Dialog {
 
     private void handleDailyFreeClaim() {
         if (prefs.canClaimDailyFreeDiamonds()) {
-            soundManager.playWin();
+            soundManager.playPurchase();
             prefs.addDiamonds(StoreManager.DIAMONDS_DAILY_FREE);
             prefs.markDailyFreeDiamondsClaimed();
             updateStoreUI();
@@ -133,7 +169,7 @@ public class StoreDialog extends Dialog {
     }
 
     private void handleDiamondPackPurchase(int diamonds, String packName) {
-        soundManager.playWin();
+        soundManager.playPurchase();
         prefs.addDiamonds(diamonds);
         Bundle bundle = new Bundle();
         bundle.putString("pack_name", packName);
@@ -151,7 +187,7 @@ public class StoreDialog extends Dialog {
 
     private void handleBoosterPurchase(String type, int cost) {
         if (prefs.spendDiamonds(cost)) {
-            soundManager.playWin();
+            soundManager.playPurchase();
             String name = "";
             switch (type) {
                 case "BOMB":
@@ -194,7 +230,7 @@ public class StoreDialog extends Dialog {
     private void handleMegaBundlePurchase() {
         int cost = 120;
         if (prefs.spendDiamonds(cost)) {
-            soundManager.playWin();
+            soundManager.playPurchase();
             prefs.addBombBoosters(2);
             prefs.addFireballBoosters(2);
             prefs.addLightningBoosters(2);
@@ -228,6 +264,20 @@ public class StoreDialog extends Dialog {
             }
         });
         heartDialog.show();
+    }
+
+    private void launchIap(String productId) {
+        if (getContext() instanceof Activity) {
+            IapBillingManager.getInstance(getContext()).launchPurchaseFlow((Activity) getContext(), productId);
+        }
+    }
+
+    private void updateDiamondPricesUI() {
+        if (binding == null) return;
+        IapBillingManager billing = IapBillingManager.getInstance(getContext());
+        binding.btnBuyPouch.setText(billing.getFormattedPrice(StoreManager.SKU_DIAMONDS_150));
+        binding.btnBuySack.setText(billing.getFormattedPrice(StoreManager.SKU_DIAMONDS_500));
+        binding.btnBuyChest.setText(billing.getFormattedPrice(StoreManager.SKU_DIAMONDS_1500));
     }
 
     private void updateStoreUI() {

@@ -211,7 +211,7 @@
                                 android:layout_marginTop="@dimen/dp_6"
                                 android:background="@drawable/bg_store_btn_amber"
                                 android:gravity="center"
-                                android:text="$0.99"
+                                android:text="₹75"
                                 android:textColor="#FFFFFF"
                                 android:textSize="@dimen/sp_12"
                                 android:textStyle="bold" />
@@ -286,7 +286,7 @@
                                 android:layout_marginTop="@dimen/dp_6"
                                 android:background="@drawable/bg_store_btn_amber"
                                 android:gravity="center"
-                                android:text="$2.99"
+                                android:text="₹250"
                                 android:textColor="#FFFFFF"
                                 android:textSize="@dimen/sp_12"
                                 android:textStyle="bold" />
@@ -353,7 +353,7 @@
                                 android:layout_marginTop="@dimen/dp_6"
                                 android:background="@drawable/bg_store_btn_amber"
                                 android:gravity="center"
-                                android:text="$6.99"
+                                android:text="₹750"
                                 android:textColor="#FFFFFF"
                                 android:textSize="@dimen/sp_12"
                                 android:textStyle="bold" />

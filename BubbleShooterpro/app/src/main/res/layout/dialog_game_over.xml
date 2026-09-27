@@ -100,7 +100,7 @@
                 android:id="@+id/tvGetMoreBubblesTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="🎯 Out of Bubbles!"
+                android:text="🎯 Out of Shots!"
                 android:textColor="#1E293B"
                 android:textSize="@dimen/sp_14"
                 android:textStyle="bold" />
@@ -122,7 +122,7 @@
                 android:background="@drawable/btn_pill_blank_green"
                 app:backgroundTint="@null"
                 android:paddingBottom="@dimen/dp_4"
-                android:text="+5 BUBBLES (💎 5)"
+                android:text="+5 EXTRA SHOTS (💎 5)"
                 android:textColor="#FFFFFF"
                 android:textSize="@dimen/sp_15"
                 android:textStyle="bold"

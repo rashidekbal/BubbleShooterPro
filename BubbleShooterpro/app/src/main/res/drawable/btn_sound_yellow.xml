@@ -1,4 +1,44 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<selector xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:drawable="@drawable/btn_sound_green" />
-</selector>
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="56dp"
+    android:height="56dp"
+    android:viewportWidth="56"
+    android:viewportHeight="56">
+
+    <!-- 3D Base Shadow -->
+    <path
+        android:pathData="M28,6 A22,22 0 1,0 28,50 A22,22 0 1,0 28,6 Z"
+        android:fillColor="#78350F" />
+
+    <!-- Main Glossy Yellow Circle -->
+    <path
+        android:pathData="M28,4 A22,22 0 1,0 28,48 A22,22 0 1,0 28,4 Z"
+        android:fillColor="#EAB308" />
+
+    <!-- Outer Highlight Ring -->
+    <path
+        android:pathData="M28,4 A22,22 0 1,0 28,48 A22,22 0 1,0 28,4 Z"
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="1.5" />
+
+    <!-- Top Specular Highlight Arc -->
+    <path
+        android:pathData="M14,14 C18,7 38,7 42,14 C36,19 20,19 14,14 Z"
+        android:fillColor="#80FFFFFF" />
+
+    <!-- Speaker Icon Shadow -->
+    <path
+        android:pathData="M16,24 H21 L28,17 V39 L21,32 H16 Z M33,21 C36,24 36,32 33,35 M37,17 C42,22 42,34 37,39"
+        android:strokeColor="#78350F"
+        android:strokeWidth="2.5"
+        android:strokeLineCap="round"
+        android:fillColor="#78350F" />
+
+    <!-- Speaker Icon Foreground -->
+    <path
+        android:pathData="M16,23 H21 L28,16 V38 L21,31 H16 Z M33,20 C36,23 36,31 33,34 M37,16 C42,21 42,33 37,38"
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="2.5"
+        android:strokeLineCap="round"
+        android:fillColor="#FFFFFF" />
+</vector>

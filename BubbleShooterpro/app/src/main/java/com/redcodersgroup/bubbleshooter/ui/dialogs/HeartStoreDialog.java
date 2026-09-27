@@ -122,7 +122,7 @@ public class HeartStoreDialog extends Dialog {
                     new com.redcodersgroup.bubbleshooter.ads.AdManager.RewardCallback() {
                         @Override
                         public void onRewardEarned(int amount, String type) {
-                            soundManager.playWin();
+                            soundManager.playPurchase();
                             prefs.addLives(1);
                             AnalyticsManager.getInstance(getContext()).logHeartRefilled("ad", 1);
                             updateLivesUI();
@@ -160,7 +160,7 @@ public class HeartStoreDialog extends Dialog {
         }
 
         if (prefs.spendDiamonds(COST_ONE_HEART)) {
-            soundManager.playWin();
+            soundManager.playPurchase();
             prefs.addLives(1);
             AnalyticsManager.getInstance(getContext()).logHeartRefilled("diamond", 1);
             updateLivesUI();
@@ -197,7 +197,7 @@ public class HeartStoreDialog extends Dialog {
         }
 
         if (prefs.spendDiamonds(COST_FULL_REFILL)) {
-            soundManager.playWin();
+            soundManager.playPurchase();
             prefs.refillLives();
             AnalyticsManager.getInstance(getContext()).logHeartRefilled("diamond", 5);
             updateLivesUI();
@@ -234,7 +234,7 @@ public class HeartStoreDialog extends Dialog {
         }
 
         if (prefs.spendDiamonds(COST_TRIPLE_HEARTS)) {
-            soundManager.playWin();
+            soundManager.playPurchase();
             prefs.addLives(3);
             AnalyticsManager.getInstance(getContext()).logHeartRefilled("diamond", 3);
             updateLivesUI();

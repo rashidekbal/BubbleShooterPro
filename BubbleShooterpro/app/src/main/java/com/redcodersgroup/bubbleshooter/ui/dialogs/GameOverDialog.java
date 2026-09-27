@@ -97,7 +97,7 @@ public class GameOverDialog extends Dialog {
         // Show Get More Bubbles option if lost due to running out of shots in Level Mode
         if (isOutOfShots && !isEndless) {
             binding.layoutGetMoreBubbles.setVisibility(View.VISIBLE);
-            binding.btnGetMoreBubbles.setText("+5 BUBBLES (💎 " + continueCost + ")");
+            binding.btnGetMoreBubbles.setText("+5 EXTRA SHOTS (💎 " + continueCost + ")");
             binding.btnGetMoreBubbles.setOnClickListener(v -> {
                 if (listener != null) {
                     listener.onGetMoreBubblesClicked();

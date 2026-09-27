@@ -2,11 +2,23 @@ package com.redcodersgroup.bubbleshooter.store;
 
 public class StoreManager {
 
+    // Rate: 0.5 Rs per Diamond (₹0.50)
+    public static final float RATE_INR_PER_DIAMOND = 0.5f;
+
     // Diamond Acquisition Packs
     public static final int DIAMONDS_DAILY_FREE = 5;
-    public static final int DIAMONDS_POUCH = 150;
-    public static final int DIAMONDS_SACK = 500;
-    public static final int DIAMONDS_CHEST = 1500;
+    public static final int DIAMONDS_POUCH = 150;      // 150 * 0.5 = ₹75
+    public static final int DIAMONDS_SACK = 500;       // 500 * 0.5 = ₹250
+    public static final int DIAMONDS_CHEST = 1500;     // 1500 * 0.5 = ₹750
+
+    // Google Play IAP Product IDs & Prices (INR)
+    public static final String SKU_DIAMONDS_150 = "diamonds_150";
+    public static final String SKU_DIAMONDS_500 = "diamonds_500";
+    public static final String SKU_DIAMONDS_1500 = "diamonds_1500";
+
+    public static final String PRICE_LABEL_150 = "₹75";
+    public static final String PRICE_LABEL_500 = "₹250";
+    public static final String PRICE_LABEL_1500 = "₹750";
 
     // Power-Up & Booster Costs (in Diamonds)
     public static final int COST_BOMB_PACK = 40;

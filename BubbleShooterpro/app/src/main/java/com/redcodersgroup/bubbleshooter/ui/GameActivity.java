@@ -57,9 +57,9 @@ public class GameActivity extends BaseActivity implements GameEngine.GameEventLi
     private int[] currentStarThresholds = new int[]{1000, 2000, 3000};
     private android.animation.ValueAnimator progressAnimator;
     private ObjectAnimator doubleBonusPulseAnimator;
+    private ObjectAnimator reviveAdPulseAnimator;
     private PauseDialog activePauseDialog;
     private VictoryDialog activeVictoryDialog;
-    private GameOverDialog activeGameOverDialog;
     private BuyBoosterDialog activeBuyBoosterDialog;
     private boolean isGameOverOrWon = false;
     private boolean wasBackgrounded = false;
@@ -294,8 +294,15 @@ public class GameActivity extends BaseActivity implements GameEngine.GameEventLi
         continueBubblePurchasesCount = 0;
         isGameOverOrWon = false;
         wasBackgrounded = false;
-        if (binding != null && binding.overlayVictory != null) {
-            binding.overlayVictory.rootVictoryOverlay.setVisibility(View.GONE);
+        stopDoubleBonusPulseAnimation();
+        stopReviveAdPulseAnimation();
+        if (binding != null) {
+            if (binding.overlayVictory != null) {
+                binding.overlayVictory.rootVictoryOverlay.setVisibility(View.GONE);
+            }
+            if (binding.overlayGameOver != null) {
+                binding.overlayGameOver.rootGameOverOverlay.setVisibility(View.GONE);
+            }
         }
         binding.tvShotsLabel.setText("SHOTS");
         binding.bubbleGameView.setBiomeLevel(currentLevelNumber);
@@ -350,8 +357,15 @@ public class GameActivity extends BaseActivity implements GameEngine.GameEventLi
         AnalyticsManager.getInstance(this).logEndlessStart();
         isGameOverOrWon = false;
         wasBackgrounded = false;
-        if (binding != null && binding.overlayVictory != null) {
-            binding.overlayVictory.rootVictoryOverlay.setVisibility(View.GONE);
+        stopDoubleBonusPulseAnimation();
+        stopReviveAdPulseAnimation();
+        if (binding != null) {
+            if (binding.overlayVictory != null) {
+                binding.overlayVictory.rootVictoryOverlay.setVisibility(View.GONE);
+            }
+            if (binding.overlayGameOver != null) {
+                binding.overlayGameOver.rootGameOverOverlay.setVisibility(View.GONE);
+            }
         }
 
         binding.bubbleGameView.setEndlessBiome(1);
@@ -453,6 +467,22 @@ public class GameActivity extends BaseActivity implements GameEngine.GameEventLi
             @Override
             public void onRestartClicked() {
                 activePauseDialog = null;
+                if (!isEndlessMode && !isGameOverOrWon) {
+                    // Deduct life for restarting mid-match in level mode
+                    prefs.deductLife();
+                    isGameOverOrWon = true;
+                    BubbleGameView.BiomeTheme theme = binding.bubbleGameView.getCurrentBiome();
+                    AnalyticsManager.getInstance(GameActivity.this).logLevelFail(
+                            currentLevelNumber,
+                            theme != null ? theme.title : "World",
+                            gameEngine != null ? gameEngine.getScore() : 0,
+                            "Restart Mid-Match"
+                    );
+                    if (prefs.getLives() <= 0) {
+                        showNoHeartsDialog();
+                        return;
+                    }
+                }
                 if (isEndlessMode) {
                     loadEndlessMode();
                 } else {
@@ -464,6 +494,18 @@ public class GameActivity extends BaseActivity implements GameEngine.GameEventLi
             @Override
             public void onHomeClicked() {
                 activePauseDialog = null;
+                if (!isEndlessMode && !isGameOverOrWon) {
+                    // Deduct life for quitting mid-match in level mode
+                    prefs.deductLife();
+                    isGameOverOrWon = true;
+                    BubbleGameView.BiomeTheme theme = binding.bubbleGameView.getCurrentBiome();
+                    AnalyticsManager.getInstance(GameActivity.this).logLevelFail(
+                            currentLevelNumber,
+                            theme != null ? theme.title : "World",
+                            gameEngine != null ? gameEngine.getScore() : 0,
+                            "Quit Mid-Match"
+                    );
+                }
                 Intent intent = new Intent(GameActivity.this, MainActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
                 startActivity(intent);
@@ -483,17 +525,22 @@ public class GameActivity extends BaseActivity implements GameEngine.GameEventLi
             return;
         }
 
-        // If a terminal dialog (Victory or Game Over) is active, back finishes cleanly
-        if (activeVictoryDialog != null && activeVictoryDialog.isShowing()) {
-            activeVictoryDialog.dismiss();
-            activeVictoryDialog = null;
+        // If full-screen game over overlay is active, user is abandoning the level -> deduct heart and finish
+        if (binding != null && binding.overlayGameOver != null &&
+                binding.overlayGameOver.rootGameOverOverlay.getVisibility() == View.VISIBLE) {
+            if (!isEndlessMode && !isGameOverOrWon) {
+                prefs.deductLife();
+                isGameOverOrWon = true;
+            }
+            stopReviveAdPulseAnimation();
             finish();
             return;
         }
 
-        if (activeGameOverDialog != null && activeGameOverDialog.isShowing()) {
-            activeGameOverDialog.dismiss();
-            activeGameOverDialog = null;
+        // If a terminal dialog is active, back finishes cleanly
+        if (activeVictoryDialog != null && activeVictoryDialog.isShowing()) {
+            activeVictoryDialog.dismiss();
+            activeVictoryDialog = null;
             finish();
             return;
         }
@@ -658,6 +705,9 @@ public class GameActivity extends BaseActivity implements GameEngine.GameEventLi
             int newHigh = Math.max(previousHigh, score);
             repository.completeLevel(currentLevelNumber, effectiveStars, score);
 
+            // Auto-save completed level progress to Google Play Games Cloud
+            com.redcodersgroup.bubbleshooter.auth.CloudSaveManager.getInstance().saveToCloud(GameActivity.this);
+
             BubbleGameView.BiomeTheme theme = binding.bubbleGameView.getCurrentBiome();
             AnalyticsManager.getInstance(this).logLevelComplete(
                     currentLevelNumber,
@@ -675,6 +725,7 @@ public class GameActivity extends BaseActivity implements GameEngine.GameEventLi
 
         // Automatically grant the standard +2 Diamonds level completion reward
         prefs.addDiamonds(2);
+        com.redcodersgroup.bubbleshooter.auth.CloudSaveManager.getInstance().saveToCloud(GameActivity.this);
         android.os.Bundle bVictoryBase = new android.os.Bundle();
         bVictoryBase.putInt("amount", 2);
         AnalyticsManager.getInstance(this).logEvent("level_victory_base_diamonds", bVictoryBase);
@@ -734,7 +785,7 @@ public class GameActivity extends BaseActivity implements GameEngine.GameEventLi
                     android.os.Bundle bDouble = new android.os.Bundle();
                     bDouble.putInt("amount", 2);
                     AnalyticsManager.getInstance(GameActivity.this).logEvent("rewarded_ad_level_double", bDouble);
-                    soundManager.playWin();
+                    soundManager.playBounce();
 
                     runOnUiThread(() -> {
                         if (binding != null && binding.overlayVictory != null) {
@@ -768,6 +819,12 @@ public class GameActivity extends BaseActivity implements GameEngine.GameEventLi
                 }
             });
         });
+
+        // Attach Touch Feedback to Action Buttons
+        attachButtonTouchFeedback(binding.overlayVictory.btnVictoryNextLevel);
+        attachButtonTouchFeedback(binding.overlayVictory.btnVictoryReplay);
+        attachButtonTouchFeedback(binding.overlayVictory.btnVictoryHome);
+        attachButtonTouchFeedback(binding.overlayVictory.btnVictoryDoubleBonus);
 
         // Next Level Button
         binding.overlayVictory.btnVictoryNextLevel.setOnClickListener(v -> {
@@ -811,6 +868,26 @@ public class GameActivity extends BaseActivity implements GameEngine.GameEventLi
                 binding.overlayVictory.rootVictoryOverlay.setVisibility(View.GONE);
             }
             finish();
+        });
+    }
+
+    @android.annotation.SuppressLint("ClickableViewAccessibility")
+    private void attachButtonTouchFeedback(View view) {
+        if (view == null) return;
+        view.setOnTouchListener((v, event) -> {
+            switch (event.getAction()) {
+                case android.view.MotionEvent.ACTION_DOWN:
+                    v.animate().scaleX(0.88f).scaleY(0.88f).setDuration(80)
+                            .setInterpolator(new android.view.animation.DecelerateInterpolator()).start();
+                    v.performHapticFeedback(android.view.HapticFeedbackConstants.VIRTUAL_KEY);
+                    break;
+                case android.view.MotionEvent.ACTION_UP:
+                case android.view.MotionEvent.ACTION_CANCEL:
+                    v.animate().scaleX(1.0f).scaleY(1.0f).setDuration(160)
+                            .setInterpolator(new OvershootInterpolator(2.5f)).start();
+                    break;
+            }
+            return false;
         });
     }
 
@@ -884,8 +961,6 @@ public class GameActivity extends BaseActivity implements GameEngine.GameEventLi
                 }
                 AnalyticsManager.getInstance(this).logEndlessGameOver(score, personalBest);
             } else {
-                // Deduct one heart for losing a level (not in endless mode)
-                prefs.deductLife();
                 BubbleGameView.BiomeTheme theme = binding.bubbleGameView.getCurrentBiome();
                 AnalyticsManager.getInstance(this).logLevelFail(
                         currentLevelNumber,
@@ -895,54 +970,207 @@ public class GameActivity extends BaseActivity implements GameEngine.GameEventLi
                 );
             }
 
-            final int livesAfterLoss = prefs.getLives();
-            final boolean isOutOfShots = !isEndlessMode && ((gameEngine != null && gameEngine.getShotsRemaining() <= 0) || (reason != null && reason.toLowerCase().contains("out of shot")));
-            final int continueCost = 5 + continueBubblePurchasesCount;
+            showGameOverOverlay(score, reason, personalBest);
+        });
+    }
 
-            activeGameOverDialog = new GameOverDialog(this, score, reason, personalBest, isEndlessMode, livesAfterLoss, isOutOfShots, continueCost, new GameOverDialog.GameOverDialogListener() {
-                @Override
-                public void onRetryClicked() {
-                    activeGameOverDialog = null;
-                    if (!isEndlessMode && livesAfterLoss <= 0) {
-                        // No hearts left — open Heart Store instead
-                        showNoHeartsDialog();
-                        return;
-                    }
-                    if (isEndlessMode) {
-                        loadEndlessMode();
-                    } else {
-                        loadCurrentLevel();
-                    }
-                    enableImmersiveStickyMode();
-                }
+    private void showGameOverOverlay(int score, String reason, int personalBest) {
+        if (binding == null || binding.overlayGameOver == null) return;
 
-                @Override
-                public void onHomeClicked() {
-                    activeGameOverDialog = null;
-                    finish();
-                }
+        final int continueCost = 5 + continueBubblePurchasesCount;
 
+        // UI Texts
+        if (isEndlessMode) {
+            binding.overlayGameOver.tvGameOverTitle.setText(score > personalBest && personalBest > 0 ? "NEW BEST!" : "STAGE OVER");
+            binding.overlayGameOver.tvGameOverSubtitle.setText(reason != null && !reason.isEmpty() ? reason : "Wave complete! Keep practicing!");
+        } else {
+            binding.overlayGameOver.tvGameOverTitle.setText("LEVEL FAILED");
+            binding.overlayGameOver.tvGameOverSubtitle.setText(reason != null && !reason.isEmpty() ? reason : "Out of shots! Don't give up!");
+        }
+
+        binding.overlayGameOver.tvGameOverScore.setText(String.format(Locale.getDefault(), "%,d", score));
+        int displayBest = Math.max(score, isEndlessMode ? prefs.getEndlessHighScore() : score);
+        binding.overlayGameOver.tvGameOverHighScore.setText("BEST: " + String.format(Locale.getDefault(), "%,d", displayBest));
+
+        // Revive Options (Available in Level Mode)
+        if (!isEndlessMode) {
+            binding.overlayGameOver.btnGameOverReviveAd.setVisibility(View.VISIBLE);
+            binding.overlayGameOver.btnGameOverReviveAd.setText("🎬 FREE REVIVE • +5 EXTRA SHOTS");
+            binding.overlayGameOver.btnGameOverReviveAd.setEnabled(true);
+            binding.overlayGameOver.btnGameOverReviveAd.setAlpha(1.0f);
+
+            binding.overlayGameOver.btnGameOverReviveDiamonds.setVisibility(View.VISIBLE);
+            binding.overlayGameOver.btnGameOverReviveDiamonds.setText("💎 REVIVE (+5 EXTRA SHOTS • " + continueCost + " 💎)");
+        } else {
+            binding.overlayGameOver.btnGameOverReviveAd.setVisibility(View.GONE);
+            binding.overlayGameOver.btnGameOverReviveDiamonds.setVisibility(View.GONE);
+        }
+
+        // Attach Touch Feedback to Action Buttons
+        attachButtonTouchFeedback(binding.overlayGameOver.btnGameOverHome);
+        attachButtonTouchFeedback(binding.overlayGameOver.btnGameOverRetry);
+        attachButtonTouchFeedback(binding.overlayGameOver.btnGameOverReviveAd);
+        attachButtonTouchFeedback(binding.overlayGameOver.btnGameOverReviveDiamonds);
+
+        // Button Click: Revive by Watching Ad (No heart deducted since player revives)
+        binding.overlayGameOver.btnGameOverReviveAd.setOnClickListener(v -> {
+            soundManager.playClick();
+            AdManager.getInstance().showRewardedVideo(GameActivity.this, new AdManager.RewardCallback() {
                 @Override
-                public void onGetMoreBubblesClicked() {
-                    if (prefs.spendDiamonds(continueCost)) {
-                        continueBubblePurchasesCount++;
-                        prefs.addLives(1); // Refund the heart deducted when game over occurred
-                        isGameOverOrWon = false;
-                        if (activeGameOverDialog != null) {
-                            activeGameOverDialog.dismiss();
-                            activeGameOverDialog = null;
+                public void onRewardEarned(int amount, String type) {
+                    continueBubblePurchasesCount++;
+                    isGameOverOrWon = false;
+                    Bundle bRevive = new Bundle();
+                    bRevive.putInt("level", currentLevelNumber);
+                    AnalyticsManager.getInstance(GameActivity.this).logEvent("rewarded_ad_revive", bRevive);
+                    soundManager.playPurchase();
+
+                    runOnUiThread(() -> {
+                        stopReviveAdPulseAnimation();
+                        if (binding != null && binding.overlayGameOver != null) {
+                            binding.overlayGameOver.rootGameOverOverlay.setVisibility(View.GONE);
                         }
                         if (gameEngine != null) {
                             gameEngine.addExtraShots(5);
                         }
                         enableImmersiveStickyMode();
-                    } else {
-                        startActivity(com.redcodersgroup.bubbleshooter.ui.ShopActivity.createIntent(GameActivity.this, com.redcodersgroup.bubbleshooter.ui.ShopActivity.TAB_DIAMONDS));
+                    });
+                }
+
+                @Override
+                public void onAdClosed(boolean rewarded) {
+                    if (!rewarded) {
+                        runOnUiThread(() -> NoticeDialog.showWarning(
+                                GameActivity.this,
+                                "AD SKIPPED",
+                                "NO REVIVE",
+                                "AD INCOMPLETE",
+                                "Watch the full video to revive with +5 extra shots!"
+                        ));
                     }
                 }
             });
-            activeGameOverDialog.show();
         });
+
+        // Button Click: Revive by Spending Diamonds (No heart deducted since player revives)
+        binding.overlayGameOver.btnGameOverReviveDiamonds.setOnClickListener(v -> {
+            soundManager.playClick();
+            if (prefs.spendDiamonds(continueCost)) {
+                continueBubblePurchasesCount++;
+                isGameOverOrWon = false;
+                stopReviveAdPulseAnimation();
+                if (binding != null && binding.overlayGameOver != null) {
+                    binding.overlayGameOver.rootGameOverOverlay.setVisibility(View.GONE);
+                }
+                soundManager.playPurchase();
+                if (gameEngine != null) {
+                    gameEngine.addExtraShots(5);
+                }
+                enableImmersiveStickyMode();
+            } else {
+                startActivity(ShopActivity.createIntent(GameActivity.this, ShopActivity.TAB_DIAMONDS));
+            }
+        });
+
+        // Home Button (Player rejects extra shots -> deduct heart)
+        binding.overlayGameOver.btnGameOverHome.setOnClickListener(v -> {
+            soundManager.playClick();
+            if (!isEndlessMode && !isGameOverOrWon) {
+                prefs.deductLife();
+                isGameOverOrWon = true;
+            }
+            stopReviveAdPulseAnimation();
+            if (binding != null && binding.overlayGameOver != null) {
+                binding.overlayGameOver.rootGameOverOverlay.setVisibility(View.GONE);
+            }
+            finish();
+        });
+
+        // Retry / Replay Button (Player rejects extra shots -> deduct heart)
+        binding.overlayGameOver.btnGameOverRetry.setOnClickListener(v -> {
+            soundManager.playClick();
+            if (!isEndlessMode) {
+                if (!isGameOverOrWon) {
+                    prefs.deductLife();
+                    isGameOverOrWon = true;
+                }
+                if (prefs.getLives() <= 0) {
+                    showNoHeartsDialog();
+                    return;
+                }
+            }
+            stopReviveAdPulseAnimation();
+            if (binding != null && binding.overlayGameOver != null) {
+                binding.overlayGameOver.rootGameOverOverlay.setVisibility(View.GONE);
+            }
+            if (isEndlessMode) {
+                loadEndlessMode();
+            } else {
+                loadCurrentLevel();
+            }
+            enableImmersiveStickyMode();
+        });
+
+        // Play Level Fail Sound
+        soundManager.playFail();
+
+        // Show Overlay with fade-in
+        binding.overlayGameOver.rootGameOverOverlay.setVisibility(View.VISIBLE);
+        binding.overlayGameOver.rootGameOverOverlay.setAlpha(0f);
+        binding.overlayGameOver.rootGameOverOverlay.animate().alpha(1f).setDuration(240).start();
+
+        // Animate Heartbreak Icon popping in with dramatic bounce
+        binding.overlayGameOver.ivGameOverHeartBreak.setScaleX(0f);
+        binding.overlayGameOver.ivGameOverHeartBreak.setScaleY(0f);
+        binding.overlayGameOver.ivGameOverHeartBreak.setRotation(-25f);
+        binding.overlayGameOver.ivGameOverHeartBreak.animate()
+                .scaleX(1.15f)
+                .scaleY(1.15f)
+                .rotation(0f)
+                .setDuration(360)
+                .setInterpolator(new OvershootInterpolator(2.2f))
+                .withEndAction(() -> {
+                    if (binding != null && binding.overlayGameOver != null) {
+                        binding.overlayGameOver.ivGameOverHeartBreak.animate()
+                                .scaleX(1.0f)
+                                .scaleY(1.0f)
+                                .setDuration(150)
+                                .start();
+                    }
+                })
+                .start();
+
+        if (!isEndlessMode) {
+            startReviveAdPulseAnimation();
+        }
+    }
+
+    private void startReviveAdPulseAnimation() {
+        stopReviveAdPulseAnimation();
+        if (binding == null || binding.overlayGameOver == null) return;
+        View btn = binding.overlayGameOver.btnGameOverReviveAd;
+        btn.setScaleX(1.0f);
+        btn.setScaleY(1.0f);
+
+        PropertyValuesHolder pvhX = PropertyValuesHolder.ofFloat(View.SCALE_X, 1.0f, 1.08f);
+        PropertyValuesHolder pvhY = PropertyValuesHolder.ofFloat(View.SCALE_Y, 1.0f, 1.08f);
+        reviveAdPulseAnimator = ObjectAnimator.ofPropertyValuesHolder(btn, pvhX, pvhY);
+        reviveAdPulseAnimator.setDuration(700);
+        reviveAdPulseAnimator.setRepeatCount(ValueAnimator.INFINITE);
+        reviveAdPulseAnimator.setRepeatMode(ValueAnimator.REVERSE);
+        reviveAdPulseAnimator.setInterpolator(new AccelerateDecelerateInterpolator());
+        reviveAdPulseAnimator.start();
+    }
+
+    private void stopReviveAdPulseAnimation() {
+        if (reviveAdPulseAnimator != null) {
+            reviveAdPulseAnimator.cancel();
+            reviveAdPulseAnimator = null;
+        }
+        if (binding != null && binding.overlayGameOver != null) {
+            binding.overlayGameOver.btnGameOverReviveAd.setScaleX(1.0f);
+            binding.overlayGameOver.btnGameOverReviveAd.setScaleY(1.0f);
+        }
     }
 
     private void showNoHeartsDialog() {
@@ -978,8 +1206,12 @@ public class GameActivity extends BaseActivity implements GameEngine.GameEventLi
             wasBackgrounded = false;
             if (!isGameOverOrWon && gameEngine != null) {
                 if (activePauseDialog == null || !activePauseDialog.isShowing()) {
-                    if ((activeVictoryDialog == null || !activeVictoryDialog.isShowing()) &&
-                        (activeGameOverDialog == null || !activeGameOverDialog.isShowing())) {
+                    boolean isVictoryShowing = (binding != null && binding.overlayVictory != null &&
+                            binding.overlayVictory.rootVictoryOverlay.getVisibility() == View.VISIBLE) ||
+                            (activeVictoryDialog != null && activeVictoryDialog.isShowing());
+                    boolean isGameOverShowing = (binding != null && binding.overlayGameOver != null &&
+                            binding.overlayGameOver.rootGameOverOverlay.getVisibility() == View.VISIBLE);
+                    if (!isVictoryShowing && !isGameOverShowing) {
                         showPauseDialog();
                     }
                 }
@@ -991,6 +1223,12 @@ public class GameActivity extends BaseActivity implements GameEngine.GameEventLi
     protected void onDestroy() {
         super.onDestroy();
         stopDoubleBonusPulseAnimation();
+        stopReviveAdPulseAnimation();
+        // If exiting or killed while actively playing a level mid-match, deduct 1 life
+        if (!isEndlessMode && !isGameOverOrWon) {
+            prefs.deductLife();
+            isGameOverOrWon = true;
+        }
         if (progressAnimator != null) {
             progressAnimator.cancel();
             progressAnimator = null;
@@ -1002,10 +1240,6 @@ public class GameActivity extends BaseActivity implements GameEngine.GameEventLi
         if (activeVictoryDialog != null && activeVictoryDialog.isShowing()) {
             activeVictoryDialog.dismiss();
             activeVictoryDialog = null;
-        }
-        if (activeGameOverDialog != null && activeGameOverDialog.isShowing()) {
-            activeGameOverDialog.dismiss();
-            activeGameOverDialog = null;
         }
         if (activeBuyBoosterDialog != null && activeBuyBoosterDialog.isShowing()) {
             activeBuyBoosterDialog.dismiss();

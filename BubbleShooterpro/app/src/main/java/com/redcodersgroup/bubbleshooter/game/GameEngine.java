@@ -1495,7 +1495,7 @@ public class GameEngine {
     private void checkEndlessAesthetics() {
         if (isEndlessMode && endlessHighScore > 0 && !hasCelebratedNewBest && scoreManager.getScore() > endlessHighScore) {
             hasCelebratedNewBest = true;
-            soundManager.playWin();
+            soundManager.playBounce();
             floatingTexts.add(new FloatingText("🎉 NEW BEST SCORE!", (boardLeft + boardRight) * 0.5f, boardTop + bubbleRadius * 3.2f, Color.parseColor("#4ADE80"), 48f, 2.2f));
             confettiSystem.spawnCelebrationBurst(boardRight, boardBottom, 35);
         }
@@ -1526,7 +1526,7 @@ public class GameEngine {
         if (isEndlessMode) {
             // If board is wiped clean in Endless Mode, give big bonus and refill top rows
             if (grid.getBubbleCount() == 0) {
-                soundManager.playWin();
+                soundManager.playBounce();
                 confettiSystem.spawnCelebrationBurst(boardRight, boardBottom, 50);
                 scoreManager.addScore(500);
                 floatingTexts.add(new FloatingText("BOARD CLEARED! +500", (boardLeft + boardRight) * 0.5f, boardTop + bubbleRadius * 3, Color.parseColor("#FFD54F"), 52f, 1.5f));
@@ -2129,7 +2129,7 @@ public class GameEngine {
         }
 
         floatingTexts.add(new FloatingText("+" + extraShots + " BUBBLES!", launcherX, launcherY - bubbleRadius * 1.8f, Color.parseColor("#4ADE80"), 48f, 2.0f));
-        soundManager.playWin();
+        soundManager.playBounce();
 
         if (listener != null) {
             listener.onShotsUpdated(shotsRemaining);
@@ -2165,5 +2165,9 @@ public class GameEngine {
 
     public int getEndlessHighScore() {
         return endlessHighScore;
+    }
+
+    public int getScore() {
+        return scoreManager != null ? scoreManager.getScore() : 0;
     }
 }

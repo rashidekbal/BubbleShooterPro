@@ -4,14 +4,19 @@ import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
 import android.view.animation.OvershootInterpolator;
+import androidx.annotation.NonNull;
+import com.google.android.gms.games.Player;
 import com.redcodersgroup.bubbleshooter.MainActivity;
 import com.redcodersgroup.bubbleshooter.audio.SoundManager;
+import com.redcodersgroup.bubbleshooter.auth.CloudSaveManager;
+import com.redcodersgroup.bubbleshooter.auth.PlayGamesAuthManager;
+import com.redcodersgroup.bubbleshooter.data.PreferencesManager;
 import com.redcodersgroup.bubbleshooter.databinding.ActivitySplashBinding;
+import com.redcodersgroup.bubbleshooter.profile.AvatarManager;
 import com.redcodersgroup.bubbleshooter.ui.BaseActivity;
 
 @android.annotation.SuppressLint("CustomSplashScreen")
@@ -19,7 +24,10 @@ public class SplashActivity extends BaseActivity {
 
     private ActivitySplashBinding binding;
     private boolean isNavigated = false;
+    private boolean isAnimFinished = false;
+    private boolean isSyncFinished = false;
     private SoundManager soundManager;
+    private PreferencesManager prefs;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,9 +36,20 @@ public class SplashActivity extends BaseActivity {
         setContentView(binding.getRoot());
 
         soundManager = SoundManager.getInstance(this);
+        prefs = new PreferencesManager(this);
 
         startEntranceAnimations();
         startLoadingSimulation();
+        startCloudRestore();
+
+        // Safety fallback: ensure splash never hangs longer than 4.5 seconds
+        binding.getRoot().postDelayed(() -> {
+            if (!isNavigated) {
+                isSyncFinished = true;
+                isAnimFinished = true;
+                checkProceedToHome();
+            }
+        }, 4500);
     }
 
     private void startEntranceAnimations() {
@@ -59,6 +78,39 @@ public class SplashActivity extends BaseActivity {
         bobAnim.start();
     }
 
+    private void startCloudRestore() {
+        PlayGamesAuthManager.getInstance().checkSilentSignIn(this, new PlayGamesAuthManager.AuthCallback() {
+            @Override
+            public void onSuccess(@NonNull Player player) {
+                if (player.getDisplayName() != null && !player.getDisplayName().isEmpty()) {
+                    String currentName = prefs.getPlayerName();
+                    if (currentName == null || currentName.isEmpty() || currentName.equals(AvatarManager.DEFAULT_PLAYER_NAME)) {
+                        prefs.setPlayerName(player.getDisplayName());
+                    }
+                }
+                runOnUiThread(() -> {
+                    if (binding != null && !isNavigated) {
+                        binding.tvLoadingHint.setText("Restoring cloud progress...");
+                    }
+                });
+
+                CloudSaveManager.getInstance().loadAndSyncFromCloud(SplashActivity.this, (success, message) -> {
+                    runOnUiThread(() -> onRestoreCompleted());
+                });
+            }
+
+            @Override
+            public void onFailure(Exception exception) {
+                runOnUiThread(() -> onRestoreCompleted());
+            }
+        });
+    }
+
+    private void onRestoreCompleted() {
+        isSyncFinished = true;
+        checkProceedToHome();
+    }
+
     private void startLoadingSimulation() {
         binding.layoutProgressTrack.post(() -> {
             int trackWidth = binding.layoutProgressTrack.getWidth();
@@ -82,7 +134,7 @@ public class SplashActivity extends BaseActivity {
                 int percent = Math.min(100, Math.round(fraction * 100));
                 binding.tvProgressPercent.setText(percent + "%");
 
-                // Dynamic contextual loading hints
+                // Dynamic contextual loading hints (if not currently syncing cloud)
                 if (percent < 28) {
                     binding.tvLoadingHint.setText("Exploring Bubble Meadows...");
                 } else if (percent < 55) {
@@ -99,17 +151,20 @@ public class SplashActivity extends BaseActivity {
             progressAnim.addListener(new android.animation.AnimatorListenerAdapter() {
                 @Override
                 public void onAnimationEnd(android.animation.Animator animation) {
-                    binding.getRoot().postDelayed(() -> {
-                        if (!isNavigated) {
-                            isNavigated = true;
-                            navigateToHome();
-                        }
-                    }, 350);
+                    isAnimFinished = true;
+                    checkProceedToHome();
                 }
             });
 
             progressAnim.start();
         });
+    }
+
+    private void checkProceedToHome() {
+        if (isAnimFinished && isSyncFinished && !isNavigated) {
+            isNavigated = true;
+            binding.getRoot().postDelayed(this::navigateToHome, 200);
+        }
     }
 
     private void navigateToHome() {

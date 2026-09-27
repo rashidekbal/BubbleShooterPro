@@ -58,7 +58,7 @@ public class BoosterIntroDialog extends Dialog {
         configureBoosterDetails();
 
         SoundManager soundManager = SoundManager.getInstance(getContext());
-        soundManager.playWin();
+        soundManager.playBounce();
 
         binding.btnLetsPlay.setOnClickListener(v -> {
             soundManager.playClick();

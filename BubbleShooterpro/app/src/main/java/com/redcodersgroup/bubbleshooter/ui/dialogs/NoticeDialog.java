@@ -93,7 +93,7 @@ public class NoticeDialog extends Dialog {
                 binding.layoutNoticePlaque.setBackgroundResource(R.drawable.bg_dialog_header_plaque);
                 binding.tvNoticeTag.setTextColor(Color.parseColor("#059669"));
                 binding.tvNoticeCallout.setTextColor(Color.parseColor("#D97706"));
-                soundManager.playWin();
+                soundManager.playPurchase();
                 break;
             case INFO:
             default:

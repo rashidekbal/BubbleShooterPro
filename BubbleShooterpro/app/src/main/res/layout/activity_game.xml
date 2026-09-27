@@ -430,4 +430,9 @@
         android:id="@+id/overlayVictory"
         layout="@layout/overlay_victory" />
 
+    <!-- Full Screen Level Failed / Game Over Overlay -->
+    <include
+        android:id="@+id/overlayGameOver"
+        layout="@layout/overlay_game_over" />
+
 </FrameLayout>

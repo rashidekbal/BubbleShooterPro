@@ -176,7 +176,7 @@ public class SettingsDialog extends Dialog {
 
     private void updateSoundUI() {
         if (prefs.isSoundEnabled()) {
-            binding.btnSettingSound.setImageResource(R.drawable.btn_sound_green);
+            binding.btnSettingSound.setImageResource(R.drawable.btn_sound_yellow);
             binding.btnSettingSound.setAlpha(1.0f);
         } else {
             binding.btnSettingSound.setImageResource(R.drawable.btn_sound_gray);
@@ -186,7 +186,7 @@ public class SettingsDialog extends Dialog {
 
     private void updateMusicUI() {
         if (prefs.isMusicEnabled()) {
-            binding.btnSettingMusic.setImageResource(R.drawable.btn_music_green);
+            binding.btnSettingMusic.setImageResource(R.drawable.btn_music_yellow);
             binding.btnSettingMusic.setAlpha(1.0f);
         } else {
             binding.btnSettingMusic.setImageResource(R.drawable.btn_music_gray);

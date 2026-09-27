@@ -53,7 +53,7 @@
                     android:layout_height="@dimen/dp_56"
                     android:background="@android:color/transparent"
                     android:scaleType="fitCenter"
-                    android:src="@drawable/btn_sound_green"
+                    android:src="@drawable/btn_sound_yellow"
                     android:contentDescription="@string/sound" />
 
                 <TextView
@@ -84,7 +84,7 @@
                     android:layout_height="@dimen/dp_56"
                     android:background="@android:color/transparent"
                     android:scaleType="fitCenter"
-                    android:src="@drawable/btn_music_green"
+                    android:src="@drawable/btn_music_yellow"
                     android:contentDescription="@string/music" />
 
                 <TextView
