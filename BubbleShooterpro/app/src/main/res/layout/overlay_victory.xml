@@ -1,0 +1,232 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/rootVictoryOverlay"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#E6050814"
+    android:clickable="true"
+    android:focusable="true"
+    android:visibility="gone">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:paddingStart="@dimen/dp_24"
+        android:paddingEnd="@dimen/dp_24"
+        android:paddingTop="@dimen/dp_16"
+        android:paddingBottom="@dimen/dp_20">
+
+        <!-- 1. Top Stars Celebration Container -->
+        <FrameLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/dp_4">
+
+            <ImageView
+                android:id="@+id/ivVictoryGlow"
+                android:layout_width="@dimen/dp_240"
+                android:layout_height="@dimen/dp_130"
+                android:layout_gravity="center"
+                android:src="@drawable/bg_circle_gold_glow"
+                android:alpha="0.85"
+                android:contentDescription="@null" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <!-- Left Star -->
+                <ImageView
+                    android:id="@+id/ivVictoryStar1"
+                    android:layout_width="@dimen/dp_64"
+                    android:layout_height="@dimen/dp_64"
+                    android:layout_marginTop="@dimen/dp_16"
+                    android:rotation="-14"
+                    android:src="@drawable/ic_star_empty"
+                    android:contentDescription="Star 1" />
+
+                <!-- Center Large Star -->
+                <ImageView
+                    android:id="@+id/ivVictoryStar2"
+                    android:layout_width="@dimen/dp_90"
+                    android:layout_height="@dimen/dp_90"
+                    android:layout_marginStart="@dimen/dp_6"
+                    android:layout_marginEnd="@dimen/dp_6"
+                    android:src="@drawable/ic_star_empty"
+                    android:contentDescription="Star 2" />
+
+                <!-- Right Star -->
+                <ImageView
+                    android:id="@+id/ivVictoryStar3"
+                    android:layout_width="@dimen/dp_64"
+                    android:layout_height="@dimen/dp_64"
+                    android:layout_marginTop="@dimen/dp_16"
+                    android:rotation="14"
+                    android:src="@drawable/ic_star_empty"
+                    android:contentDescription="Star 3" />
+            </LinearLayout>
+        </FrameLayout>
+
+        <!-- 2. Clean Victory Title -->
+        <TextView
+            android:id="@+id/tvVictoryTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="LEVEL COMPLETE!"
+            android:textColor="#FDE047"
+            android:textSize="@dimen/sp_28"
+            android:textStyle="bold"
+            android:letterSpacing="0.04"
+            android:shadowColor="#C0000000"
+            android:shadowDx="0"
+            android:shadowDy="3"
+            android:shadowRadius="6" />
+
+        <!-- 3. Clean Score & High Score Display -->
+        <TextView
+            android:id="@+id/tvVictoryScore"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/dp_8"
+            android:text="8,400"
+            android:textColor="#FFFFFF"
+            android:textSize="@dimen/sp_40"
+            android:textStyle="bold"
+            android:shadowColor="#A0000000"
+            android:shadowDx="0"
+            android:shadowDy="2"
+            android:shadowRadius="4" />
+
+        <TextView
+            android:id="@+id/tvVictoryHighScore"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/dp_2"
+            android:text="HIGH SCORE: 8,400"
+            android:textColor="#94A3B8"
+            android:textSize="@dimen/sp_13"
+            android:textStyle="bold"
+            android:letterSpacing="0.05" />
+
+        <!-- 4. Diamond Reward Bonus Pill -->
+        <LinearLayout
+            android:id="@+id/layoutDiamondRewardCard"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:background="@drawable/bg_victory_diamond_card"
+            android:paddingStart="@dimen/dp_14"
+            android:paddingEnd="@dimen/dp_12"
+            android:paddingTop="@dimen/dp_6"
+            android:paddingBottom="@dimen/dp_6"
+            android:layout_marginTop="@dimen/dp_14"
+            android:layout_marginBottom="@dimen/dp_14">
+
+            <ImageView
+                android:id="@+id/ivDiamondRewardIcon"
+                android:layout_width="@dimen/dp_28"
+                android:layout_height="@dimen/dp_28"
+                android:src="@drawable/ic_hud_diamond"
+                android:contentDescription="Diamonds Reward" />
+
+            <TextView
+                android:id="@+id/tvVictoryDiamondReward"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/dp_8"
+                android:layout_marginEnd="@dimen/dp_10"
+                android:text="+2 DIAMONDS"
+                android:textColor="#38BDF8"
+                android:textSize="@dimen/sp_15"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/tvVictoryDiamondStatus"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_booster_badge_available"
+                android:paddingStart="@dimen/dp_8"
+                android:paddingEnd="@dimen/dp_8"
+                android:paddingTop="@dimen/dp_2"
+                android:paddingBottom="@dimen/dp_2"
+                android:text="CLAIMED"
+                android:textColor="#FFFFFF"
+                android:textSize="@dimen/sp_11"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <!-- 5. Redesigned Double Bonus Button (Sleek Glass Ripple Pill matching overlay) -->
+        <TextView
+            android:id="@+id/btnVictoryDoubleBonus"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_victory_double_bonus_btn"
+            android:clickable="true"
+            android:focusable="true"
+            android:gravity="center"
+            android:paddingStart="@dimen/dp_24"
+            android:paddingEnd="@dimen/dp_24"
+            android:paddingTop="@dimen/dp_12"
+            android:paddingBottom="@dimen/dp_12"
+            android:text="🎬 DOUBLE BONUS • 💎 +4"
+            android:textColor="#FDE047"
+            android:textSize="@dimen/sp_15"
+            android:textStyle="bold"
+            android:shadowColor="#80000000"
+            android:shadowDx="0"
+            android:shadowDy="1"
+            android:shadowRadius="2"
+            android:layout_marginBottom="@dimen/dp_24" />
+
+        <!-- 6. Bottom Navigation Row (Matching Circular Buttons Side-by-Side) -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:layout_marginTop="@dimen/dp_20">
+
+            <!-- Home Button -->
+            <ImageButton
+                android:id="@+id/btnVictoryHome"
+                android:layout_width="@dimen/dp_66"
+                android:layout_height="@dimen/dp_66"
+                android:background="@android:color/transparent"
+                android:scaleType="fitCenter"
+                android:src="@drawable/btn_home_yellow"
+                android:contentDescription="Home" />
+
+            <!-- Replay Button -->
+            <ImageButton
+                android:id="@+id/btnVictoryReplay"
+                android:layout_width="@dimen/dp_66"
+                android:layout_height="@dimen/dp_66"
+                android:layout_marginStart="@dimen/dp_20"
+                android:layout_marginEnd="@dimen/dp_20"
+                android:background="@android:color/transparent"
+                android:scaleType="fitCenter"
+                android:src="@drawable/btn_restart_yellow"
+                android:contentDescription="Replay" />
+
+            <!-- Next Level Button (Matching Yellow/Gold Action Button) -->
+            <ImageButton
+                android:id="@+id/btnVictoryNextLevel"
+                android:layout_width="@dimen/dp_66"
+                android:layout_height="@dimen/dp_66"
+                android:background="@android:color/transparent"
+                android:scaleType="fitCenter"
+                android:src="@drawable/btn_forward_yellow"
+                android:contentDescription="Next Level" />
+        </LinearLayout>
+
+    </LinearLayout>
+
+</FrameLayout>

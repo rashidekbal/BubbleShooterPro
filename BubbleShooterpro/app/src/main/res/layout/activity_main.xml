@@ -144,8 +144,9 @@
         android:id="@+id/layoutLeftBadgesColumn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="start|center_vertical"
+        android:layout_gravity="start"
         android:layout_marginStart="@dimen/dp_10"
+        android:layout_marginTop="@dimen/dp_120"
         android:orientation="vertical"
         android:gravity="center_horizontal"
         android:elevation="@dimen/dp_8">

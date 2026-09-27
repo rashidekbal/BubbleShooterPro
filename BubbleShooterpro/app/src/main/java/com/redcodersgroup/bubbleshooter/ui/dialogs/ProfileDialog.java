@@ -153,7 +153,7 @@ public class ProfileDialog extends Dialog {
                 if (binding.etPlayerName.getText() != null) {
                     binding.etPlayerName.setSelection(binding.etPlayerName.getText().length());
                 }
-                binding.tvSyncPlayGames.setText("Synced with Google ✓");
+                binding.tvSyncPlayGames.setText("Synced with Google");
                 binding.tvSyncPlayGames.setTextColor(android.graphics.Color.parseColor("#059669"));
             } else if (hostActivity != null) {
                 binding.tvSyncPlayGames.setText("Signing in...");

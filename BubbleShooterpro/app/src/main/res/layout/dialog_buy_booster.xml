@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/rootBuyBoosterDialog"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center"
+    android:clipChildren="false"
+    android:clipToPadding="false"
+    android:paddingStart="@dimen/dp_16"
+    android:paddingEnd="@dimen/dp_16"
+    android:paddingTop="@dimen/dp_16"
+    android:paddingBottom="@dimen/dp_16">
+
+    <!-- Main Dialog Card Body -->
+    <LinearLayout
+        android:id="@+id/cardBody"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center_horizontal"
+        android:background="@drawable/bg_dialog_frame"
+        android:paddingStart="@dimen/dp_20"
+        android:paddingEnd="@dimen/dp_20"
+        android:paddingTop="@dimen/dp_40"
+        android:paddingBottom="@dimen/dp_22">
+
+        <!-- Booster Icon Container -->
+        <FrameLayout
+            android:id="@+id/layoutBoosterIcon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/dp_6"
+            android:layout_marginBottom="@dimen/dp_8">
+
+            <ImageView
+                android:id="@+id/ivBoosterGlow"
+                android:layout_width="@dimen/dp_90"
+                android:layout_height="@dimen/dp_90"
+                android:layout_gravity="center"
+                android:src="@drawable/bg_circle_gold_glow"
+                android:alpha="0.6"
+                android:contentDescription="@null" />
+
+            <ImageView
+                android:id="@+id/ivBoosterIcon"
+                android:layout_width="@dimen/dp_68"
+                android:layout_height="@dimen/dp_68"
+                android:layout_gravity="center"
+                android:src="@drawable/bomb_bubble"
+                android:contentDescription="Booster Preview" />
+        </FrameLayout>
+
+        <!-- Inset Content Panel -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:background="@drawable/bg_dialog_inset_panel"
+            android:paddingStart="@dimen/dp_16"
+            android:paddingEnd="@dimen/dp_16"
+            android:paddingTop="@dimen/dp_14"
+            android:paddingBottom="@dimen/dp_14">
+
+            <!-- Booster Name / Title -->
+            <TextView
+                android:id="@+id/tvBoosterName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="OUT OF BOMBS!"
+                android:textColor="#1E293B"
+                android:textSize="@dimen/sp_18"
+                android:textStyle="bold"
+                android:gravity="center" />
+
+            <!-- Booster Description -->
+            <TextView
+                android:id="@+id/tvBoosterDescription"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/dp_6"
+                android:text="You've used all of this power-up! Visit the Shop to restock and blast through tricky levels."
+                android:textColor="#475569"
+                android:textSize="@dimen/sp_13"
+                android:lineSpacingMultiplier="1.2"
+                android:gravity="center" />
+        </LinearLayout>
+
+        <!-- Primary CTA: Go To Shop / Buy Boosters -->
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btnBuyInShop"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/dp_48"
+            android:layout_marginTop="@dimen/dp_14"
+            android:background="@drawable/btn_pill_blank_green"
+            android:text="🛒 VISIT SHOP"
+            android:textColor="#FFFFFF"
+            android:textSize="@dimen/sp_16"
+            android:textStyle="bold"
+            android:shadowColor="#80000000"
+            android:shadowDx="1"
+            android:shadowDy="2"
+            android:shadowRadius="3"
+            android:stateListAnimator="@null" />
+
+        <!-- Secondary Button: Later / Dismiss -->
+        <TextView
+            android:id="@+id/btnCancel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/dp_10"
+            android:padding="@dimen/dp_6"
+            android:text="MAYBE LATER"
+            android:textColor="#64748B"
+            android:textSize="@dimen/sp_12"
+            android:textStyle="bold"
+            android:letterSpacing="0.04" />
+
+    </LinearLayout>
+
+    <!-- Top Curved Header Plaque -->
+    <LinearLayout
+        android:id="@+id/layoutBoosterPlaque"
+        android:layout_width="@dimen/dp_230"
+        android:layout_height="@dimen/dp_46"
+        android:layout_gravity="top|center_horizontal"
+        android:background="@drawable/bg_dialog_header_plaque"
+        android:gravity="center"
+        android:elevation="@dimen/dp_6">
+
+        <TextView
+            android:id="@+id/tvBoosterPlaqueTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="OUT OF POWER-UPS"
+            android:textColor="#FFFFFF"
+            android:textSize="@dimen/sp_16"
+            android:textStyle="bold"
+            android:shadowColor="#B0000000"
+            android:shadowDx="1"
+            android:shadowDy="2"
+            android:shadowRadius="3" />
+    </LinearLayout>
+
+    <!-- Top-Right Close Button -->
+    <ImageButton
+        android:id="@+id/btnCloseDialog"
+        android:layout_width="@dimen/dp_40"
+        android:layout_height="@dimen/dp_40"
+        android:layout_gravity="top|end"
+        android:layout_marginTop="@dimen/dp_4"
+        android:layout_marginEnd="@dimen/dp_4"
+        android:background="@android:color/transparent"
+        android:scaleType="fitCenter"
+        android:src="@drawable/btn_close_red"
+        android:elevation="@dimen/dp_8"
+        android:contentDescription="Close" />
+
+</FrameLayout>

@@ -11,6 +11,7 @@ import android.view.animation.OvershootInterpolator;
 import android.widget.ImageView;
 import androidx.annotation.NonNull;
 import com.redcodersgroup.bubbleshooter.R;
+import com.redcodersgroup.bubbleshooter.audio.SoundManager;
 import com.redcodersgroup.bubbleshooter.databinding.DialogVictoryBinding;
 
 public class VictoryDialog extends Dialog {
@@ -105,6 +106,7 @@ public class VictoryDialog extends Dialog {
             iv.setImageResource(R.drawable.ic_star_filled);
             iv.setScaleX(0f);
             iv.setScaleY(0f);
+            SoundManager.getInstance(getContext()).playBounce();
             iv.animate()
                     .scaleX(1.15f)
                     .scaleY(1.15f)

@@ -425,4 +425,9 @@
 
     </LinearLayout>
 
+    <!-- Full Screen Level Victory Overlay -->
+    <include
+        android:id="@+id/overlayVictory"
+        layout="@layout/overlay_victory" />
+
 </FrameLayout>

@@ -55,6 +55,7 @@ public class SoundManager {
         try {
             soundShoot = soundPool.load(context, R.raw.bubble_shot, 1);
             soundPop = soundPool.load(context, R.raw.bubble_pop, 1);
+            soundWin = soundPool.load(context, R.raw.win_sound, 1);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -64,9 +65,11 @@ public class SoundManager {
                 if (soundShoot <= 0) {
                     soundShoot = loadSyntheticSound("snd_shoot.wav", SoundEffectGenerator.generateShoot());
                 }
+                if (soundWin <= 0) {
+                    soundWin = loadSyntheticSound("snd_win.wav", SoundEffectGenerator.generateWin());
+                }
                 soundBounce = loadSyntheticSound("snd_bounce.wav", SoundEffectGenerator.generateBounce());
                 soundBomb = loadSyntheticSound("snd_bomb.wav", SoundEffectGenerator.generateBomb());
-                soundWin = loadSyntheticSound("snd_win.wav", SoundEffectGenerator.generateWin());
                 soundClick = loadSyntheticSound("snd_click.wav", SoundEffectGenerator.generateClick());
 
                 // Musical ascending pitch pops for combos (C, D, E, G, A, C) fallback

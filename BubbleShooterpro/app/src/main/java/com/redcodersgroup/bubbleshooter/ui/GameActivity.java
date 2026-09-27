@@ -1,9 +1,19 @@
 package com.redcodersgroup.bubbleshooter.ui;
 
+import android.animation.ObjectAnimator;
+import android.animation.PropertyValuesHolder;
+import android.animation.ValueAnimator;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
+import android.view.animation.AccelerateDecelerateInterpolator;
+import android.view.animation.OvershootInterpolator;
+import android.widget.ImageView;
+import android.widget.TextView;
+
+import java.util.Locale;
 
 import androidx.activity.OnBackPressedCallback;
 import androidx.core.graphics.Insets;
@@ -12,6 +22,7 @@ import androidx.core.view.WindowInsetsCompat;
 
 import com.redcodersgroup.bubbleshooter.MainActivity;
 import com.redcodersgroup.bubbleshooter.R;
+import com.redcodersgroup.bubbleshooter.ads.AdManager;
 import com.redcodersgroup.bubbleshooter.bubble.BubbleType;
 import com.redcodersgroup.bubbleshooter.data.PreferencesManager;
 import com.redcodersgroup.bubbleshooter.data.ProgressRepository;
@@ -22,6 +33,7 @@ import com.redcodersgroup.bubbleshooter.level.LevelManager;
 import com.redcodersgroup.bubbleshooter.analytics.AnalyticsManager;
 import com.redcodersgroup.bubbleshooter.audio.SoundManager;
 import com.redcodersgroup.bubbleshooter.ui.dialogs.BoosterIntroDialog;
+import com.redcodersgroup.bubbleshooter.ui.dialogs.BuyBoosterDialog;
 import com.redcodersgroup.bubbleshooter.ui.dialogs.GameOverDialog;
 import com.redcodersgroup.bubbleshooter.ui.dialogs.LowShotsWarningDialog;
 import com.redcodersgroup.bubbleshooter.ui.dialogs.NoticeDialog;
@@ -45,10 +57,12 @@ public class GameActivity extends BaseActivity implements GameEngine.GameEventLi
     private int currentStarsCount = 0;
     private int[] currentStarThresholds = new int[]{1000, 2000, 3000};
     private android.animation.ValueAnimator progressAnimator;
+    private ObjectAnimator doubleBonusPulseAnimator;
     private PauseDialog activePauseDialog;
     private VictoryDialog activeVictoryDialog;
     private GameOverDialog activeGameOverDialog;
     private LowShotsWarningDialog activeLowShotsWarningDialog;
+    private BuyBoosterDialog activeBuyBoosterDialog;
     private boolean hasShownLowShotsWarning = false;
     private boolean isGameOverOrWon = false;
     private boolean wasBackgrounded = false;
@@ -204,13 +218,13 @@ public class GameActivity extends BaseActivity implements GameEngine.GameEventLi
             updateBoosterCounts();
         } else {
             soundManager.playClick();
-            NoticeDialog.showWarning(
-                    this,
-                    "OUT OF BOOSTERS",
-                    "NO " + type.name() + "S LEFT",
-                    type.name() + " BOOSTER EMPTY",
-                    "Visit the Shop to acquire more " + type.name().toLowerCase(java.util.Locale.ROOT) + " power-ups!"
-            );
+            if (activeBuyBoosterDialog != null && activeBuyBoosterDialog.isShowing()) {
+                activeBuyBoosterDialog.dismiss();
+                activeBuyBoosterDialog = null;
+            }
+            activeBuyBoosterDialog = BuyBoosterDialog.show(this, type, boosterType -> {
+                startActivity(ShopActivity.createIntent(GameActivity.this, ShopActivity.TAB_BOOSTERS));
+            });
         }
     }
 
@@ -238,36 +252,32 @@ public class GameActivity extends BaseActivity implements GameEngine.GameEventLi
         int fireball = prefs.getFireballBoosters();
         int lightning = prefs.getLightningBoosters();
 
-        if (bombUnlocked) {
-            binding.tvCountBomb.setText(String.valueOf(bomb));
-            binding.layoutBoosterBomb.setAlpha(bomb > 0 ? 1.0f : 0.45f);
-        } else {
-            binding.tvCountBomb.setText("🔒");
-            binding.layoutBoosterBomb.setAlpha(0.35f);
-        }
+        updateSingleBoosterUI(binding.layoutBoosterBomb, binding.tvCountBomb, bombUnlocked, bomb);
+        updateSingleBoosterUI(binding.layoutBoosterRainbow, binding.tvCountRainbow, rainbowUnlocked, rainbow);
+        updateSingleBoosterUI(binding.layoutBoosterFireball, binding.tvCountFireball, fireballUnlocked, fireball);
+        updateSingleBoosterUI(binding.layoutBoosterLightning, binding.tvCountLightning, lightningUnlocked, lightning);
+    }
 
-        if (rainbowUnlocked) {
-            binding.tvCountRainbow.setText(String.valueOf(rainbow));
-            binding.layoutBoosterRainbow.setAlpha(rainbow > 0 ? 1.0f : 0.45f);
+    private void updateSingleBoosterUI(View boosterLayout, TextView badgeView, boolean isUnlocked, int count) {
+        if (boosterLayout == null || badgeView == null) return;
+        if (!isUnlocked) {
+            // Locked booster: clearly dimmed out with lock badge
+            boosterLayout.setAlpha(0.28f);
+            badgeView.setText("🔒");
+            badgeView.setBackgroundResource(R.drawable.bg_booster_badge_locked);
+            badgeView.setTextColor(Color.parseColor("#CBD5E1"));
+        } else if (count > 0) {
+            // Available booster: fully vibrant (1.0f) with emerald green count badge
+            boosterLayout.setAlpha(1.0f);
+            badgeView.setText(String.valueOf(count));
+            badgeView.setBackgroundResource(R.drawable.bg_booster_badge_available);
+            badgeView.setTextColor(Color.WHITE);
         } else {
-            binding.tvCountRainbow.setText("🔒");
-            binding.layoutBoosterRainbow.setAlpha(0.35f);
-        }
-
-        if (fireballUnlocked) {
-            binding.tvCountFireball.setText(String.valueOf(fireball));
-            binding.layoutBoosterFireball.setAlpha(fireball > 0 ? 1.0f : 0.45f);
-        } else {
-            binding.tvCountFireball.setText("🔒");
-            binding.layoutBoosterFireball.setAlpha(0.35f);
-        }
-
-        if (lightningUnlocked) {
-            binding.tvCountLightning.setText(String.valueOf(lightning));
-            binding.layoutBoosterLightning.setAlpha(lightning > 0 ? 1.0f : 0.45f);
-        } else {
-            binding.tvCountLightning.setText("🔒");
-            binding.layoutBoosterLightning.setAlpha(0.35f);
+            // Unlocked but Exhausted (0 count): crisp & visible (0.92f) with gold '+' refill badge
+            boosterLayout.setAlpha(0.92f);
+            badgeView.setText("+");
+            badgeView.setBackgroundResource(R.drawable.bg_booster_badge_buy);
+            badgeView.setTextColor(Color.WHITE);
         }
     }
 
@@ -288,6 +298,9 @@ public class GameActivity extends BaseActivity implements GameEngine.GameEventLi
         isGameOverOrWon = false;
         wasBackgrounded = false;
         hasShownLowShotsWarning = false;
+        if (binding != null && binding.overlayVictory != null) {
+            binding.overlayVictory.rootVictoryOverlay.setVisibility(View.GONE);
+        }
         if (activeLowShotsWarningDialog != null && activeLowShotsWarningDialog.isShowing()) {
             activeLowShotsWarningDialog.dismissWithAnimation();
             activeLowShotsWarningDialog = null;
@@ -346,6 +359,9 @@ public class GameActivity extends BaseActivity implements GameEngine.GameEventLi
         isGameOverOrWon = false;
         wasBackgrounded = false;
         hasShownLowShotsWarning = false;
+        if (binding != null && binding.overlayVictory != null) {
+            binding.overlayVictory.rootVictoryOverlay.setVisibility(View.GONE);
+        }
         if (activeLowShotsWarningDialog != null && activeLowShotsWarningDialog.isShowing()) {
             activeLowShotsWarningDialog.dismissWithAnimation();
             activeLowShotsWarningDialog = null;
@@ -477,6 +493,13 @@ public class GameActivity extends BaseActivity implements GameEngine.GameEventLi
 
     private void handleBackPress() {
         if (isFinishing() || isDestroyed()) return;
+
+        // If full-screen victory overlay is active, back press finishes cleanly
+        if (binding != null && binding.overlayVictory != null &&
+                binding.overlayVictory.rootVictoryOverlay.getVisibility() == View.VISIBLE) {
+            finish();
+            return;
+        }
 
         // If a terminal dialog (Victory or Game Over) is active, back finishes cleanly
         if (activeVictoryDialog != null && activeVictoryDialog.isShowing()) {
@@ -683,37 +706,197 @@ public class GameActivity extends BaseActivity implements GameEngine.GameEventLi
                     effectiveStars
             );
 
-            activeVictoryDialog = new VictoryDialog(this, score, newHigh, effectiveStars, objectiveSummary, shotsRemaining, shotBonus, new VictoryDialog.VictoryDialogListener() {
+            showVictoryOverlay(score, newHigh, effectiveStars, objectiveSummary, shotsRemaining, shotBonus);
+        });
+    }
+
+    private void showVictoryOverlay(int score, int newHigh, int stars, String objectiveSummary, int shotsRemaining, int shotBonus) {
+        if (binding == null || binding.overlayVictory == null) return;
+
+        // Automatically grant the standard +2 Diamonds level completion reward
+        prefs.addDiamonds(2);
+        android.os.Bundle bVictoryBase = new android.os.Bundle();
+        bVictoryBase.putInt("amount", 2);
+        AnalyticsManager.getInstance(this).logEvent("level_victory_base_diamonds", bVictoryBase);
+
+        final boolean[] hasDoubledReward = {false};
+
+        // UI Texts
+        binding.overlayVictory.tvVictoryTitle.setText(isEndlessMode ? "STAGE CLEARED!" : "LEVEL " + currentLevelNumber + " COMPLETE!");
+        binding.overlayVictory.tvVictoryScore.setText(String.format(Locale.getDefault(), "%,d", score));
+        binding.overlayVictory.tvVictoryHighScore.setText("HIGH SCORE: " + String.format(Locale.getDefault(), "%,d", Math.max(score, newHigh)));
+
+        // Diamond reward card initial state
+        binding.overlayVictory.tvVictoryDiamondReward.setText("+2 DIAMONDS");
+        binding.overlayVictory.tvVictoryDiamondStatus.setText("CLAIMED");
+        binding.overlayVictory.tvVictoryDiamondStatus.setBackgroundResource(R.drawable.bg_booster_badge_available);
+
+        // Double bonus button initial state
+        binding.overlayVictory.btnVictoryDoubleBonus.setText("🎬 DOUBLE BONUS • 💎 +4");
+        binding.overlayVictory.btnVictoryDoubleBonus.setEnabled(true);
+        binding.overlayVictory.btnVictoryDoubleBonus.setAlpha(1.0f);
+
+        // Reset stars
+        binding.overlayVictory.ivVictoryStar1.setImageResource(R.drawable.ic_star_empty);
+        binding.overlayVictory.ivVictoryStar2.setImageResource(R.drawable.ic_star_empty);
+        binding.overlayVictory.ivVictoryStar3.setImageResource(R.drawable.ic_star_empty);
+
+        binding.overlayVictory.ivVictoryStar1.setScaleX(0f);
+        binding.overlayVictory.ivVictoryStar1.setScaleY(0f);
+        binding.overlayVictory.ivVictoryStar2.setScaleX(0f);
+        binding.overlayVictory.ivVictoryStar2.setScaleY(0f);
+        binding.overlayVictory.ivVictoryStar3.setScaleX(0f);
+        binding.overlayVictory.ivVictoryStar3.setScaleY(0f);
+
+        // Show overlay with fade-in
+        binding.overlayVictory.rootVictoryOverlay.setVisibility(View.VISIBLE);
+        binding.overlayVictory.rootVictoryOverlay.setAlpha(0f);
+        binding.overlayVictory.rootVictoryOverlay.animate().alpha(1f).setDuration(240).start();
+
+        // Animate stars popping in with bounce
+        animateOverlayStar(binding.overlayVictory.ivVictoryStar1, stars >= 1, 250);
+        animateOverlayStar(binding.overlayVictory.ivVictoryStar2, stars >= 2, 500);
+        animateOverlayStar(binding.overlayVictory.ivVictoryStar3, stars >= 3, 750);
+
+        // Start pulsing animation on Double Bonus button
+        startDoubleBonusPulseAnimation();
+
+        // Button handlers: Double Bonus (Rewarded Ad)
+        binding.overlayVictory.btnVictoryDoubleBonus.setOnClickListener(v -> {
+            soundManager.playClick();
+            if (hasDoubledReward[0]) return;
+
+            AdManager.getInstance().showRewardedVideo(GameActivity.this, new AdManager.RewardCallback() {
                 @Override
-                public void onNextLevelClicked() {
-                    activeVictoryDialog = null;
-                    final int completedLvl = currentLevelNumber;
-                    if (currentLevelNumber < levelManager.getTotalLevels()) {
-                        currentLevelNumber++;
-                        com.redcodersgroup.bubbleshooter.ads.AdManager.getInstance().onLevelCompleted(GameActivity.this, completedLvl, () -> {
-                            loadCurrentLevel();
-                            enableImmersiveStickyMode();
-                        });
-                    } else {
-                        finish();
+                public void onRewardEarned(int amount, String type) {
+                    hasDoubledReward[0] = true;
+                    prefs.addDiamonds(2); // +2 more diamonds (making it +4 total)
+                    android.os.Bundle bDouble = new android.os.Bundle();
+                    bDouble.putInt("amount", 2);
+                    AnalyticsManager.getInstance(GameActivity.this).logEvent("rewarded_ad_level_double", bDouble);
+                    soundManager.playWin();
+
+                    runOnUiThread(() -> {
+                        if (binding != null && binding.overlayVictory != null) {
+                            stopDoubleBonusPulseAnimation();
+                            binding.overlayVictory.tvVictoryDiamondReward.setText("+4 DIAMONDS (2X)");
+                            binding.overlayVictory.tvVictoryDiamondStatus.setText("DOUBLED! 🎁");
+                            binding.overlayVictory.btnVictoryDoubleBonus.setText("✓ 2X BONUS CLAIMED!");
+                            binding.overlayVictory.btnVictoryDoubleBonus.setEnabled(false);
+                            binding.overlayVictory.btnVictoryDoubleBonus.setAlpha(0.65f);
+
+                            // Pop animation on diamond icon
+                            binding.overlayVictory.ivDiamondRewardIcon.animate()
+                                    .scaleX(1.35f).scaleY(1.35f).setDuration(180)
+                                    .withEndAction(() -> binding.overlayVictory.ivDiamondRewardIcon.animate().scaleX(1.0f).scaleY(1.0f).setDuration(180).start())
+                                    .start();
+                        }
+                    });
+                }
+
+                @Override
+                public void onAdClosed(boolean rewarded) {
+                    if (!rewarded && !hasDoubledReward[0]) {
+                        runOnUiThread(() -> NoticeDialog.showWarning(
+                                GameActivity.this,
+                                "AD SKIPPED",
+                                "NO BONUS",
+                                "AD INCOMPLETE",
+                                "Watch the full video to double your diamonds bonus!"
+                        ));
                     }
                 }
+            });
+        });
 
-                @Override
-                public void onReplayClicked() {
-                    activeVictoryDialog = null;
+        // Next Level Button
+        binding.overlayVictory.btnVictoryNextLevel.setOnClickListener(v -> {
+            soundManager.playClick();
+            stopDoubleBonusPulseAnimation();
+            if (binding != null && binding.overlayVictory != null) {
+                binding.overlayVictory.rootVictoryOverlay.setVisibility(View.GONE);
+            }
+            final int completedLvl = currentLevelNumber;
+            if (currentLevelNumber < levelManager.getTotalLevels()) {
+                currentLevelNumber++;
+                AdManager.getInstance().onLevelCompleted(GameActivity.this, completedLvl, () -> {
                     loadCurrentLevel();
                     enableImmersiveStickyMode();
-                }
-
-                @Override
-                public void onHomeClicked() {
-                    activeVictoryDialog = null;
-                    finish();
-                }
-            });
-            activeVictoryDialog.show();
+                });
+            } else {
+                finish();
+            }
         });
+
+        // Replay Button
+        binding.overlayVictory.btnVictoryReplay.setOnClickListener(v -> {
+            soundManager.playClick();
+            stopDoubleBonusPulseAnimation();
+            if (binding != null && binding.overlayVictory != null) {
+                binding.overlayVictory.rootVictoryOverlay.setVisibility(View.GONE);
+            }
+            if (isEndlessMode) {
+                loadEndlessMode();
+            } else {
+                loadCurrentLevel();
+            }
+            enableImmersiveStickyMode();
+        });
+
+        // Home Button
+        binding.overlayVictory.btnVictoryHome.setOnClickListener(v -> {
+            soundManager.playClick();
+            stopDoubleBonusPulseAnimation();
+            if (binding != null && binding.overlayVictory != null) {
+                binding.overlayVictory.rootVictoryOverlay.setVisibility(View.GONE);
+            }
+            finish();
+        });
+    }
+
+    private void startDoubleBonusPulseAnimation() {
+        stopDoubleBonusPulseAnimation();
+        if (binding == null || binding.overlayVictory == null) return;
+        View btn = binding.overlayVictory.btnVictoryDoubleBonus;
+        btn.setScaleX(1.0f);
+        btn.setScaleY(1.0f);
+
+        PropertyValuesHolder pvhX = PropertyValuesHolder.ofFloat(View.SCALE_X, 1.0f, 1.08f);
+        PropertyValuesHolder pvhY = PropertyValuesHolder.ofFloat(View.SCALE_Y, 1.0f, 1.08f);
+        doubleBonusPulseAnimator = ObjectAnimator.ofPropertyValuesHolder(btn, pvhX, pvhY);
+        doubleBonusPulseAnimator.setDuration(700);
+        doubleBonusPulseAnimator.setRepeatCount(ValueAnimator.INFINITE);
+        doubleBonusPulseAnimator.setRepeatMode(ValueAnimator.REVERSE);
+        doubleBonusPulseAnimator.setInterpolator(new AccelerateDecelerateInterpolator());
+        doubleBonusPulseAnimator.start();
+    }
+
+    private void stopDoubleBonusPulseAnimation() {
+        if (doubleBonusPulseAnimator != null) {
+            doubleBonusPulseAnimator.cancel();
+            doubleBonusPulseAnimator = null;
+        }
+        if (binding != null && binding.overlayVictory != null) {
+            binding.overlayVictory.btnVictoryDoubleBonus.setScaleX(1.0f);
+            binding.overlayVictory.btnVictoryDoubleBonus.setScaleY(1.0f);
+        }
+    }
+
+    private void animateOverlayStar(ImageView iv, boolean filled, long delay) {
+        if (!filled) return;
+        iv.postDelayed(() -> {
+            iv.setImageResource(R.drawable.ic_star_filled);
+            iv.setScaleX(0f);
+            iv.setScaleY(0f);
+            soundManager.playBounce();
+            iv.animate()
+                    .scaleX(1.18f)
+                    .scaleY(1.18f)
+                    .setDuration(320)
+                    .setInterpolator(new OvershootInterpolator(2.2f))
+                    .withEndAction(() -> iv.animate().scaleX(1.0f).scaleY(1.0f).setDuration(140).start())
+                    .start();
+        }, delay);
     }
 
     @Override
@@ -851,6 +1034,7 @@ public class GameActivity extends BaseActivity implements GameEngine.GameEventLi
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        stopDoubleBonusPulseAnimation();
         if (progressAnimator != null) {
             progressAnimator.cancel();
             progressAnimator = null;
@@ -870,6 +1054,10 @@ public class GameActivity extends BaseActivity implements GameEngine.GameEventLi
         if (activeLowShotsWarningDialog != null && activeLowShotsWarningDialog.isShowing()) {
             activeLowShotsWarningDialog.dismiss();
             activeLowShotsWarningDialog = null;
+        }
+        if (activeBuyBoosterDialog != null && activeBuyBoosterDialog.isShowing()) {
+            activeBuyBoosterDialog.dismiss();
+            activeBuyBoosterDialog = null;
         }
     }
 }
