@@ -115,7 +115,7 @@ public class SoundEffectGenerator {
         int numSamples = (SAMPLE_RATE * durationMs) / 1000;
         byte[] buffer = new byte[numSamples * 2];
 
-        // Metallic coin clicks + ascending bright chime arpeggio (G5, B5, D6, G6, B6)
+        // Diamond sparkle clicks + ascending bright chime arpeggio (G5, B5, D6, G6, B6)
         float[] chimeNotes = {783.99f, 987.77f, 1174.66f, 1567.98f, 1975.53f};
         int[] noteStartTimesMs = {50, 110, 170, 230, 290};
 
@@ -124,7 +124,7 @@ public class SoundEffectGenerator {
             int timeMs = (int) (timeSec * 1000f);
             double sampleValue = 0.0;
 
-            // 1. Initial crisp metallic coin clink at t=0ms and t=45ms
+            // 1. Initial crisp diamond sparkle clink at t=0ms and t=45ms
             if (timeMs < 60) {
                 float tCoin1 = timeMs / 60.0f;
                 float envCoin1 = (1.0f - tCoin1) * (1.0f - tCoin1);
