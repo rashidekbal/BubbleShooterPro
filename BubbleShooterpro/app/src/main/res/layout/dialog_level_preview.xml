@@ -101,9 +101,10 @@
 
         <!-- Pre-game Boosters Selection -->
         <TextView
+            android:id="@+id/tvSelectBoostersHeader"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="SELECT BOOSTERS"
+            android:text="SELECT A BOOSTER (FIRST SHOT)"
             android:textColor="#64748B"
             android:textSize="@dimen/sp_11"
             android:textStyle="bold"
@@ -111,81 +112,280 @@
             android:layout_marginBottom="@dimen/dp_8" />
 
         <LinearLayout
+            android:id="@+id/layoutBoostersRow"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:gravity="center"
+            android:clipChildren="false"
+            android:clipToPadding="false"
             android:layout_marginBottom="@dimen/dp_18">
 
-            <!-- Rainbow Booster Toggle -->
+            <!-- Rainbow Booster Container -->
             <FrameLayout
-                android:id="@+id/btnToggleBoosterRainbow"
-                android:layout_width="@dimen/dp_52"
-                android:layout_height="@dimen/dp_52"
-                android:background="@drawable/btn_orb_blank_yellow"
-                android:clickable="true"
-                android:focusable="true">
+                android:id="@+id/layoutPreviewBoosterRainbow"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:clipChildren="false"
+                android:clipToPadding="false">
 
-                <ImageView
-                    android:layout_width="@dimen/dp_34"
-                    android:layout_height="@dimen/dp_34"
+                <!-- Selection Ring -->
+                <View
+                    android:id="@+id/ringBoosterRainbow"
+                    android:layout_width="@dimen/dp_60"
+                    android:layout_height="@dimen/dp_60"
                     android:layout_gravity="center"
-                    android:src="@drawable/rainbow_bubble"
-                    android:contentDescription="Rainbow Booster" />
+                    android:background="@drawable/bg_booster_selected_ring"
+                    android:visibility="gone" />
+
+                <!-- Orb Button -->
+                <FrameLayout
+                    android:id="@+id/btnToggleBoosterRainbow"
+                    android:layout_width="@dimen/dp_50"
+                    android:layout_height="@dimen/dp_50"
+                    android:layout_gravity="center"
+                    android:background="@drawable/btn_orb_blank_yellow"
+                    android:clickable="true"
+                    android:focusable="true">
+
+                    <ImageView
+                        android:layout_width="@dimen/dp_32"
+                        android:layout_height="@dimen/dp_32"
+                        android:layout_gravity="center"
+                        android:src="@drawable/rainbow_bubble"
+                        android:contentDescription="Rainbow Booster" />
+                </FrameLayout>
+
+                <!-- Checkmark badge (visible when selected) -->
+                <ImageView
+                    android:id="@+id/ivCheckPreviewRainbow"
+                    android:layout_width="@dimen/dp_20"
+                    android:layout_height="@dimen/dp_20"
+                    android:layout_gravity="top|end"
+                    android:layout_marginTop="@dimen/dp_2"
+                    android:layout_marginEnd="@dimen/dp_2"
+                    android:src="@drawable/ic_checkmark_badge"
+                    android:elevation="@dimen/dp_6"
+                    android:visibility="gone" />
+
+                <!-- Count Badge -->
+                <TextView
+                    android:id="@+id/tvCountPreviewRainbow"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom|end"
+                    android:minWidth="@dimen/dp_20"
+                    android:minHeight="@dimen/dp_20"
+                    android:gravity="center"
+                    android:paddingStart="@dimen/dp_5"
+                    android:paddingEnd="@dimen/dp_5"
+                    android:background="@drawable/bg_booster_badge_available"
+                    android:textColor="#FFFFFF"
+                    android:textSize="@dimen/sp_10"
+                    android:textStyle="bold"
+                    android:elevation="@dimen/dp_6"
+                    android:text="1" />
             </FrameLayout>
 
-            <!-- Fireball Booster Toggle -->
+            <!-- Fireball Booster Container -->
             <FrameLayout
-                android:id="@+id/btnToggleBoosterFireball"
-                android:layout_width="@dimen/dp_52"
-                android:layout_height="@dimen/dp_52"
-                android:layout_marginStart="@dimen/dp_10"
-                android:background="@drawable/btn_orb_blank_orange"
-                android:clickable="true"
-                android:focusable="true">
+                android:id="@+id/layoutPreviewBoosterFireball"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/dp_12"
+                android:clipChildren="false"
+                android:clipToPadding="false">
 
-                <ImageView
-                    android:layout_width="@dimen/dp_34"
-                    android:layout_height="@dimen/dp_34"
+                <!-- Selection Ring -->
+                <View
+                    android:id="@+id/ringBoosterFireball"
+                    android:layout_width="@dimen/dp_60"
+                    android:layout_height="@dimen/dp_60"
                     android:layout_gravity="center"
-                    android:src="@drawable/fireball_bubble"
-                    android:contentDescription="Fireball Booster" />
+                    android:background="@drawable/bg_booster_selected_ring"
+                    android:visibility="gone" />
+
+                <!-- Orb Button -->
+                <FrameLayout
+                    android:id="@+id/btnToggleBoosterFireball"
+                    android:layout_width="@dimen/dp_50"
+                    android:layout_height="@dimen/dp_50"
+                    android:layout_gravity="center"
+                    android:background="@drawable/btn_orb_blank_orange"
+                    android:clickable="true"
+                    android:focusable="true">
+
+                    <ImageView
+                        android:layout_width="@dimen/dp_32"
+                        android:layout_height="@dimen/dp_32"
+                        android:layout_gravity="center"
+                        android:src="@drawable/fireball_bubble"
+                        android:contentDescription="Fireball Booster" />
+                </FrameLayout>
+
+                <!-- Checkmark badge (visible when selected) -->
+                <ImageView
+                    android:id="@+id/ivCheckPreviewFireball"
+                    android:layout_width="@dimen/dp_20"
+                    android:layout_height="@dimen/dp_20"
+                    android:layout_gravity="top|end"
+                    android:layout_marginTop="@dimen/dp_2"
+                    android:layout_marginEnd="@dimen/dp_2"
+                    android:src="@drawable/ic_checkmark_badge"
+                    android:elevation="@dimen/dp_6"
+                    android:visibility="gone" />
+
+                <!-- Count Badge -->
+                <TextView
+                    android:id="@+id/tvCountPreviewFireball"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom|end"
+                    android:minWidth="@dimen/dp_20"
+                    android:minHeight="@dimen/dp_20"
+                    android:gravity="center"
+                    android:paddingStart="@dimen/dp_5"
+                    android:paddingEnd="@dimen/dp_5"
+                    android:background="@drawable/bg_booster_badge_available"
+                    android:textColor="#FFFFFF"
+                    android:textSize="@dimen/sp_10"
+                    android:textStyle="bold"
+                    android:elevation="@dimen/dp_6"
+                    android:text="1" />
             </FrameLayout>
 
-            <!-- Lightning Booster Toggle -->
+            <!-- Lightning Booster Container -->
             <FrameLayout
-                android:id="@+id/btnToggleBoosterLightning"
-                android:layout_width="@dimen/dp_52"
-                android:layout_height="@dimen/dp_52"
-                android:layout_marginStart="@dimen/dp_10"
-                android:background="@drawable/btn_orb_blank_blue"
-                android:clickable="true"
-                android:focusable="true">
+                android:id="@+id/layoutPreviewBoosterLightning"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/dp_12"
+                android:clipChildren="false"
+                android:clipToPadding="false">
 
-                <ImageView
-                    android:layout_width="@dimen/dp_34"
-                    android:layout_height="@dimen/dp_34"
+                <!-- Selection Ring -->
+                <View
+                    android:id="@+id/ringBoosterLightning"
+                    android:layout_width="@dimen/dp_60"
+                    android:layout_height="@dimen/dp_60"
                     android:layout_gravity="center"
-                    android:src="@drawable/lightning_bubble"
-                    android:contentDescription="Lightning Booster" />
+                    android:background="@drawable/bg_booster_selected_ring"
+                    android:visibility="gone" />
+
+                <!-- Orb Button -->
+                <FrameLayout
+                    android:id="@+id/btnToggleBoosterLightning"
+                    android:layout_width="@dimen/dp_50"
+                    android:layout_height="@dimen/dp_50"
+                    android:layout_gravity="center"
+                    android:background="@drawable/btn_orb_blank_blue"
+                    android:clickable="true"
+                    android:focusable="true">
+
+                    <ImageView
+                        android:layout_width="@dimen/dp_32"
+                        android:layout_height="@dimen/dp_32"
+                        android:layout_gravity="center"
+                        android:src="@drawable/lightning_bubble"
+                        android:contentDescription="Lightning Booster" />
+                </FrameLayout>
+
+                <!-- Checkmark badge (visible when selected) -->
+                <ImageView
+                    android:id="@+id/ivCheckPreviewLightning"
+                    android:layout_width="@dimen/dp_20"
+                    android:layout_height="@dimen/dp_20"
+                    android:layout_gravity="top|end"
+                    android:layout_marginTop="@dimen/dp_2"
+                    android:layout_marginEnd="@dimen/dp_2"
+                    android:src="@drawable/ic_checkmark_badge"
+                    android:elevation="@dimen/dp_6"
+                    android:visibility="gone" />
+
+                <!-- Count Badge -->
+                <TextView
+                    android:id="@+id/tvCountPreviewLightning"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom|end"
+                    android:minWidth="@dimen/dp_20"
+                    android:minHeight="@dimen/dp_20"
+                    android:gravity="center"
+                    android:paddingStart="@dimen/dp_5"
+                    android:paddingEnd="@dimen/dp_5"
+                    android:background="@drawable/bg_booster_badge_available"
+                    android:textColor="#FFFFFF"
+                    android:textSize="@dimen/sp_10"
+                    android:textStyle="bold"
+                    android:elevation="@dimen/dp_6"
+                    android:text="1" />
             </FrameLayout>
 
-            <!-- Bomb Booster Toggle -->
+            <!-- Bomb Booster Container -->
             <FrameLayout
-                android:id="@+id/btnToggleBoosterBomb"
-                android:layout_width="@dimen/dp_52"
-                android:layout_height="@dimen/dp_52"
-                android:layout_marginStart="@dimen/dp_10"
-                android:background="@drawable/btn_orb_blank_red"
-                android:clickable="true"
-                android:focusable="true">
+                android:id="@+id/layoutPreviewBoosterBomb"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/dp_12"
+                android:clipChildren="false"
+                android:clipToPadding="false">
 
-                <ImageView
-                    android:layout_width="@dimen/dp_34"
-                    android:layout_height="@dimen/dp_34"
+                <!-- Selection Ring -->
+                <View
+                    android:id="@+id/ringBoosterBomb"
+                    android:layout_width="@dimen/dp_60"
+                    android:layout_height="@dimen/dp_60"
                     android:layout_gravity="center"
-                    android:src="@drawable/bomb_bubble"
-                    android:contentDescription="Bomb Booster" />
+                    android:background="@drawable/bg_booster_selected_ring"
+                    android:visibility="gone" />
+
+                <!-- Orb Button -->
+                <FrameLayout
+                    android:id="@+id/btnToggleBoosterBomb"
+                    android:layout_width="@dimen/dp_50"
+                    android:layout_height="@dimen/dp_50"
+                    android:layout_gravity="center"
+                    android:background="@drawable/btn_orb_blank_red"
+                    android:clickable="true"
+                    android:focusable="true">
+
+                    <ImageView
+                        android:layout_width="@dimen/dp_32"
+                        android:layout_height="@dimen/dp_32"
+                        android:layout_gravity="center"
+                        android:src="@drawable/bomb_bubble"
+                        android:contentDescription="Bomb Booster" />
+                </FrameLayout>
+
+                <!-- Checkmark badge (visible when selected) -->
+                <ImageView
+                    android:id="@+id/ivCheckPreviewBomb"
+                    android:layout_width="@dimen/dp_20"
+                    android:layout_height="@dimen/dp_20"
+                    android:layout_gravity="top|end"
+                    android:layout_marginTop="@dimen/dp_2"
+                    android:layout_marginEnd="@dimen/dp_2"
+                    android:src="@drawable/ic_checkmark_badge"
+                    android:elevation="@dimen/dp_6"
+                    android:visibility="gone" />
+
+                <!-- Count Badge -->
+                <TextView
+                    android:id="@+id/tvCountPreviewBomb"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom|end"
+                    android:minWidth="@dimen/dp_20"
+                    android:minHeight="@dimen/dp_20"
+                    android:gravity="center"
+                    android:paddingStart="@dimen/dp_5"
+                    android:paddingEnd="@dimen/dp_5"
+                    android:background="@drawable/bg_booster_badge_available"
+                    android:textColor="#FFFFFF"
+                    android:textSize="@dimen/sp_10"
+                    android:textStyle="bold"
+                    android:elevation="@dimen/dp_6"
+                    android:text="1" />
             </FrameLayout>
         </LinearLayout>
 

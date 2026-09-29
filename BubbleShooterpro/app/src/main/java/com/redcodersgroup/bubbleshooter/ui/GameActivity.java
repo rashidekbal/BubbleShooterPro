@@ -66,9 +66,18 @@ public class GameActivity extends BaseActivity implements GameEngine.GameEventLi
     private boolean wasBackgrounded = false;
     private int continueBubblePurchasesCount = 0;
 
+    public static final String EXTRA_PRESELECTED_BOOSTER = "extra_preselected_booster";
+
     public static Intent createIntent(Context context, int levelNumber) {
+        return createIntent(context, levelNumber, null);
+    }
+
+    public static Intent createIntent(Context context, int levelNumber, String preselectedBooster) {
         Intent intent = new Intent(context, GameActivity.class);
         intent.putExtra(EXTRA_LEVEL_NUMBER, levelNumber);
+        if (preselectedBooster != null) {
+            intent.putExtra(EXTRA_PRESELECTED_BOOSTER, preselectedBooster);
+        }
         return intent;
     }
 
@@ -320,6 +329,36 @@ public class GameActivity extends BaseActivity implements GameEngine.GameEventLi
         currentStarsCount = 0;
         resetStarProgressNodes(level != null ? level.getStarThresholds() : new int[]{1000, 2000, 3000});
         gameEngine.loadLevel(level);
+
+        // Equip pre-selected booster if chosen in the level preview dialog
+        String preselectedBooster = getIntent().getStringExtra(EXTRA_PRESELECTED_BOOSTER);
+        if (preselectedBooster != null) {
+            try {
+                BubbleType boosterType = BubbleType.valueOf(preselectedBooster);
+                boolean consumed = false;
+                switch (boosterType) {
+                    case BOMB:
+                        consumed = prefs.consumeBombBooster();
+                        break;
+                    case RAINBOW:
+                        consumed = prefs.consumeRainbowBooster();
+                        break;
+                    case FIREBALL:
+                        consumed = prefs.consumeFireballBooster();
+                        break;
+                    case LIGHTNING:
+                        consumed = prefs.consumeLightningBooster();
+                        break;
+                    default:
+                        break;
+                }
+                if (consumed) {
+                    gameEngine.equipBooster(boosterType);
+                }
+            } catch (Exception ignored) {}
+            getIntent().removeExtra(EXTRA_PRESELECTED_BOOSTER);
+        }
+
         AnalyticsManager.getInstance(this).logLevelStart(currentLevelNumber, theme != null ? theme.title : "World");
         updateBoosterCounts();
         checkBoosterIntroOnLevelStart();

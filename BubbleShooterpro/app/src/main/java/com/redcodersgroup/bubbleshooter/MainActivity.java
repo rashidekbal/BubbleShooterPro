@@ -19,6 +19,7 @@ import com.redcodersgroup.bubbleshooter.data.WorldConfigManager;
 import com.redcodersgroup.bubbleshooter.data.WorldConfigManager.WorldModel;
 import com.redcodersgroup.bubbleshooter.databinding.ActivityMainBinding;
 import com.redcodersgroup.bubbleshooter.databinding.DialogLevelPreviewBinding;
+import com.redcodersgroup.bubbleshooter.bubble.BubbleType;
 import com.redcodersgroup.bubbleshooter.level.Level;
 import com.redcodersgroup.bubbleshooter.level.LevelManager;
 import com.redcodersgroup.bubbleshooter.ui.GameActivity;
@@ -356,10 +357,118 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-        previewBinding.btnToggleBoosterRainbow.setOnClickListener(v -> soundManager.playClick());
-        previewBinding.btnToggleBoosterFireball.setOnClickListener(v -> soundManager.playClick());
-        previewBinding.btnToggleBoosterLightning.setOnClickListener(v -> soundManager.playClick());
-        previewBinding.btnToggleBoosterBomb.setOnClickListener(v -> soundManager.playClick());
+        boolean rainbowUnlocked = prefs.isBoosterUnlocked(BubbleType.RAINBOW, level);
+        int rainbowCount = prefs.getRainbowBoosters();
+        boolean rainbowAvailable = rainbowUnlocked && rainbowCount > 0;
+
+        boolean fireballUnlocked = prefs.isBoosterUnlocked(BubbleType.FIREBALL, level);
+        int fireballCount = prefs.getFireballBoosters();
+        boolean fireballAvailable = fireballUnlocked && fireballCount > 0;
+
+        boolean lightningUnlocked = prefs.isBoosterUnlocked(BubbleType.LIGHTNING, level);
+        int lightningCount = prefs.getLightningBoosters();
+        boolean lightningAvailable = lightningUnlocked && lightningCount > 0;
+
+        boolean bombUnlocked = prefs.isBoosterUnlocked(BubbleType.BOMB, level);
+        int bombCount = prefs.getBombBoosters();
+        boolean bombAvailable = bombUnlocked && bombCount > 0;
+
+        previewBinding.layoutPreviewBoosterRainbow.setVisibility(rainbowAvailable ? View.VISIBLE : View.GONE);
+        if (rainbowAvailable) {
+            previewBinding.tvCountPreviewRainbow.setText(String.valueOf(rainbowCount));
+        }
+
+        previewBinding.layoutPreviewBoosterFireball.setVisibility(fireballAvailable ? View.VISIBLE : View.GONE);
+        if (fireballAvailable) {
+            previewBinding.tvCountPreviewFireball.setText(String.valueOf(fireballCount));
+        }
+
+        previewBinding.layoutPreviewBoosterLightning.setVisibility(lightningAvailable ? View.VISIBLE : View.GONE);
+        if (lightningAvailable) {
+            previewBinding.tvCountPreviewLightning.setText(String.valueOf(lightningCount));
+        }
+
+        previewBinding.layoutPreviewBoosterBomb.setVisibility(bombAvailable ? View.VISIBLE : View.GONE);
+        if (bombAvailable) {
+            previewBinding.tvCountPreviewBomb.setText(String.valueOf(bombCount));
+        }
+
+        boolean anyBoosterAvailable = rainbowAvailable || fireballAvailable || lightningAvailable || bombAvailable;
+        previewBinding.tvSelectBoostersHeader.setVisibility(anyBoosterAvailable ? View.VISIBLE : View.GONE);
+        previewBinding.layoutBoostersRow.setVisibility(anyBoosterAvailable ? View.VISIBLE : View.GONE);
+
+        final BubbleType[] selectedBooster = new BubbleType[]{null};
+        Runnable updateBoosterSelection = () -> {
+            BubbleType sel = selectedBooster[0];
+
+            boolean isRainbow = sel == BubbleType.RAINBOW;
+            previewBinding.ringBoosterRainbow.setVisibility(isRainbow ? View.VISIBLE : View.GONE);
+            previewBinding.ivCheckPreviewRainbow.setVisibility(isRainbow ? View.VISIBLE : View.GONE);
+
+            boolean isFireball = sel == BubbleType.FIREBALL;
+            previewBinding.ringBoosterFireball.setVisibility(isFireball ? View.VISIBLE : View.GONE);
+            previewBinding.ivCheckPreviewFireball.setVisibility(isFireball ? View.VISIBLE : View.GONE);
+
+            boolean isLightning = sel == BubbleType.LIGHTNING;
+            previewBinding.ringBoosterLightning.setVisibility(isLightning ? View.VISIBLE : View.GONE);
+            previewBinding.ivCheckPreviewLightning.setVisibility(isLightning ? View.VISIBLE : View.GONE);
+
+            boolean isBomb = sel == BubbleType.BOMB;
+            previewBinding.ringBoosterBomb.setVisibility(isBomb ? View.VISIBLE : View.GONE);
+            previewBinding.ivCheckPreviewBomb.setVisibility(isBomb ? View.VISIBLE : View.GONE);
+        };
+
+        previewBinding.btnToggleBoosterRainbow.setOnClickListener(v -> {
+            soundManager.playClick();
+            if (selectedBooster[0] == BubbleType.RAINBOW) {
+                selectedBooster[0] = null;
+            } else {
+                selectedBooster[0] = BubbleType.RAINBOW;
+                v.animate().scaleX(1.12f).scaleY(1.12f).setDuration(80).withEndAction(() ->
+                        v.animate().scaleX(1.0f).scaleY(1.0f).setDuration(120).start()
+                ).start();
+            }
+            updateBoosterSelection.run();
+        });
+
+        previewBinding.btnToggleBoosterFireball.setOnClickListener(v -> {
+            soundManager.playClick();
+            if (selectedBooster[0] == BubbleType.FIREBALL) {
+                selectedBooster[0] = null;
+            } else {
+                selectedBooster[0] = BubbleType.FIREBALL;
+                v.animate().scaleX(1.12f).scaleY(1.12f).setDuration(80).withEndAction(() ->
+                        v.animate().scaleX(1.0f).scaleY(1.0f).setDuration(120).start()
+                ).start();
+            }
+            updateBoosterSelection.run();
+        });
+
+        previewBinding.btnToggleBoosterLightning.setOnClickListener(v -> {
+            soundManager.playClick();
+            if (selectedBooster[0] == BubbleType.LIGHTNING) {
+                selectedBooster[0] = null;
+            } else {
+                selectedBooster[0] = BubbleType.LIGHTNING;
+                v.animate().scaleX(1.12f).scaleY(1.12f).setDuration(80).withEndAction(() ->
+                        v.animate().scaleX(1.0f).scaleY(1.0f).setDuration(120).start()
+                ).start();
+            }
+            updateBoosterSelection.run();
+        });
+
+        previewBinding.btnToggleBoosterBomb.setOnClickListener(v -> {
+            soundManager.playClick();
+            if (selectedBooster[0] == BubbleType.BOMB) {
+                selectedBooster[0] = null;
+            } else {
+                selectedBooster[0] = BubbleType.BOMB;
+                v.animate().scaleX(1.12f).scaleY(1.12f).setDuration(80).withEndAction(() ->
+                        v.animate().scaleX(1.0f).scaleY(1.0f).setDuration(120).start()
+                ).start();
+            }
+            updateBoosterSelection.run();
+        });
 
         previewBinding.btnStartLevel.setOnClickListener(v -> {
             soundManager.playClick();
@@ -369,7 +478,8 @@ public class MainActivity extends AppCompatActivity {
             }
             dialog.dismiss();
             activePreviewDialog = null;
-            startActivity(GameActivity.createIntent(MainActivity.this, level));
+            String boosterExtra = selectedBooster[0] != null ? selectedBooster[0].name() : null;
+            startActivity(GameActivity.createIntent(MainActivity.this, level, boosterExtra));
         });
 
         previewBinding.btnClosePreview.setOnClickListener(v -> {

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Outer Glow -->
+    <item>
+        <shape android:shape="oval">
+            <stroke
+                android:width="4dp"
+                android:color="#5022C55E" />
+        </shape>
+    </item>
+    <!-- Crisp Bright Inner Ring -->
+    <item
+        android:top="1dp"
+        android:bottom="1dp"
+        android:left="1dp"
+        android:right="1dp">
+        <shape android:shape="oval">
+            <stroke
+                android:width="2.5dp"
+                android:color="#22C55E" />
+            <solid android:color="#2222C55E" />
+        </shape>
+    </item>
+</layer-list>
