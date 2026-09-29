@@ -189,9 +189,14 @@ public class WorldMapPagerAdapter extends RecyclerView.Adapter<WorldMapPagerAdap
                 float nodeDp = minNodeDp + normY * (maxNodeDp - minNodeDp);
                 int nodeSize = Math.round(nodeDp * density);
 
-                float minSp = 10f;
-                float maxSp = 19f;
+                float minSp = 7.5f;
+                float maxSp = 12.5f;
                 float textSp = minSp + normY * (maxSp - minSp);
+                if (level >= 100) {
+                    textSp *= 0.80f;
+                } else if (level >= 10) {
+                    textSp *= 0.90f;
+                }
 
                 int posX = (int) (mapWidth * coord.x - nodeSize / 2f);
                 int posY = (int) (mapHeight * coord.y - nodeSize / 2f);
@@ -207,6 +212,15 @@ public class WorldMapPagerAdapter extends RecyclerView.Adapter<WorldMapPagerAdap
                     orbLp.height = nodeSize;
                     nodeBinding.layoutNodeOrb.setLayoutParams(orbLp);
                 }
+
+                // Center text inside the 3D dome (offset by ~8% of node size to account for 3D bottom bevel)
+                ViewGroup.LayoutParams textLp = nodeBinding.tvNodeLevelNumber.getLayoutParams();
+                if (textLp instanceof FrameLayout.LayoutParams) {
+                    FrameLayout.LayoutParams flp = (FrameLayout.LayoutParams) textLp;
+                    flp.bottomMargin = Math.round(nodeSize * 0.08f);
+                    nodeBinding.tvNodeLevelNumber.setLayoutParams(flp);
+                }
+
                 nodeBinding.tvNodeLevelNumber.setTextSize(TypedValue.COMPLEX_UNIT_SP, textSp);
                 nodeBinding.tvNodeLevelNumber.setText(String.valueOf(level));
 
