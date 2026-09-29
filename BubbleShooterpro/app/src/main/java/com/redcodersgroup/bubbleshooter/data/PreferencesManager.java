@@ -356,6 +356,26 @@ public class PreferencesManager {
         return false;
     }
 
+    public void refundBooster(com.redcodersgroup.bubbleshooter.bubble.BubbleType type) {
+        if (type == null) return;
+        switch (type) {
+            case BOMB:
+                addBombBoosters(1);
+                break;
+            case RAINBOW:
+                addRainbowBoosters(1);
+                break;
+            case FIREBALL:
+                addFireballBoosters(1);
+                break;
+            case LIGHTNING:
+                addLightningBoosters(1);
+                break;
+            default:
+                break;
+        }
+    }
+
     public boolean canClaimDailyFreeDiamonds() {
         long lastClaim = prefs.getLong(KEY_FREE_DIAMONDS_CLAIM_DATE, 0);
         long now = System.currentTimeMillis();

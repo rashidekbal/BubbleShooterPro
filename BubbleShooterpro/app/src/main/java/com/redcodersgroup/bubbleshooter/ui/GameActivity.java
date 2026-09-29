@@ -196,6 +196,19 @@ public class GameActivity extends BaseActivity implements GameEngine.GameEventLi
             return;
         }
 
+        BubbleType currentEquipped = gameEngine != null ? gameEngine.getCurrentBubbleType() : BubbleType.NORMAL;
+
+        // If user tapped the same booster that is already active, unequip and refund it
+        if (currentEquipped == type) {
+            prefs.refundBooster(type);
+            if (gameEngine != null) {
+                gameEngine.unequipBooster();
+            }
+            soundManager.playClick();
+            updateBoosterCounts();
+            return;
+        }
+
         boolean consumed = false;
         View targetLayout = null;
         switch (type) {
@@ -220,6 +233,10 @@ public class GameActivity extends BaseActivity implements GameEngine.GameEventLi
         }
 
         if (consumed) {
+            // If another powerup was already active in the launcher, refund the previous one
+            if (isPowerup(currentEquipped)) {
+                prefs.refundBooster(currentEquipped);
+            }
             playBoosterTapFeedback(targetLayout);
             gameEngine.equipBooster(type);
             updateBoosterCounts();
@@ -233,6 +250,13 @@ public class GameActivity extends BaseActivity implements GameEngine.GameEventLi
                 startActivity(ShopActivity.createIntent(GameActivity.this, ShopActivity.TAB_BOOSTERS));
             });
         }
+    }
+
+    private boolean isPowerup(BubbleType type) {
+        return type == BubbleType.BOMB
+                || type == BubbleType.RAINBOW
+                || type == BubbleType.FIREBALL
+                || type == BubbleType.LIGHTNING;
     }
 
     private void playBoosterTapFeedback(View view) {
