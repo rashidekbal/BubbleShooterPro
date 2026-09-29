@@ -247,9 +247,12 @@ public class WorldMapPagerAdapter extends RecyclerView.Adapter<WorldMapPagerAdap
                 boolean isCompleted = (level < highestUnlocked) || (stars > 0);
                 boolean isCurrent = (level == highestUnlocked);
                 boolean isLocked = (level > highestUnlocked);
+                boolean isBoss = (level % 10 == 0);
 
                 if (isCurrent) {
-                    nodeBinding.layoutNodeOrb.setBackgroundResource(R.drawable.btn_level_active);
+                    // Yellow for current open, Red if current open is boss mode
+                    int orbBg = isBoss ? R.drawable.btn_level_red : R.drawable.btn_level_yellow;
+                    nodeBinding.layoutNodeOrb.setBackgroundResource(orbBg);
                     nodeBinding.tvNodeLevelNumber.setTextColor(Color.WHITE);
                     nodeBinding.layoutPlayerAvatarPin.setVisibility(View.VISIBLE);
                     nodeBinding.layoutNodeStars.setVisibility(View.GONE);
@@ -261,7 +264,8 @@ public class WorldMapPagerAdapter extends RecyclerView.Adapter<WorldMapPagerAdap
                     nodeBinding.layoutPlayerAvatarPin.setElevation(elev + 8f);
                     nodeBinding.layoutPlayerAvatarPin.setTranslationZ(elev + 8f);
                 } else if (isCompleted) {
-                    nodeBinding.layoutNodeOrb.setBackgroundResource(R.drawable.btn_level_completed);
+                    // Green for finished level
+                    nodeBinding.layoutNodeOrb.setBackgroundResource(R.drawable.btn_level_green);
                     nodeBinding.tvNodeLevelNumber.setTextColor(Color.WHITE);
                     nodeBinding.layoutPlayerAvatarPin.setVisibility(View.GONE);
                     nodeBinding.layoutNodeStars.setVisibility(View.VISIBLE);
@@ -272,7 +276,9 @@ public class WorldMapPagerAdapter extends RecyclerView.Adapter<WorldMapPagerAdap
                     nodeBinding.ivNodeStar2.setImageResource(stars >= 2 ? R.drawable.ic_star_filled : R.drawable.ic_star_empty);
                     nodeBinding.ivNodeStar3.setImageResource(stars >= 3 ? R.drawable.ic_star_filled : R.drawable.ic_star_empty);
                 } else {
-                    nodeBinding.layoutNodeOrb.setBackgroundResource(R.drawable.btn_level_locked);
+                    // Red for boss mode, Gray for locked normal level
+                    int orbBg = isBoss ? R.drawable.btn_level_red : R.drawable.btn_level_locked;
+                    nodeBinding.layoutNodeOrb.setBackgroundResource(orbBg);
                     nodeBinding.tvNodeLevelNumber.setTextColor(Color.WHITE);
                     nodeBinding.layoutPlayerAvatarPin.setVisibility(View.GONE);
                     nodeBinding.layoutNodeStars.setVisibility(View.GONE);
@@ -285,10 +291,12 @@ public class WorldMapPagerAdapter extends RecyclerView.Adapter<WorldMapPagerAdap
                         if (listener != null) listener.onLevelSelected(level);
                     } else {
                         soundManager.playClick();
+                        String title = isBoss ? "BOSS LEVEL LOCKED" : "LOCKED";
+                        String subtitle = isBoss ? "BOSS STAGE NOT ACCESSIBLE" : "STAGE NOT ACCESSIBLE";
                         NoticeDialog.showWarning(
                                 context,
-                                "LOCKED",
-                                "STAGE NOT ACCESSIBLE",
+                                title,
+                                subtitle,
                                 "LEVEL " + level + " LOCKED",
                                 "Complete Level " + (level - 1) + " to unlock this stage."
                         );

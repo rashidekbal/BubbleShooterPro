@@ -348,7 +348,8 @@ public class MainActivity extends AppCompatActivity {
 
         WorldModel world = worldConfigManager.getWorldForLevel(level);
         previewBinding.tvPreviewWorld.setText(world.subtitle);
-        previewBinding.tvPreviewLevel.setText("LEVEL " + level);
+        boolean isBoss = (level % 10 == 0);
+        previewBinding.tvPreviewLevel.setText(isBoss ? "LEVEL " + level + " • BOSS" : "LEVEL " + level);
 
         int stars = prefs.getStarsForLevel(level);
         previewBinding.ivPreviewStar1.setImageResource(stars >= 1 ? R.drawable.ic_star_filled : R.drawable.ic_star_empty);
