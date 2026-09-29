@@ -797,7 +797,7 @@ public class GameEngine {
         TrajectoryCalculator.TrajectoryResult result = TrajectoryCalculator.calculateTrajectory(
                 launcherX, launcherY, aimAngleRad,
                 boardLeft, boardRight, boardTop,
-                grid, bubbleRadius, false, maxBounces
+                grid, bubbleRadius, isFireball, maxBounces
         );
 
         this.trajectoryPoints = result.points;
@@ -808,19 +808,65 @@ public class GameEngine {
         this.projectedLandingPos = null;
         this.projectedPoppedPositions.clear();
 
-        // Landing circle & pop highlights activate for direct aim (0 bounce), 1st indirect (1 bounce), and 2nd indirect (2 bounces)
-        if (trajectoryBounces <= 2 && trajectoryPoints != null && !trajectoryPoints.isEmpty() && !isFireballBlocked) {
-            PointF hitPt = trajectoryPoints.get(trajectoryPoints.size() - 1);
-            GridPosition snapPos = board.findNearestSnapPosition(hitPt.x, hitPt.y);
-            if (snapPos != null) {
-                this.projectedLandingPos = snapPos;
-                this.projectedLandingPoint = new PointF(grid.getCenterX(snapPos.row, snapPos.col), grid.getCenterY(snapPos.row));
-                List<GridPosition> matches = board.previewMatches(snapPos, currentBubble.getColor(), currentBubble.getType());
-                if (matches != null && !matches.isEmpty()) {
-                    this.projectedPoppedPositions.addAll(matches);
+        if (isFireball) {
+            // Accurately project and highlight all bubbles penetrated and incinerated by the fireball
+            if (!isFireballBlocked && trajectoryPoints != null && !trajectoryPoints.isEmpty()) {
+                float hitThresholdSq = (bubbleRadius * 1.85f) * (bubbleRadius * 1.85f);
+                Set<GridPosition> hits = new LinkedHashSet<>();
+                Set<GridPosition> bombsToExplode = new HashSet<>();
+                Set<GridPosition> lightningToTrigger = new HashSet<>();
+
+                for (int r = 0; r < BubbleGrid.MAX_ROWS; r++) {
+                    int cols = grid.getCols(r);
+                    for (int c = 0; c < cols; c++) {
+                        Bubble b = grid.getBubble(r, c);
+                        if (b != null && !b.isPopping() && !b.isFalling() && isBubbleVisibleOnBoard(b)) {
+                            float bx = b.getX();
+                            float by = b.getY();
+                            float pX = launcherX;
+                            float pY = launcherY;
+                            for (PointF pt : trajectoryPoints) {
+                                if (distanceSqToSegment(bx, by, pX, pY, pt.x, pt.y) <= hitThresholdSq) {
+                                    GridPosition pos = new GridPosition(r, c);
+                                    hits.add(pos);
+                                    if (b.getType() == BubbleType.BOMB || b.getColor() == BubbleColor.BOMB) {
+                                        bombsToExplode.add(pos);
+                                    } else if (b.getType() == BubbleType.LIGHTNING || b.getColor() == BubbleColor.LIGHTNING) {
+                                        lightningToTrigger.add(pos);
+                                    }
+                                    break;
+                                }
+                                pX = pt.x;
+                                pY = pt.y;
+                            }
+                        }
+                    }
                 }
-            } else if (hitPt.y <= boardTop + bubbleRadius * 1.5f) {
-                this.projectedLandingPoint = new PointF(hitPt.x, boardTop + bubbleRadius);
+
+                if (!bombsToExplode.isEmpty()) {
+                    hits.addAll(board.getBombExplosionPositions(bombsToExplode));
+                }
+                if (!lightningToTrigger.isEmpty()) {
+                    hits.addAll(board.getLightningExplosionPositions(lightningToTrigger, null));
+                }
+
+                this.projectedPoppedPositions.addAll(hits);
+            }
+        } else {
+            // Landing circle & pop highlights activate for direct aim (0 bounce), 1st indirect (1 bounce), and 2nd indirect (2 bounces)
+            if (trajectoryBounces <= 2 && trajectoryPoints != null && !trajectoryPoints.isEmpty()) {
+                PointF hitPt = trajectoryPoints.get(trajectoryPoints.size() - 1);
+                GridPosition snapPos = board.findNearestSnapPosition(hitPt.x, hitPt.y);
+                if (snapPos != null) {
+                    this.projectedLandingPos = snapPos;
+                    this.projectedLandingPoint = new PointF(grid.getCenterX(snapPos.row, snapPos.col), grid.getCenterY(snapPos.row));
+                    List<GridPosition> matches = board.previewMatches(snapPos, currentBubble.getColor(), currentBubble.getType());
+                    if (matches != null && !matches.isEmpty()) {
+                        this.projectedPoppedPositions.addAll(matches);
+                    }
+                } else if (hitPt.y <= boardTop + bubbleRadius * 1.5f) {
+                    this.projectedLandingPoint = new PointF(hitPt.x, boardTop + bubbleRadius);
+                }
             }
         }
     }
@@ -1790,6 +1836,7 @@ public class GameEngine {
             return;
         }
 
+        boolean isCurrentFireball = (currentBubble != null && (currentBubble.getType() == BubbleType.FIREBALL || currentBubble.getColor() == BubbleColor.FIREBALL));
         for (GridPosition pos : projectedPoppedPositions) {
             Bubble b = grid.getBubble(pos);
             if (b == null || b.isPopping() || b.isFalling()) continue;
@@ -1800,7 +1847,7 @@ public class GameEngine {
             float pulse = (float) (1.0 + 0.08 * Math.sin(aimPulseTimer * 9.0 + phaseOffset));
             float ringRadius = bubbleRadius * pulse;
 
-            int popGlow = (b.getColor() != null) ? b.getColor().lightColor : Color.WHITE;
+            int popGlow = isCurrentFireball ? Color.parseColor("#FF5722") : ((b.getColor() != null) ? b.getColor().lightColor : Color.WHITE);
 
             // 1. Pulsing Outer Glow Aura
             paint.setStyle(Paint.Style.STROKE);
