@@ -136,6 +136,10 @@ public class ProfileDialog extends Dialog {
             prefs.setPlayerName(name);
             prefs.setPlayerAvatar(selectedAvatarId);
 
+            if (hostActivity != null) {
+                com.redcodersgroup.bubbleshooter.auth.CloudSaveManager.getInstance().saveToCloud(hostActivity);
+            }
+
             if (listener != null) {
                 listener.onProfileUpdated(name, selectedAvatarId);
             }

@@ -12,6 +12,7 @@ import com.google.android.gms.games.snapshot.SnapshotMetadataChange;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
 import com.redcodersgroup.bubbleshooter.data.PreferencesManager;
+import com.redcodersgroup.bubbleshooter.profile.AvatarManager;
 import org.json.JSONObject;
 
 import java.nio.charset.StandardCharsets;
@@ -185,11 +186,23 @@ public class CloudSaveManager {
                 changed = true;
             }
 
-            // Profile info
+            // Profile info (Avatar & Name)
             String remoteAvatar = remoteJson.optString("playerAvatar", "");
-            if (!remoteAvatar.isEmpty() && "avatar_hero".equals(prefs.getPlayerAvatar())) {
+            if (!remoteAvatar.isEmpty() && (prefs.getPlayerAvatar() == null || prefs.getPlayerAvatar().isEmpty() || "avatar_hero".equals(prefs.getPlayerAvatar()))) {
                 prefs.setPlayerAvatar(remoteAvatar);
                 changed = true;
+            }
+
+            String remoteName = remoteJson.optString("playerName", "");
+            if (!remoteName.isEmpty() && !remoteName.equals(AvatarManager.DEFAULT_PLAYER_NAME)) {
+                String currentLocalName = prefs.getPlayerName();
+                String playGamesName = PlayGamesAuthManager.getInstance().getDisplayName();
+                if (currentLocalName == null || currentLocalName.isEmpty()
+                        || currentLocalName.equals(AvatarManager.DEFAULT_PLAYER_NAME)
+                        || (playGamesName != null && currentLocalName.equals(playGamesName))) {
+                    prefs.setPlayerName(remoteName);
+                    changed = true;
+                }
             }
 
             // Level Stars & Scores
