@@ -247,7 +247,7 @@ public class WorldMapPagerAdapter extends RecyclerView.Adapter<WorldMapPagerAdap
                 boolean isCompleted = (level < highestUnlocked) || (stars > 0);
                 boolean isCurrent = (level == highestUnlocked);
                 boolean isLocked = (level > highestUnlocked);
-                boolean isBoss = (level % 10 == 0);
+                boolean isBoss = (level % 5 == 0);
 
                 if (isCurrent) {
                     // Yellow for current open, Red if current open is boss mode
