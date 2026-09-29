@@ -35,6 +35,7 @@ public class IapBillingManager implements PurchasesUpdatedListener {
 
     private static final String TAG = "IapBillingManager";
 
+    public static final String SKU_DIAMONDS_50 = StoreManager.SKU_DIAMONDS_50;
     public static final String SKU_DIAMONDS_150 = StoreManager.SKU_DIAMONDS_150;
     public static final String SKU_DIAMONDS_500 = StoreManager.SKU_DIAMONDS_500;
     public static final String SKU_DIAMONDS_1500 = StoreManager.SKU_DIAMONDS_1500;
@@ -125,6 +126,10 @@ public class IapBillingManager implements PurchasesUpdatedListener {
 
         List<QueryProductDetailsParams.Product> productList = ImmutableList.of(
                 QueryProductDetailsParams.Product.newBuilder()
+                        .setProductId(SKU_DIAMONDS_50)
+                        .setProductType(BillingClient.ProductType.INAPP)
+                        .build(),
+                QueryProductDetailsParams.Product.newBuilder()
                         .setProductId(SKU_DIAMONDS_150)
                         .setProductType(BillingClient.ProductType.INAPP)
                         .build(),
@@ -180,12 +185,14 @@ public class IapBillingManager implements PurchasesUpdatedListener {
         String country = Locale.getDefault().getCountry().toUpperCase(Locale.ROOT);
         boolean isIndia = "IN".equals(country);
 
-        if (SKU_DIAMONDS_150.equals(productId)) {
+        if (SKU_DIAMONDS_50.equals(productId)) {
+            return isIndia ? "₹29" : "$0.49";
+        } else if (SKU_DIAMONDS_150.equals(productId)) {
             return isIndia ? "₹75" : "$0.99";
         } else if (SKU_DIAMONDS_500.equals(productId)) {
-            return isIndia ? "₹250" : "$2.99";
+            return isIndia ? "₹249" : "$2.99";
         } else if (SKU_DIAMONDS_1500.equals(productId)) {
-            return isIndia ? "₹750" : "$6.99";
+            return isIndia ? "₹699" : "$7.99";
         }
         return "$0.99";
     }
@@ -296,7 +303,9 @@ public class IapBillingManager implements PurchasesUpdatedListener {
         PreferencesManager prefs = new PreferencesManager(context);
         int diamondsToAdd = 0;
 
-        if (SKU_DIAMONDS_150.equals(productId)) {
+        if (SKU_DIAMONDS_50.equals(productId)) {
+            diamondsToAdd = StoreManager.DIAMONDS_POCKET;
+        } else if (SKU_DIAMONDS_150.equals(productId)) {
             diamondsToAdd = StoreManager.DIAMONDS_POUCH;
         } else if (SKU_DIAMONDS_500.equals(productId)) {
             diamondsToAdd = StoreManager.DIAMONDS_SACK;

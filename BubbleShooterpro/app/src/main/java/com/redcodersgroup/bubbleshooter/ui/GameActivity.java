@@ -61,7 +61,8 @@ public class GameActivity extends BaseActivity implements GameEngine.GameEventLi
     private PauseDialog activePauseDialog;
     private VictoryDialog activeVictoryDialog;
     private BuyBoosterDialog activeBuyBoosterDialog;
-    private boolean isGameOverOrWon = false;
+    private enum MatchState { PLAYING, WON, LOST }
+    private MatchState matchState = MatchState.PLAYING;
     private boolean wasBackgrounded = false;
     private int continueBubblePurchasesCount = 0;
 
@@ -292,7 +293,7 @@ public class GameActivity extends BaseActivity implements GameEngine.GameEventLi
 
     private void loadCurrentLevel() {
         continueBubblePurchasesCount = 0;
-        isGameOverOrWon = false;
+        matchState = MatchState.PLAYING;
         wasBackgrounded = false;
         stopDoubleBonusPulseAnimation();
         stopReviveAdPulseAnimation();
@@ -315,6 +316,7 @@ public class GameActivity extends BaseActivity implements GameEngine.GameEventLi
             binding.tvObjectiveBadge.setText(level.getObjective().getBadgeText(0, level.getRows().size() * 8));
             binding.layoutObjectiveBadge.setBackgroundResource(R.drawable.bg_badge_objective);
         }
+        binding.layoutObjectiveBadge.setVisibility(View.GONE);
         currentStarsCount = 0;
         resetStarProgressNodes(level != null ? level.getStarThresholds() : new int[]{1000, 2000, 3000});
         gameEngine.loadLevel(level);
@@ -355,7 +357,7 @@ public class GameActivity extends BaseActivity implements GameEngine.GameEventLi
     private void loadEndlessMode() {
         continueBubblePurchasesCount = 0;
         AnalyticsManager.getInstance(this).logEndlessStart();
-        isGameOverOrWon = false;
+        matchState = MatchState.PLAYING;
         wasBackgrounded = false;
         stopDoubleBonusPulseAnimation();
         stopReviveAdPulseAnimation();
@@ -447,7 +449,7 @@ public class GameActivity extends BaseActivity implements GameEngine.GameEventLi
     }
 
     private void showPauseDialog() {
-        if (isFinishing() || isDestroyed() || isGameOverOrWon) return;
+        if (isFinishing() || isDestroyed() || matchState != MatchState.PLAYING) return;
         if (activePauseDialog != null && activePauseDialog.isShowing()) return;
 
         if (gameEngine != null) {
@@ -467,17 +469,8 @@ public class GameActivity extends BaseActivity implements GameEngine.GameEventLi
             @Override
             public void onRestartClicked() {
                 activePauseDialog = null;
-                if (!isEndlessMode && !isGameOverOrWon) {
-                    // Deduct life for restarting mid-match in level mode
+                if (!isEndlessMode && matchState == MatchState.PLAYING) {
                     prefs.deductLife();
-                    isGameOverOrWon = true;
-                    BubbleGameView.BiomeTheme theme = binding.bubbleGameView.getCurrentBiome();
-                    AnalyticsManager.getInstance(GameActivity.this).logLevelFail(
-                            currentLevelNumber,
-                            theme != null ? theme.title : "World",
-                            gameEngine != null ? gameEngine.getScore() : 0,
-                            "Restart Mid-Match"
-                    );
                     if (prefs.getLives() <= 0) {
                         showNoHeartsDialog();
                         return;
@@ -494,17 +487,8 @@ public class GameActivity extends BaseActivity implements GameEngine.GameEventLi
             @Override
             public void onHomeClicked() {
                 activePauseDialog = null;
-                if (!isEndlessMode && !isGameOverOrWon) {
-                    // Deduct life for quitting mid-match in level mode
+                if (!isEndlessMode && matchState == MatchState.PLAYING) {
                     prefs.deductLife();
-                    isGameOverOrWon = true;
-                    BubbleGameView.BiomeTheme theme = binding.bubbleGameView.getCurrentBiome();
-                    AnalyticsManager.getInstance(GameActivity.this).logLevelFail(
-                            currentLevelNumber,
-                            theme != null ? theme.title : "World",
-                            gameEngine != null ? gameEngine.getScore() : 0,
-                            "Quit Mid-Match"
-                    );
                 }
                 Intent intent = new Intent(GameActivity.this, MainActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
@@ -521,6 +505,7 @@ public class GameActivity extends BaseActivity implements GameEngine.GameEventLi
         // If full-screen victory overlay is active, back press finishes cleanly
         if (binding != null && binding.overlayVictory != null &&
                 binding.overlayVictory.rootVictoryOverlay.getVisibility() == View.VISIBLE) {
+            matchState = MatchState.WON;
             finish();
             return;
         }
@@ -528,9 +513,8 @@ public class GameActivity extends BaseActivity implements GameEngine.GameEventLi
         // If full-screen game over overlay is active, user is abandoning the level -> deduct heart and finish
         if (binding != null && binding.overlayGameOver != null &&
                 binding.overlayGameOver.rootGameOverOverlay.getVisibility() == View.VISIBLE) {
-            if (!isEndlessMode && !isGameOverOrWon) {
+            if (!isEndlessMode && matchState == MatchState.LOST) {
                 prefs.deductLife();
-                isGameOverOrWon = true;
             }
             stopReviveAdPulseAnimation();
             finish();
@@ -541,6 +525,7 @@ public class GameActivity extends BaseActivity implements GameEngine.GameEventLi
         if (activeVictoryDialog != null && activeVictoryDialog.isShowing()) {
             activeVictoryDialog.dismiss();
             activeVictoryDialog = null;
+            matchState = MatchState.WON;
             finish();
             return;
         }
@@ -557,7 +542,7 @@ public class GameActivity extends BaseActivity implements GameEngine.GameEventLi
         }
 
         // If in active gameplay (any mode: Level Mode or Endless Mode), show the pause dialog
-        if (!isGameOverOrWon) {
+        if (matchState == MatchState.PLAYING) {
             showPauseDialog();
         } else {
             finish();
@@ -628,6 +613,10 @@ public class GameActivity extends BaseActivity implements GameEngine.GameEventLi
     public void onObjectiveUpdated(String badgeText, boolean isCompleted, String summaryText) {
         runOnUiThread(() -> {
             if (isFinishing() || isDestroyed()) return;
+            if (!isEndlessMode) {
+                binding.layoutObjectiveBadge.setVisibility(View.GONE);
+                return;
+            }
             binding.tvObjectiveBadge.setText(badgeText);
             if (isCompleted) {
                 binding.ivObjectiveIcon.setImageResource(R.drawable.ic_star_filled);
@@ -641,7 +630,7 @@ public class GameActivity extends BaseActivity implements GameEngine.GameEventLi
                         .setDuration(250)
                         .start();
             } else {
-                binding.ivObjectiveIcon.setImageResource(isEndlessMode ? R.drawable.ic_lightning : R.drawable.ic_target_bullseye);
+                binding.ivObjectiveIcon.setImageResource(R.drawable.ic_lightning);
                 binding.layoutObjectiveBadge.setBackgroundResource(R.drawable.bg_badge_objective);
             }
         });
@@ -659,7 +648,7 @@ public class GameActivity extends BaseActivity implements GameEngine.GameEventLi
                 String themeTitle = (theme != null) ? theme.title : "Meadows";
                 binding.tvLevelTitle.setText("WAVE " + shotsRemainingOrWave + " • " + themeTitle);
             } else {
-                boolean isCelebrationOrWon = isGameOverOrWon || (gameEngine != null && gameEngine.isWonOrCelebrating());
+                boolean isCelebrationOrWon = (matchState == MatchState.WON) || (gameEngine != null && gameEngine.isWonOrCelebrating());
 
                 if (shotsRemainingOrWave <= 5 && !isCelebrationOrWon) {
                     binding.layoutShots.setBackgroundResource(R.drawable.bg_button_glossy_red);
@@ -692,7 +681,7 @@ public class GameActivity extends BaseActivity implements GameEngine.GameEventLi
     public void onGameWon(int score, int stars, String objectiveSummary, int shotsRemaining, int shotBonus) {
         runOnUiThread(() -> {
             if (isFinishing() || isDestroyed()) return;
-            isGameOverOrWon = true;
+            matchState = MatchState.WON;
             wasBackgrounded = false;
 
             if (activePauseDialog != null && activePauseDialog.isShowing()) {
@@ -723,11 +712,13 @@ public class GameActivity extends BaseActivity implements GameEngine.GameEventLi
     private void showVictoryOverlay(int score, int newHigh, int stars, String objectiveSummary, int shotsRemaining, int shotBonus) {
         if (binding == null || binding.overlayVictory == null) return;
 
-        // Automatically grant the standard +2 Diamonds level completion reward
-        prefs.addDiamonds(2);
+        // Milestone reward (Every 5th level = 3 diamonds, otherwise 1 diamond on regular clear)
+        boolean isMilestoneLevel = (!isEndlessMode && currentLevelNumber % 5 == 0);
+        final int baseDiamonds = isMilestoneLevel ? 3 : 1;
+        prefs.addDiamonds(baseDiamonds);
         com.redcodersgroup.bubbleshooter.auth.CloudSaveManager.getInstance().saveToCloud(GameActivity.this);
         android.os.Bundle bVictoryBase = new android.os.Bundle();
-        bVictoryBase.putInt("amount", 2);
+        bVictoryBase.putInt("amount", baseDiamonds);
         AnalyticsManager.getInstance(this).logEvent("level_victory_base_diamonds", bVictoryBase);
 
         final boolean[] hasDoubledReward = {false};
@@ -738,12 +729,12 @@ public class GameActivity extends BaseActivity implements GameEngine.GameEventLi
         binding.overlayVictory.tvVictoryHighScore.setText("HIGH SCORE: " + String.format(Locale.getDefault(), "%,d", Math.max(score, newHigh)));
 
         // Diamond reward card initial state
-        binding.overlayVictory.tvVictoryDiamondReward.setText("+2 DIAMONDS");
+        binding.overlayVictory.tvVictoryDiamondReward.setText("+" + baseDiamonds + (baseDiamonds > 1 ? " DIAMONDS" : " DIAMOND"));
         binding.overlayVictory.tvVictoryDiamondStatus.setText("CLAIMED");
         binding.overlayVictory.tvVictoryDiamondStatus.setBackgroundResource(R.drawable.bg_booster_badge_available);
 
         // Double bonus button initial state
-        binding.overlayVictory.btnVictoryDoubleBonus.setText("🎬 DOUBLE BONUS • 💎 +4");
+        binding.overlayVictory.btnVictoryDoubleBonus.setText("🎬 DOUBLE BONUS • 💎 +" + (baseDiamonds * 2));
         binding.overlayVictory.btnVictoryDoubleBonus.setEnabled(true);
         binding.overlayVictory.btnVictoryDoubleBonus.setAlpha(1.0f);
 
@@ -781,16 +772,16 @@ public class GameActivity extends BaseActivity implements GameEngine.GameEventLi
                 @Override
                 public void onRewardEarned(int amount, String type) {
                     hasDoubledReward[0] = true;
-                    prefs.addDiamonds(2); // +2 more diamonds (making it +4 total)
+                    prefs.addDiamonds(baseDiamonds); // Doubles the reward
                     android.os.Bundle bDouble = new android.os.Bundle();
-                    bDouble.putInt("amount", 2);
+                    bDouble.putInt("amount", baseDiamonds);
                     AnalyticsManager.getInstance(GameActivity.this).logEvent("rewarded_ad_level_double", bDouble);
                     soundManager.playBounce();
 
                     runOnUiThread(() -> {
                         if (binding != null && binding.overlayVictory != null) {
                             stopDoubleBonusPulseAnimation();
-                            binding.overlayVictory.tvVictoryDiamondReward.setText("+4 DIAMONDS (2X)");
+                            binding.overlayVictory.tvVictoryDiamondReward.setText("+" + (baseDiamonds * 2) + " DIAMONDS (2X)");
                             binding.overlayVictory.tvVictoryDiamondStatus.setText("DOUBLED! 🎁");
                             binding.overlayVictory.btnVictoryDoubleBonus.setText("✓ 2X BONUS CLAIMED!");
                             binding.overlayVictory.btnVictoryDoubleBonus.setEnabled(false);
@@ -864,6 +855,7 @@ public class GameActivity extends BaseActivity implements GameEngine.GameEventLi
         binding.overlayVictory.btnVictoryHome.setOnClickListener(v -> {
             soundManager.playClick();
             stopDoubleBonusPulseAnimation();
+            matchState = MatchState.WON;
             if (binding != null && binding.overlayVictory != null) {
                 binding.overlayVictory.rootVictoryOverlay.setVisibility(View.GONE);
             }
@@ -945,7 +937,7 @@ public class GameActivity extends BaseActivity implements GameEngine.GameEventLi
     public void onGameLost(int score, String reason) {
         runOnUiThread(() -> {
             if (isFinishing() || isDestroyed()) return;
-            isGameOverOrWon = true;
+            matchState = MatchState.LOST;
             wasBackgrounded = false;
 
             if (activePauseDialog != null && activePauseDialog.isShowing()) {
@@ -977,7 +969,7 @@ public class GameActivity extends BaseActivity implements GameEngine.GameEventLi
     private void showGameOverOverlay(int score, String reason, int personalBest) {
         if (binding == null || binding.overlayGameOver == null) return;
 
-        final int continueCost = 5 + continueBubblePurchasesCount;
+        final int continueCost = 10 + (continueBubblePurchasesCount * 5);
 
         // UI Texts
         if (isEndlessMode) {
@@ -1019,7 +1011,7 @@ public class GameActivity extends BaseActivity implements GameEngine.GameEventLi
                 @Override
                 public void onRewardEarned(int amount, String type) {
                     continueBubblePurchasesCount++;
-                    isGameOverOrWon = false;
+                    matchState = MatchState.PLAYING;
                     Bundle bRevive = new Bundle();
                     bRevive.putInt("level", currentLevelNumber);
                     AnalyticsManager.getInstance(GameActivity.this).logEvent("rewarded_ad_revive", bRevive);
@@ -1057,7 +1049,7 @@ public class GameActivity extends BaseActivity implements GameEngine.GameEventLi
             soundManager.playClick();
             if (prefs.spendDiamonds(continueCost)) {
                 continueBubblePurchasesCount++;
-                isGameOverOrWon = false;
+                matchState = MatchState.PLAYING;
                 stopReviveAdPulseAnimation();
                 if (binding != null && binding.overlayGameOver != null) {
                     binding.overlayGameOver.rootGameOverOverlay.setVisibility(View.GONE);
@@ -1075,9 +1067,8 @@ public class GameActivity extends BaseActivity implements GameEngine.GameEventLi
         // Home Button (Player rejects extra shots -> deduct heart)
         binding.overlayGameOver.btnGameOverHome.setOnClickListener(v -> {
             soundManager.playClick();
-            if (!isEndlessMode && !isGameOverOrWon) {
+            if (!isEndlessMode && matchState == MatchState.LOST) {
                 prefs.deductLife();
-                isGameOverOrWon = true;
             }
             stopReviveAdPulseAnimation();
             if (binding != null && binding.overlayGameOver != null) {
@@ -1089,11 +1080,8 @@ public class GameActivity extends BaseActivity implements GameEngine.GameEventLi
         // Retry / Replay Button (Player rejects extra shots -> deduct heart)
         binding.overlayGameOver.btnGameOverRetry.setOnClickListener(v -> {
             soundManager.playClick();
-            if (!isEndlessMode) {
-                if (!isGameOverOrWon) {
-                    prefs.deductLife();
-                    isGameOverOrWon = true;
-                }
+            if (!isEndlessMode && matchState == MatchState.LOST) {
+                prefs.deductLife();
                 if (prefs.getLives() <= 0) {
                     showNoHeartsDialog();
                     return;
@@ -1187,7 +1175,7 @@ public class GameActivity extends BaseActivity implements GameEngine.GameEventLi
         }
         if (gameEngine != null) {
             gameEngine.pause();
-            if (!isGameOverOrWon) {
+            if (matchState == MatchState.PLAYING) {
                 wasBackgrounded = true;
             }
         }
@@ -1204,7 +1192,7 @@ public class GameActivity extends BaseActivity implements GameEngine.GameEventLi
         // Only auto-show pause dialog if the app was actively sent to background during gameplay
         if (wasBackgrounded) {
             wasBackgrounded = false;
-            if (!isGameOverOrWon && gameEngine != null) {
+            if (matchState == MatchState.PLAYING && gameEngine != null) {
                 if (activePauseDialog == null || !activePauseDialog.isShowing()) {
                     boolean isVictoryShowing = (binding != null && binding.overlayVictory != null &&
                             binding.overlayVictory.rootVictoryOverlay.getVisibility() == View.VISIBLE) ||
@@ -1225,9 +1213,8 @@ public class GameActivity extends BaseActivity implements GameEngine.GameEventLi
         stopDoubleBonusPulseAnimation();
         stopReviveAdPulseAnimation();
         // If exiting or killed while actively playing a level mid-match, deduct 1 life
-        if (!isEndlessMode && !isGameOverOrWon) {
+        if (!isEndlessMode && matchState == MatchState.PLAYING) {
             prefs.deductLife();
-            isGameOverOrWon = true;
         }
         if (progressAnimator != null) {
             progressAnimator.cancel();

@@ -304,13 +304,13 @@
                         android:layout_height="@dimen/dp_34"
                         android:background="@drawable/bg_store_btn_rose"
                         android:gravity="center"
-                        android:text="5 💎"
+                        android:text="6 💎"
                         android:textColor="#FFFFFF"
                         android:textSize="@dimen/sp_12"
                         android:textStyle="bold" />
                 </LinearLayout>
 
-                <!-- 4. Triple Hearts (+3 ❤️) (12 💎) -->
+                <!-- 4. Triple Hearts (+3 ❤️) (15 💎) -->
                 <FrameLayout
                     android:id="@+id/cardBuyTripleHearts"
                     android:layout_width="match_parent"
@@ -363,7 +363,7 @@
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="3 extra lives with 20% discount"
+                                android:text="3 extra lives with 17% discount"
                                 android:textColor="#64748B"
                                 android:textSize="@dimen/sp_11" />
                         </LinearLayout>
@@ -374,14 +374,14 @@
                             android:layout_height="@dimen/dp_34"
                             android:background="@drawable/bg_store_btn_rose"
                             android:gravity="center"
-                            android:text="12 💎"
+                            android:text="15 💎"
                             android:textColor="#FFFFFF"
                             android:textSize="@dimen/sp_12"
                             android:textStyle="bold" />
                     </LinearLayout>
                 </FrameLayout>
 
-                <!-- 5. Full Refill (5/5 ❤️) (20 💎) -->
+                <!-- 5. Full Refill (5/5 ❤️) (25 💎) -->
                 <FrameLayout
                     android:id="@+id/cardBuyFullRefill"
                     android:layout_width="match_parent"
@@ -445,7 +445,7 @@
                             android:layout_height="@dimen/dp_34"
                             android:background="@drawable/bg_store_btn_amber"
                             android:gravity="center"
-                            android:text="20 💎"
+                            android:text="25 💎"
                             android:textColor="#FFFFFF"
                             android:textSize="@dimen/sp_12"
                             android:textStyle="bold" />

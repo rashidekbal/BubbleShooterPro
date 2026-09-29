@@ -17,6 +17,7 @@ import com.redcodersgroup.bubbleshooter.analytics.AnalyticsManager;
 import com.redcodersgroup.bubbleshooter.audio.SoundManager;
 import com.redcodersgroup.bubbleshooter.data.PreferencesManager;
 import com.redcodersgroup.bubbleshooter.databinding.DialogHeartStoreBinding;
+import com.redcodersgroup.bubbleshooter.store.StoreManager;
 
 public class HeartStoreDialog extends Dialog {
 
@@ -24,9 +25,9 @@ public class HeartStoreDialog extends Dialog {
         void onHeartStoreClosed();
     }
 
-    public static final int COST_ONE_HEART = 5;
-    public static final int COST_TRIPLE_HEARTS = 12;
-    public static final int COST_FULL_REFILL = 20;
+    public static final int COST_ONE_HEART = StoreManager.COST_ONE_HEART;
+    public static final int COST_TRIPLE_HEARTS = StoreManager.COST_TRIPLE_HEARTS;
+    public static final int COST_FULL_REFILL = StoreManager.COST_LIVES_REFILL;
 
     private final PreferencesManager prefs;
     private final SoundManager soundManager;
@@ -89,15 +90,18 @@ public class HeartStoreDialog extends Dialog {
         binding.cardWatchAdForLife.setOnClickListener(v -> handleWatchAdForLife());
         binding.btnWatchAdForLife.setOnClickListener(v -> handleWatchAdForLife());
 
-        // 2. Buy Single Heart (5 Diamonds)
+        // 2. Buy Single Heart (6 Diamonds)
+        binding.btnBuyOneHeart.setText(COST_ONE_HEART + " 💎");
         binding.cardBuyOneHeart.setOnClickListener(v -> handleBuyOneHeart());
         binding.btnBuyOneHeart.setOnClickListener(v -> handleBuyOneHeart());
 
-        // 4. Buy Triple Hearts (12 Diamonds)
+        // 4. Buy Triple Hearts (15 Diamonds)
+        binding.btnBuyTripleHearts.setText(COST_TRIPLE_HEARTS + " 💎");
         binding.cardBuyTripleHearts.setOnClickListener(v -> handleBuyTripleHearts());
         binding.btnBuyTripleHearts.setOnClickListener(v -> handleBuyTripleHearts());
 
-        // 5. Buy Full Refill (20 Diamonds)
+        // 5. Buy Full Refill (25 Diamonds)
+        binding.btnBuyFullRefill.setText(COST_FULL_REFILL + " 💎");
         binding.cardBuyFullRefill.setOnClickListener(v -> handleBuyFullRefill());
         binding.btnBuyFullRefill.setOnClickListener(v -> handleBuyFullRefill());
     }

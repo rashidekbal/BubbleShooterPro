@@ -107,6 +107,7 @@ public class ShopActivity extends BaseActivity {
     private void updateDiamondPricesUI() {
         if (binding == null) return;
         IapBillingManager billing = IapBillingManager.getInstance(this);
+        binding.btnShopBuyPocket.setText(billing.getFormattedPrice(StoreManager.SKU_DIAMONDS_50));
         binding.btnShopBuyPouch.setText(billing.getFormattedPrice(StoreManager.SKU_DIAMONDS_150));
         binding.btnShopBuySack.setText(billing.getFormattedPrice(StoreManager.SKU_DIAMONDS_500));
         binding.btnShopBuyChest.setText(billing.getFormattedPrice(StoreManager.SKU_DIAMONDS_1500));
@@ -128,15 +129,15 @@ public class ShopActivity extends BaseActivity {
         binding.cardShopWatchAd.setOnClickListener(v -> handleWatchAdForLife());
         binding.btnShopWatchAd.setOnClickListener(v -> handleWatchAdForLife());
 
-        // 2. Buy One Heart (5 Diamonds)
+        // 2. Buy One Heart (6 Diamonds)
         binding.cardShopBuyOneHeart.setOnClickListener(v -> handleBuyOneHeart());
         binding.btnShopBuyOneHeart.setOnClickListener(v -> handleBuyOneHeart());
 
-        // 3. Buy Triple Hearts (12 Diamonds)
+        // 3. Buy Triple Hearts (15 Diamonds)
         binding.cardShopBuyTripleHearts.setOnClickListener(v -> handleBuyTripleHearts());
         binding.btnShopBuyTripleHearts.setOnClickListener(v -> handleBuyTripleHearts());
 
-        // 4. Buy Full Refill (20 Diamonds)
+        // 4. Buy Full Refill (25 Diamonds)
         binding.cardShopBuyFullRefill.setOnClickListener(v -> handleBuyFullRefill());
         binding.btnShopBuyFullRefill.setOnClickListener(v -> handleBuyFullRefill());
 
@@ -144,48 +145,52 @@ public class ShopActivity extends BaseActivity {
         binding.cardShopDailyFree.setOnClickListener(v -> handleDailyFreeClaim());
         binding.btnShopDailyFree.setOnClickListener(v -> handleDailyFreeClaim());
 
-        // 5b. Watch Ad for +5 Diamonds (REWARDED)
+        // 5b. Watch Ad for +2 Diamonds (REWARDED)
         binding.cardShopWatchAdDiamonds.setOnClickListener(v -> handleWatchAdForDiamonds());
         binding.btnShopWatchAdDiamonds.setOnClickListener(v -> handleWatchAdForDiamonds());
 
-        // 6. Buy Pouch (150 Diamonds - ₹75 / $0.99)
+        // 5c. Buy Pocket (50 Diamonds - ₹29 / $0.49)
+        binding.cardShopBuyPocket.setOnClickListener(v -> IapBillingManager.getInstance(this).launchPurchaseFlow(this, StoreManager.SKU_DIAMONDS_50));
+        binding.btnShopBuyPocket.setOnClickListener(v -> IapBillingManager.getInstance(this).launchPurchaseFlow(this, StoreManager.SKU_DIAMONDS_50));
+
+        // 6. Buy Pouch (100 Diamonds - ₹75 / $0.99)
         binding.cardShopBuyPouch.setOnClickListener(v -> IapBillingManager.getInstance(this).launchPurchaseFlow(this, StoreManager.SKU_DIAMONDS_150));
         binding.btnShopBuyPouch.setOnClickListener(v -> IapBillingManager.getInstance(this).launchPurchaseFlow(this, StoreManager.SKU_DIAMONDS_150));
 
-        // 7. Buy Sack (500 Diamonds - ₹250 / $2.99)
+        // 7. Buy Sack (350 Diamonds - ₹250 / $2.99)
         binding.cardShopBuySack.setOnClickListener(v -> IapBillingManager.getInstance(this).launchPurchaseFlow(this, StoreManager.SKU_DIAMONDS_500));
         binding.btnShopBuySack.setOnClickListener(v -> IapBillingManager.getInstance(this).launchPurchaseFlow(this, StoreManager.SKU_DIAMONDS_500));
 
-        // 8. Buy Chest (1500 Diamonds - ₹750 / $6.99)
+        // 8. Buy Chest (1100 Diamonds - ₹750 / $6.99)
         binding.cardShopBuyChest.setOnClickListener(v -> IapBillingManager.getInstance(this).launchPurchaseFlow(this, StoreManager.SKU_DIAMONDS_1500));
         binding.btnShopBuyChest.setOnClickListener(v -> IapBillingManager.getInstance(this).launchPurchaseFlow(this, StoreManager.SKU_DIAMONDS_1500));
 
         updateDiamondPricesUI();
 
         // 9. Boosters (Individual +1 Single & +3 Pack Cards)
-        binding.cardShopBuyBomb1.setOnClickListener(v -> handleBoosterPurchase("BOMB", 1, 15));
-        binding.btnShopBuyBomb1.setOnClickListener(v -> handleBoosterPurchase("BOMB", 1, 15));
+        binding.cardShopBuyBomb1.setOnClickListener(v -> handleBoosterPurchase("BOMB", 1, StoreManager.COST_BOMB_SINGLE));
+        binding.btnShopBuyBomb1.setOnClickListener(v -> handleBoosterPurchase("BOMB", 1, StoreManager.COST_BOMB_SINGLE));
 
-        binding.cardShopBuyBomb3.setOnClickListener(v -> handleBoosterPurchase("BOMB", 3, 40));
-        binding.btnShopBuyBomb3.setOnClickListener(v -> handleBoosterPurchase("BOMB", 3, 40));
+        binding.cardShopBuyBomb3.setOnClickListener(v -> handleBoosterPurchase("BOMB", 3, StoreManager.COST_BOMB_PACK));
+        binding.btnShopBuyBomb3.setOnClickListener(v -> handleBoosterPurchase("BOMB", 3, StoreManager.COST_BOMB_PACK));
 
-        binding.cardShopBuyFireball1.setOnClickListener(v -> handleBoosterPurchase("FIREBALL", 1, 15));
-        binding.btnShopBuyFireball1.setOnClickListener(v -> handleBoosterPurchase("FIREBALL", 1, 15));
+        binding.cardShopBuyFireball1.setOnClickListener(v -> handleBoosterPurchase("FIREBALL", 1, StoreManager.COST_FIREBALL_SINGLE));
+        binding.btnShopBuyFireball1.setOnClickListener(v -> handleBoosterPurchase("FIREBALL", 1, StoreManager.COST_FIREBALL_SINGLE));
 
-        binding.cardShopBuyFireball3.setOnClickListener(v -> handleBoosterPurchase("FIREBALL", 3, 40));
-        binding.btnShopBuyFireball3.setOnClickListener(v -> handleBoosterPurchase("FIREBALL", 3, 40));
+        binding.cardShopBuyFireball3.setOnClickListener(v -> handleBoosterPurchase("FIREBALL", 3, StoreManager.COST_FIREBALL_PACK));
+        binding.btnShopBuyFireball3.setOnClickListener(v -> handleBoosterPurchase("FIREBALL", 3, StoreManager.COST_FIREBALL_PACK));
 
-        binding.cardShopBuyRainbow1.setOnClickListener(v -> handleBoosterPurchase("RAINBOW", 1, 20));
-        binding.btnShopBuyRainbow1.setOnClickListener(v -> handleBoosterPurchase("RAINBOW", 1, 20));
+        binding.cardShopBuyRainbow1.setOnClickListener(v -> handleBoosterPurchase("RAINBOW", 1, StoreManager.COST_RAINBOW_SINGLE));
+        binding.btnShopBuyRainbow1.setOnClickListener(v -> handleBoosterPurchase("RAINBOW", 1, StoreManager.COST_RAINBOW_SINGLE));
 
-        binding.cardShopBuyRainbow3.setOnClickListener(v -> handleBoosterPurchase("RAINBOW", 3, 50));
-        binding.btnShopBuyRainbow3.setOnClickListener(v -> handleBoosterPurchase("RAINBOW", 3, 50));
+        binding.cardShopBuyRainbow3.setOnClickListener(v -> handleBoosterPurchase("RAINBOW", 3, StoreManager.COST_RAINBOW_PACK));
+        binding.btnShopBuyRainbow3.setOnClickListener(v -> handleBoosterPurchase("RAINBOW", 3, StoreManager.COST_RAINBOW_PACK));
 
-        binding.cardShopBuyLightning1.setOnClickListener(v -> handleBoosterPurchase("LIGHTNING", 1, 20));
-        binding.btnShopBuyLightning1.setOnClickListener(v -> handleBoosterPurchase("LIGHTNING", 1, 20));
+        binding.cardShopBuyLightning1.setOnClickListener(v -> handleBoosterPurchase("LIGHTNING", 1, StoreManager.COST_LIGHTNING_SINGLE));
+        binding.btnShopBuyLightning1.setOnClickListener(v -> handleBoosterPurchase("LIGHTNING", 1, StoreManager.COST_LIGHTNING_SINGLE));
 
-        binding.cardShopBuyLightning3.setOnClickListener(v -> handleBoosterPurchase("LIGHTNING", 3, 50));
-        binding.btnShopBuyLightning3.setOnClickListener(v -> handleBoosterPurchase("LIGHTNING", 3, 50));
+        binding.cardShopBuyLightning3.setOnClickListener(v -> handleBoosterPurchase("LIGHTNING", 3, StoreManager.COST_LIGHTNING_PACK));
+        binding.btnShopBuyLightning3.setOnClickListener(v -> handleBoosterPurchase("LIGHTNING", 3, StoreManager.COST_LIGHTNING_PACK));
     }
 
     private void selectTab(String tab, boolean playSound) {
@@ -328,13 +333,13 @@ public class ShopActivity extends BaseActivity {
             @Override
             public void onRewardEarned(int amount, String type) {
                 soundManager.playBounce();
-                prefs.addDiamonds(5);
+                prefs.addDiamonds(2);
                 Bundle bundle = new Bundle();
                 bundle.putString("reward_type", "diamonds");
-                bundle.putInt("amount", 5);
+                bundle.putInt("amount", 2);
                 AnalyticsManager.getInstance(ShopActivity.this).logEvent("rewarded_ad_diamonds", bundle);
                 updateAllUI();
-                NoticeDialog.showReward(ShopActivity.this, "REWARD", "DIAMONDS EARNED", "+5 DIAMONDS ADDED", "Ad reward granted! 5 diamonds have been added to your vault.");
+                NoticeDialog.showReward(ShopActivity.this, "REWARD", "DIAMONDS EARNED", "+2 DIAMONDS ADDED", "Ad reward granted! 2 diamonds have been added to your vault.");
             }
 
             @Override
@@ -353,7 +358,7 @@ public class ShopActivity extends BaseActivity {
             return;
         }
 
-        if (prefs.spendDiamonds(5)) {
+        if (prefs.spendDiamonds(StoreManager.COST_ONE_HEART)) {
             soundManager.playPurchase();
             prefs.addLives(1);
             AnalyticsManager.getInstance(this).logHeartRefilled("diamond", 1);
@@ -372,7 +377,7 @@ public class ShopActivity extends BaseActivity {
             return;
         }
 
-        if (prefs.spendDiamonds(12)) {
+        if (prefs.spendDiamonds(StoreManager.COST_TRIPLE_HEARTS)) {
             soundManager.playPurchase();
             prefs.addLives(3);
             AnalyticsManager.getInstance(this).logHeartRefilled("diamond", 3);
@@ -391,7 +396,7 @@ public class ShopActivity extends BaseActivity {
             return;
         }
 
-        if (prefs.spendDiamonds(20)) {
+        if (prefs.spendDiamonds(StoreManager.COST_LIVES_REFILL)) {
             soundManager.playPurchase();
             prefs.addLives(5);
             AnalyticsManager.getInstance(this).logHeartRefilled("diamond", 5);

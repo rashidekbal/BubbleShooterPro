@@ -213,13 +213,14 @@ public class PreferencesManager {
         }
     }
 
+    public static final int INITIAL_DIAMONDS = 25;
+
     public int getDiamonds() {
         if (!prefs.contains(KEY_DIAMONDS)) {
-            int initial = Math.max(100, getHighestUnlockedLevel() * 25);
-            prefs.edit().putInt(KEY_DIAMONDS, initial).apply();
-            return initial;
+            prefs.edit().putInt(KEY_DIAMONDS, INITIAL_DIAMONDS).apply();
+            return INITIAL_DIAMONDS;
         }
-        return prefs.getInt(KEY_DIAMONDS, 100);
+        return prefs.getInt(KEY_DIAMONDS, INITIAL_DIAMONDS);
     }
 
     public void setDiamonds(int count) {

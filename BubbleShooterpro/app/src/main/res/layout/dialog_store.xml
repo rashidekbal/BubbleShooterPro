@@ -146,7 +146,7 @@
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="+5 💎"
+                                android:text="+3 💎"
                                 android:textColor="#0284C7"
                                 android:textSize="@dimen/sp_13"
                                 android:textStyle="bold" />
@@ -165,7 +165,68 @@
                         </LinearLayout>
                     </FrameLayout>
 
-                    <!-- Pouch: 150 Diamonds -->
+                    <!-- Pocket of Gems: 50 Diamonds (STARTER) -->
+                    <FrameLayout
+                        android:id="@+id/cardBuyPocket"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:background="@drawable/bg_store_item_card"
+                        android:padding="@dimen/dp_10"
+                        android:layout_marginStart="@dimen/dp_6">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:gravity="center_horizontal">
+
+                            <ImageView
+                                android:layout_width="@dimen/dp_44"
+                                android:layout_height="@dimen/dp_44"
+                                android:src="@drawable/ic_hud_diamond"
+                                android:contentDescription="Pocket of Gems" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Pocket"
+                                android:textColor="#1E293B"
+                                android:textSize="@dimen/sp_12"
+                                android:textStyle="bold"
+                                android:layout_marginTop="@dimen/dp_4" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="+50 💎"
+                                android:textColor="#0284C7"
+                                android:textSize="@dimen/sp_13"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:id="@+id/btnBuyPocket"
+                                android:layout_width="match_parent"
+                                android:layout_height="@dimen/dp_32"
+                                android:layout_marginTop="@dimen/dp_6"
+                                android:background="@drawable/bg_store_btn_amber"
+                                android:gravity="center"
+                                android:text="₹29"
+                                android:textColor="#FFFFFF"
+                                android:textSize="@dimen/sp_12"
+                                android:textStyle="bold" />
+                        </LinearLayout>
+                    </FrameLayout>
+                </LinearLayout>
+
+                <!-- Row 2: Handful + Sack of Gems -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginBottom="@dimen/dp_10">
+
+                    <!-- Pouch: 140 Diamonds (8% OFF) -->
                     <FrameLayout
                         android:id="@+id/cardBuyPouch"
                         android:layout_width="0dp"
@@ -173,7 +234,21 @@
                         android:layout_weight="1"
                         android:background="@drawable/bg_store_item_card"
                         android:padding="@dimen/dp_10"
-                        android:layout_marginStart="@dimen/dp_6">
+                        android:layout_marginEnd="@dimen/dp_6">
+
+                        <!-- Badge -->
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/bg_store_badge_emerald"
+                            android:paddingStart="@dimen/dp_6"
+                            android:paddingEnd="@dimen/dp_6"
+                            android:paddingTop="@dimen/dp_2"
+                            android:paddingBottom="@dimen/dp_2"
+                            android:text="8% OFF"
+                            android:textColor="#FFFFFF"
+                            android:textSize="@dimen/sp_9"
+                            android:textStyle="bold" />
 
                         <LinearLayout
                             android:layout_width="match_parent"
@@ -199,7 +274,7 @@
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="+150 💎"
+                                android:text="+140 💎"
                                 android:textColor="#0284C7"
                                 android:textSize="@dimen/sp_13"
                                 android:textStyle="bold" />
@@ -217,16 +292,8 @@
                                 android:textStyle="bold" />
                         </LinearLayout>
                     </FrameLayout>
-                </LinearLayout>
 
-                <!-- Row 2: Sack of Gems + Royal Chest -->
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:layout_marginBottom="@dimen/dp_16">
-
-                    <!-- Sack of Gems: 500 Diamonds (POPULAR) -->
+                    <!-- Sack of Gems: 500 Diamonds (14% OFF) -->
                     <FrameLayout
                         android:id="@+id/cardBuySack"
                         android:layout_width="0dp"
@@ -234,7 +301,7 @@
                         android:layout_weight="1"
                         android:background="@drawable/bg_store_item_card"
                         android:padding="@dimen/dp_10"
-                        android:layout_marginEnd="@dimen/dp_6">
+                        android:layout_marginStart="@dimen/dp_6">
 
                         <!-- Badge -->
                         <TextView
@@ -245,7 +312,7 @@
                             android:paddingEnd="@dimen/dp_6"
                             android:paddingTop="@dimen/dp_2"
                             android:paddingBottom="@dimen/dp_2"
-                            android:text="POPULAR"
+                            android:text="14% OFF"
                             android:textColor="#FFFFFF"
                             android:textSize="@dimen/sp_9"
                             android:textStyle="bold" />
@@ -286,22 +353,27 @@
                                 android:layout_marginTop="@dimen/dp_6"
                                 android:background="@drawable/bg_store_btn_amber"
                                 android:gravity="center"
-                                android:text="₹250"
+                                android:text="₹249"
                                 android:textColor="#FFFFFF"
                                 android:textSize="@dimen/sp_12"
                                 android:textStyle="bold" />
                         </LinearLayout>
                     </FrameLayout>
+                </LinearLayout>
 
-                    <!-- Royal Chest: 1500 Diamonds (BEST VALUE) -->
+                <!-- Row 3: Royal Chest (1,600 Diamonds - 25% OFF) -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginBottom="@dimen/dp_16">
+
                     <FrameLayout
                         android:id="@+id/cardBuyChest"
-                        android:layout_width="0dp"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
                         android:background="@drawable/bg_store_item_card_featured"
-                        android:padding="@dimen/dp_10"
-                        android:layout_marginStart="@dimen/dp_6">
+                        android:padding="@dimen/dp_10">
 
                         <!-- Badge -->
                         <TextView
@@ -312,7 +384,7 @@
                             android:paddingEnd="@dimen/dp_6"
                             android:paddingTop="@dimen/dp_2"
                             android:paddingBottom="@dimen/dp_2"
-                            android:text="BEST VALUE"
+                            android:text="25% OFF • BEST VALUE"
                             android:textColor="#FFFFFF"
                             android:textSize="@dimen/sp_9"
                             android:textStyle="bold" />
@@ -320,8 +392,9 @@
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:orientation="vertical"
-                            android:gravity="center_horizontal">
+                            android:orientation="horizontal"
+                            android:gravity="center_vertical"
+                            android:paddingTop="@dimen/dp_6">
 
                             <ImageView
                                 android:layout_width="@dimen/dp_44"
@@ -329,31 +402,37 @@
                                 android:src="@drawable/ic_store_chest"
                                 android:contentDescription="Diamond Chest" />
 
-                            <TextView
-                                android:layout_width="wrap_content"
+                            <LinearLayout
+                                android:layout_width="0dp"
                                 android:layout_height="wrap_content"
-                                android:text="Royal Chest"
-                                android:textColor="#92400E"
-                                android:textSize="@dimen/sp_12"
-                                android:textStyle="bold"
-                                android:layout_marginTop="@dimen/dp_4" />
+                                android:layout_weight="1"
+                                android:orientation="vertical"
+                                android:layout_marginStart="@dimen/dp_10">
 
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="+1,500 💎"
-                                android:textColor="#D97706"
-                                android:textSize="@dimen/sp_13"
-                                android:textStyle="bold" />
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Royal Vault"
+                                    android:textColor="#92400E"
+                                    android:textSize="@dimen/sp_13"
+                                    android:textStyle="bold" />
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="+1,600 💎"
+                                    android:textColor="#D97706"
+                                    android:textSize="@dimen/sp_13"
+                                    android:textStyle="bold" />
+                            </LinearLayout>
 
                             <TextView
                                 android:id="@+id/btnBuyChest"
-                                android:layout_width="match_parent"
+                                android:layout_width="@dimen/dp_88"
                                 android:layout_height="@dimen/dp_32"
-                                android:layout_marginTop="@dimen/dp_6"
                                 android:background="@drawable/bg_store_btn_amber"
                                 android:gravity="center"
-                                android:text="₹750"
+                                android:text="₹699"
                                 android:textColor="#FFFFFF"
                                 android:textSize="@dimen/sp_12"
                                 android:textStyle="bold" />
@@ -572,7 +651,7 @@
                             android:layout_marginTop="@dimen/dp_4"
                             android:background="@drawable/bg_store_btn_green"
                             android:gravity="center"
-                            android:text="40 💎"
+                            android:text="45 💎"
                             android:textColor="#FFFFFF"
                             android:textSize="@dimen/sp_12"
                             android:textStyle="bold" />

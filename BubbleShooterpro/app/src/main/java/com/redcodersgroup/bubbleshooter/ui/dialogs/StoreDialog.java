@@ -104,15 +104,19 @@ public class StoreDialog extends Dialog {
         binding.cardBuyDailyFree.setOnClickListener(v -> handleDailyFreeClaim());
         binding.btnBuyDailyFree.setOnClickListener(v -> handleDailyFreeClaim());
 
-        // 2. Pouch: 150 Diamonds (₹75 / $0.99)
+        // 1b. Pocket: 50 Diamonds (₹29 / $0.49)
+        binding.cardBuyPocket.setOnClickListener(v -> launchIap(StoreManager.SKU_DIAMONDS_50));
+        binding.btnBuyPocket.setOnClickListener(v -> launchIap(StoreManager.SKU_DIAMONDS_50));
+
+        // 2. Pouch: 100 Diamonds (₹75 / $0.99)
         binding.cardBuyPouch.setOnClickListener(v -> launchIap(StoreManager.SKU_DIAMONDS_150));
         binding.btnBuyPouch.setOnClickListener(v -> launchIap(StoreManager.SKU_DIAMONDS_150));
 
-        // 3. Sack: 500 Diamonds (₹250 / $2.99)
+        // 3. Sack: 350 Diamonds (₹250 / $2.99)
         binding.cardBuySack.setOnClickListener(v -> launchIap(StoreManager.SKU_DIAMONDS_500));
         binding.btnBuySack.setOnClickListener(v -> launchIap(StoreManager.SKU_DIAMONDS_500));
 
-        // 4. Chest: 1,500 Diamonds (₹750 / $6.99)
+        // 4. Chest: 1,100 Diamonds (₹750 / $6.99)
         binding.cardBuyChest.setOnClickListener(v -> launchIap(StoreManager.SKU_DIAMONDS_1500));
         binding.btnBuyChest.setOnClickListener(v -> launchIap(StoreManager.SKU_DIAMONDS_1500));
 
@@ -123,20 +127,20 @@ public class StoreDialog extends Dialog {
         binding.btnBuyMegaBundle.setOnClickListener(v -> handleMegaBundlePurchase());
 
         // 6. Bomb Booster (40 Diamonds)
-        binding.cardBuyBomb.setOnClickListener(v -> handleBoosterPurchase("BOMB", 40));
-        binding.btnBuyBomb.setOnClickListener(v -> handleBoosterPurchase("BOMB", 40));
+        binding.cardBuyBomb.setOnClickListener(v -> handleBoosterPurchase("BOMB", StoreManager.COST_BOMB_PACK));
+        binding.btnBuyBomb.setOnClickListener(v -> handleBoosterPurchase("BOMB", StoreManager.COST_BOMB_PACK));
 
         // 7. Fireball Booster (40 Diamonds)
-        binding.cardBuyFireball.setOnClickListener(v -> handleBoosterPurchase("FIREBALL", 40));
-        binding.btnBuyFireball.setOnClickListener(v -> handleBoosterPurchase("FIREBALL", 40));
+        binding.cardBuyFireball.setOnClickListener(v -> handleBoosterPurchase("FIREBALL", StoreManager.COST_FIREBALL_PACK));
+        binding.btnBuyFireball.setOnClickListener(v -> handleBoosterPurchase("FIREBALL", StoreManager.COST_FIREBALL_PACK));
 
-        // 8. Lightning Booster (40 Diamonds)
-        binding.cardBuyLightning.setOnClickListener(v -> handleBoosterPurchase("LIGHTNING", 40));
-        binding.btnBuyLightning.setOnClickListener(v -> handleBoosterPurchase("LIGHTNING", 40));
+        // 8. Lightning Booster (45 Diamonds)
+        binding.cardBuyLightning.setOnClickListener(v -> handleBoosterPurchase("LIGHTNING", StoreManager.COST_LIGHTNING_PACK));
+        binding.btnBuyLightning.setOnClickListener(v -> handleBoosterPurchase("LIGHTNING", StoreManager.COST_LIGHTNING_PACK));
 
         // 9. Rainbow Booster (50 Diamonds)
-        binding.cardBuyRainbow.setOnClickListener(v -> handleBoosterPurchase("RAINBOW", 50));
-        binding.btnBuyRainbow.setOnClickListener(v -> handleBoosterPurchase("RAINBOW", 50));
+        binding.cardBuyRainbow.setOnClickListener(v -> handleBoosterPurchase("RAINBOW", StoreManager.COST_RAINBOW_PACK));
+        binding.btnBuyRainbow.setOnClickListener(v -> handleBoosterPurchase("RAINBOW", StoreManager.COST_RAINBOW_PACK));
 
         // 10. Refill Lives (25 Diamonds)
         binding.cardBuyLives.setOnClickListener(v -> handleLivesRefill());
@@ -275,6 +279,7 @@ public class StoreDialog extends Dialog {
     private void updateDiamondPricesUI() {
         if (binding == null) return;
         IapBillingManager billing = IapBillingManager.getInstance(getContext());
+        binding.btnBuyPocket.setText(billing.getFormattedPrice(StoreManager.SKU_DIAMONDS_50));
         binding.btnBuyPouch.setText(billing.getFormattedPrice(StoreManager.SKU_DIAMONDS_150));
         binding.btnBuySack.setText(billing.getFormattedPrice(StoreManager.SKU_DIAMONDS_500));
         binding.btnBuyChest.setText(billing.getFormattedPrice(StoreManager.SKU_DIAMONDS_1500));

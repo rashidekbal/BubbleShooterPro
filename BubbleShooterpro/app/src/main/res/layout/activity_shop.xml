@@ -361,7 +361,7 @@
                         android:shadowRadius="2" />
                 </LinearLayout>
 
-                <!-- 2. Single Heart (5 Diamonds) -->
+                <!-- 2. Single Heart (6 Diamonds) -->
                 <LinearLayout
                     android:id="@+id/cardShopBuyOneHeart"
                     android:layout_width="match_parent"
@@ -409,7 +409,7 @@
                         android:background="@drawable/btn_pill_blank_yellow"
                         app:backgroundTint="@null"
                         android:paddingBottom="@dimen/dp_4"
-                        android:text="💎 5"
+                        android:text="💎 6"
                         android:textColor="#FFFFFF"
                         android:textSize="@dimen/sp_14"
                         android:textStyle="bold"
@@ -419,7 +419,7 @@
                         android:shadowRadius="2" />
                 </LinearLayout>
 
-                <!-- 3. Triple Hearts (12 Diamonds) -->
+                <!-- 3. Triple Hearts (15 Diamonds) -->
                 <LinearLayout
                     android:id="@+id/cardShopBuyTripleHearts"
                     android:layout_width="match_parent"
@@ -455,7 +455,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Popular Choice • Save 20%"
+                            android:text="Popular Choice • Save 17%"
                             android:textColor="#D97706"
                             android:textSize="@dimen/sp_12"
                             android:textStyle="bold" />
@@ -468,7 +468,7 @@
                         android:background="@drawable/btn_pill_blank_yellow"
                         app:backgroundTint="@null"
                         android:paddingBottom="@dimen/dp_4"
-                        android:text="💎 12"
+                        android:text="💎 15"
                         android:textColor="#FFFFFF"
                         android:textSize="@dimen/sp_14"
                         android:textStyle="bold"
@@ -478,7 +478,7 @@
                         android:shadowRadius="2" />
                 </LinearLayout>
 
-                <!-- 4. Full Refill (20 Diamonds) -->
+                <!-- 4. Full Refill (25 Diamonds) -->
                 <LinearLayout
                     android:id="@+id/cardShopBuyFullRefill"
                     android:layout_width="match_parent"
@@ -526,7 +526,7 @@
                         android:background="@drawable/btn_pill_blank_green"
                         app:backgroundTint="@null"
                         android:paddingBottom="@dimen/dp_4"
-                        android:text="💎 20"
+                        android:text="💎 25"
                         android:textColor="#FFFFFF"
                         android:textSize="@dimen/sp_14"
                         android:textStyle="bold"
@@ -589,7 +589,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="+5 Daily Free Gems"
+                            android:text="+3 Daily Free Gems"
                             android:textColor="#1E293B"
                             android:textSize="@dimen/sp_15"
                             android:textStyle="bold" />
@@ -620,7 +620,7 @@
                         android:shadowRadius="2" />
                 </LinearLayout>
 
-                <!-- Watch Video Ad for +5 Free Diamonds -->
+                <!-- Watch Video Ad for +2 Free Diamonds -->
                 <LinearLayout
                     android:id="@+id/cardShopWatchAdDiamonds"
                     android:layout_width="match_parent"
@@ -648,7 +648,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="+5 Free Diamonds"
+                            android:text="+2 Free Diamonds"
                             android:textColor="#1E293B"
                             android:textSize="@dimen/sp_15"
                             android:textStyle="bold" />
@@ -678,7 +678,66 @@
                         android:shadowRadius="2" />
                 </LinearLayout>
 
-                <!-- Handful of Gems (150 Diamonds - $0.99) -->
+                <!-- Pocket of Gems (50 Diamonds - ₹29 / $0.49) -->
+                <LinearLayout
+                    android:id="@+id/cardShopBuyPocket"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:background="@drawable/bg_store_item_card"
+                    android:padding="@dimen/dp_12"
+                    android:layout_marginBottom="@dimen/dp_10"
+                    android:clickable="true"
+                    android:focusable="true">
+
+                    <ImageView
+                        android:layout_width="@dimen/dp_48"
+                        android:layout_height="@dimen/dp_48"
+                        android:src="@drawable/ic_hud_diamond" />
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_marginStart="@dimen/dp_12"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="50 Diamonds"
+                            android:textColor="#1E293B"
+                            android:textSize="@dimen/sp_15"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Pocket of Gems • Starter Deal"
+                            android:textColor="#0284C7"
+                            android:textSize="@dimen/sp_12"
+                            android:textStyle="bold" />
+                    </LinearLayout>
+
+                    <androidx.appcompat.widget.AppCompatButton
+                        android:id="@+id/btnShopBuyPocket"
+                        android:layout_width="@dimen/dp_96"
+                        android:layout_height="@dimen/dp_40"
+                        android:background="@drawable/btn_pill_blank_blue"
+                        app:backgroundTint="@null"
+                        android:paddingBottom="@dimen/dp_4"
+                        android:text="₹29"
+                        android:textColor="#FFFFFF"
+                        android:textSize="@dimen/sp_13"
+                        android:textStyle="bold"
+                        android:shadowColor="#60000000"
+                        android:shadowDx="1"
+                        android:shadowDy="2"
+                        android:shadowRadius="2" />
+                </LinearLayout>
+
+                <!-- Handful of Gems (140 Diamonds - ₹75 / $0.99) -->
                 <LinearLayout
                     android:id="@+id/cardShopBuyPouch"
                     android:layout_width="match_parent"
@@ -706,7 +765,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="150 Diamonds"
+                            android:text="140 Diamonds"
                             android:textColor="#1E293B"
                             android:textSize="@dimen/sp_15"
                             android:textStyle="bold" />
@@ -714,9 +773,10 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Handful of Gems"
-                            android:textColor="#64748B"
-                            android:textSize="@dimen/sp_12" />
+                            android:text="Handful of Gems • 8% Discount"
+                            android:textColor="#059669"
+                            android:textSize="@dimen/sp_12"
+                            android:textStyle="bold" />
                     </LinearLayout>
 
                     <androidx.appcompat.widget.AppCompatButton
@@ -736,7 +796,7 @@
                         android:shadowRadius="2" />
                 </LinearLayout>
 
-                <!-- Sack of Gems (500 Diamonds - ₹250) -->
+                <!-- Sack of Gems (500 Diamonds - ₹249) -->
                 <LinearLayout
                     android:id="@+id/cardShopBuySack"
                     android:layout_width="match_parent"
@@ -772,7 +832,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Sack of Gems • Popular"
+                            android:text="Sack of Gems • 14% Discount (Popular)"
                             android:textColor="#D97706"
                             android:textSize="@dimen/sp_12"
                             android:textStyle="bold" />
@@ -785,7 +845,7 @@
                         android:background="@drawable/btn_pill_blank_blue"
                         app:backgroundTint="@null"
                         android:paddingBottom="@dimen/dp_4"
-                        android:text="₹250"
+                        android:text="₹249"
                         android:textColor="#FFFFFF"
                         android:textSize="@dimen/sp_13"
                         android:textStyle="bold"
@@ -795,7 +855,7 @@
                         android:shadowRadius="2" />
                 </LinearLayout>
 
-                <!-- Royal Chest (1,500 Diamonds - ₹750) -->
+                <!-- Royal Chest (1,600 Diamonds - ₹699) -->
                 <LinearLayout
                     android:id="@+id/cardShopBuyChest"
                     android:layout_width="match_parent"
@@ -822,7 +882,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="1,500 Diamonds"
+                            android:text="1,600 Diamonds"
                             android:textColor="#1E293B"
                             android:textSize="@dimen/sp_15"
                             android:textStyle="bold" />
@@ -830,8 +890,8 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Royal Vault • Best Deal"
-                            android:textColor="#059669"
+                            android:text="Royal Vault • 25% Discount (Best Value)"
+                            android:textColor="#E11D48"
                             android:textSize="@dimen/sp_12"
                             android:textStyle="bold" />
                     </LinearLayout>
@@ -843,7 +903,7 @@
                         android:background="@drawable/btn_pill_blank_green"
                         app:backgroundTint="@null"
                         android:paddingBottom="@dimen/dp_4"
-                        android:text="₹750"
+                        android:text="₹699"
                         android:textColor="#FFFFFF"
                         android:textSize="@dimen/sp_13"
                         android:textStyle="bold"
@@ -1339,7 +1399,7 @@
                         android:background="@drawable/btn_pill_blank_green"
                         app:backgroundTint="@null"
                         android:paddingBottom="@dimen/dp_4"
-                        android:text="💎 50"
+                        android:text="💎 45"
                         android:textColor="#FFFFFF"
                         android:textSize="@dimen/sp_14"
                         android:textStyle="bold"
