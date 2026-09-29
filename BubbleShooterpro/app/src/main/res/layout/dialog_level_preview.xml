@@ -190,7 +190,7 @@
         </LinearLayout>
 
         <!-- Big Glossy Green Start Button -->
-        <Button
+        <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/btnStartLevel"
             android:layout_width="@dimen/dp_220"
             android:layout_height="@dimen/dp_56"

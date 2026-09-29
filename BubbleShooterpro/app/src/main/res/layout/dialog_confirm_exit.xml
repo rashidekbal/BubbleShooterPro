@@ -37,26 +37,7 @@
             android:layout_marginTop="@dimen/dp_6"
             android:layout_marginBottom="@dimen/dp_20">
 
-            <!-- Category / Urgency Tag -->
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="LEAVING THE GAME?"
-                android:textColor="#D97706"
-                android:textSize="@dimen/sp_12"
-                android:textStyle="bold"
-                android:letterSpacing="0.08" />
 
-            <!-- Prominent Callout -->
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/dp_4"
-                android:text="QUIT GAME"
-                android:textColor="#1E293B"
-                android:textSize="@dimen/sp_22"
-                android:textStyle="bold"
-                android:gravity="center" />
 
             <!-- Subtitle Notice -->
             <TextView
@@ -77,13 +58,13 @@
             android:gravity="center">
 
             <!-- Stay / Keep Playing Button -->
-            <Button
+            <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/btnStay"
                 android:layout_width="0dp"
                 android:layout_height="@dimen/dp_50"
                 android:layout_weight="1"
                 android:layout_marginEnd="@dimen/dp_8"
-                android:background="@drawable/btn_pill_blank_yellow"
+                android:background="@drawable/btn_pill_blank_green"
                 android:text="STAY"
                 android:textColor="#FFFFFF"
                 android:textSize="@dimen/sp_16"
@@ -95,7 +76,7 @@
                 android:shadowRadius="3" />
 
             <!-- Exit Game Button -->
-            <Button
+            <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/btnExit"
                 android:layout_width="0dp"
                 android:layout_height="@dimen/dp_50"

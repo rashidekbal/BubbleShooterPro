@@ -145,7 +145,7 @@
                 android:contentDescription="@string/restart" />
 
             <!-- Big Glossy Green Next Button -->
-            <Button
+            <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/btnWinNext"
                 android:layout_width="0dp"
                 android:layout_height="@dimen/dp_56"
