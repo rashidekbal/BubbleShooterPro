@@ -756,11 +756,14 @@ public class GameEngine {
     public void onTouchUp(float touchX, float touchY) {
         if (state == GameState.AIMING) {
             float cancelThreshold = launcherY - (bubbleRadius * 0.4f);
-            if (isAimCancelled || touchY >= cancelThreshold) {
+            if (isAimCancelled || touchY >= cancelThreshold || isFireballBlocked) {
                 // Canceled shot: reset to READY, clear trajectory, do NOT launch projectile
                 state = GameState.READY;
                 isAimCancelled = false;
-                isFireballBlocked = false;
+                if (isFireballBlocked) {
+                    soundManager.playBounce();
+                    isFireballBlocked = false;
+                }
                 if (trajectoryPoints != null) {
                     trajectoryPoints.clear();
                 }
@@ -810,15 +813,17 @@ public class GameEngine {
         boolean isFireball = (currentBubble.getType() == BubbleType.FIREBALL
                 || currentBubble.getColor() == BubbleColor.FIREBALL);
 
+        int maxBounces = isFireball ? 1 : TrajectoryCalculator.MAX_BOUNCES;
+
         // Do not extend laser into the bubbles (isPiercing = false), stopping right at the starting point of the bubbles
         TrajectoryCalculator.TrajectoryResult result = TrajectoryCalculator.calculateTrajectory(
                 launcherX, launcherY, aimAngleRad,
                 boardLeft, boardRight, boardTop,
-                grid, bubbleRadius, false, TrajectoryCalculator.MAX_BOUNCES
+                grid, bubbleRadius, false, maxBounces
         );
 
         this.trajectoryPoints = result.points;
-        this.isFireballBlocked = false;
+        this.isFireballBlocked = isFireball && result.bounceLimitExceeded;
         this.trajectoryBounces = result.bounceCount;
 
         this.projectedLandingPoint = null;
@@ -826,7 +831,7 @@ public class GameEngine {
         this.projectedPoppedPositions.clear();
 
         if (isFireball) {
-            if (trajectoryPoints != null && !trajectoryPoints.isEmpty()) {
+            if (!isFireballBlocked && trajectoryPoints != null && !trajectoryPoints.isEmpty()) {
                 PointF hitPt = trajectoryPoints.get(trajectoryPoints.size() - 1);
 
                 // Laser heading direction into hitPt
@@ -845,36 +850,23 @@ public class GameEngine {
                     lastDirY /= dirLen;
                 }
 
-                // Trace full piercing flight path through the bubbles up to the top
-                List<PointF> flightPath = new ArrayList<>(trajectoryPoints);
-                float curX = hitPt.x;
-                float curY = hitPt.y;
-                float curDx = lastDirX;
-                float curDy = lastDirY;
+                // Fireball penetrates through the bubbles in a single straight trajectory (no secondary wall bounce)
+                float tCeil = lastDirY < 0 ? (boardTop - hitPt.y) / lastDirY : Float.MAX_VALUE;
+                float tWall = Float.MAX_VALUE;
                 float minX = boardLeft + bubbleRadius;
                 float maxX = boardRight - bubbleRadius;
-
-                for (int step = 0; step < 80; step++) {
-                    float nextX = curX + curDx * 22f;
-                    float nextY = curY + curDy * 22f;
-
-                    if (nextX <= minX && curDx < 0) {
-                        nextX = minX;
-                        curDx = -curDx;
-                    } else if (nextX >= maxX && curDx > 0) {
-                        nextX = maxX;
-                        curDx = -curDx;
-                    }
-
-                    if (nextY <= boardTop) {
-                        flightPath.add(new PointF(nextX, boardTop));
-                        break;
-                    }
-
-                    flightPath.add(new PointF(nextX, nextY));
-                    curX = nextX;
-                    curY = nextY;
+                if (lastDirX < 0) {
+                    tWall = (minX - hitPt.x) / lastDirX;
+                } else if (lastDirX > 0) {
+                    tWall = (maxX - hitPt.x) / lastDirX;
                 }
+                float tEnd = Math.max(0f, Math.min(tCeil, tWall));
+                float endX = hitPt.x + lastDirX * tEnd;
+                float endY = hitPt.y + lastDirY * tEnd;
+
+                // Start slightly before hitPt to ensure initial bubble contact is cleanly covered
+                float startX = hitPt.x - lastDirX * bubbleRadius;
+                float startY = hitPt.y - lastDirY * bubbleRadius;
 
                 float hitThresholdSq = (bubbleRadius * 1.85f) * (bubbleRadius * 1.85f);
                 Set<GridPosition> hits = new LinkedHashSet<>();
@@ -888,21 +880,14 @@ public class GameEngine {
                         if (b != null && !b.isPopping() && !b.isFalling() && isBubbleVisibleOnBoard(b)) {
                             float bx = b.getX();
                             float by = b.getY();
-                            float pX = launcherX;
-                            float pY = launcherY;
-                            for (PointF pt : flightPath) {
-                                if (distanceSqToSegment(bx, by, pX, pY, pt.x, pt.y) <= hitThresholdSq) {
-                                    GridPosition pos = new GridPosition(r, c);
-                                    hits.add(pos);
-                                    if (b.getType() == BubbleType.BOMB || b.getColor() == BubbleColor.BOMB) {
-                                        bombsToExplode.add(pos);
-                                    } else if (b.getType() == BubbleType.LIGHTNING || b.getColor() == BubbleColor.LIGHTNING) {
-                                        lightningToTrigger.add(pos);
-                                    }
-                                    break;
+                            if (distanceSqToSegment(bx, by, startX, startY, endX, endY) <= hitThresholdSq) {
+                                GridPosition pos = new GridPosition(r, c);
+                                hits.add(pos);
+                                if (b.getType() == BubbleType.BOMB || b.getColor() == BubbleColor.BOMB) {
+                                    bombsToExplode.add(pos);
+                                } else if (b.getType() == BubbleType.LIGHTNING || b.getColor() == BubbleColor.LIGHTNING) {
+                                    lightningToTrigger.add(pos);
                                 }
-                                pX = pt.x;
-                                pY = pt.y;
                             }
                         }
                     }
@@ -1897,10 +1882,10 @@ public class GameEngine {
 
     private void drawPopClusterHighlights(Canvas canvas, Paint paint) {
         boolean isCurrentFireball = (currentBubble != null && (currentBubble.getType() == BubbleType.FIREBALL || currentBubble.getColor() == BubbleColor.FIREBALL));
-        if (state != GameState.AIMING || isAimCancelled || projectedPoppedPositions.isEmpty()) {
+        if (state != GameState.AIMING || isAimCancelled || isFireballBlocked || projectedPoppedPositions.isEmpty()) {
             return;
         }
-        if (!isCurrentFireball && (trajectoryBounces > 2 || isFireballBlocked)) {
+        if (!isCurrentFireball && trajectoryBounces > 2) {
             return;
         }
         for (GridPosition pos : projectedPoppedPositions) {
