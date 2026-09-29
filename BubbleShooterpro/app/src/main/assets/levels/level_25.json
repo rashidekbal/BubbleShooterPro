@@ -1,27 +1,28 @@
 {
-  "shots": 15,
+  "level": 25,
+  "shots": 20,
   "colors": [
     "RED",
     "BLUE",
     "YELLOW",
-    "GREEN"
+    "PURPLE"
   ],
   "objective": {
-    "type": "DROP_COUNT",
-    "target": 16
+    "type": "CLEAR_ALL",
+    "target": 0
   },
   "starThresholds": [
-    1190,
-    2764,
-    4796
+    2550,
+    4700,
+    7300
   ],
   "rows": [
-    "RRRRBBBBB",
-    "GRRBBBBY",
-    "GGRGBBGYY",
-    "GGRYYRYY",
-    "GGYYYYYYY",
-    "GGGYYYYY"
-  ],
-  "level": 25
+    "RRRPYPBYY",
+    "PPBPXPBY",
+    "PPBRYYBBR",
+    "YBRRYSYR",
+    "YYBRBSPRY",
+    "PPRBBPPR",
+    "PPPYYYPPR"
+  ]
 }

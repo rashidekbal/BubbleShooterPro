@@ -1,27 +1,28 @@
 {
-  "shots": 18,
+  "level": 61,
+  "shots": 21,
   "colors": [
-    "PURPLE",
+    "ORANGE",
     "CYAN",
-    "YELLOW",
-    "RED"
+    "RED",
+    "BLUE"
   ],
   "objective": {
     "type": "CLEAR_ALL",
     "target": 0
   },
   "starThresholds": [
-    1554,
-    3390,
-    5771
+    2550,
+    4800,
+    7400
   ],
   "rows": [
-    "PPCCYCCPP",
-    "PTYRRYTP",
-    "CYPRRRPYC",
-    "CTRRRRTC",
-    ".YRRRRRY.",
-    ".YCYYCY."
-  ],
-  "level": 61
+    "OOOORROOC",
+    "ROBRCCOC",
+    "RRCBXCORC",
+    "RCRBCRRC",
+    "RCRROCBCR",
+    "BCRCOOBB",
+    "BBRCCOOBB"
+  ]
 }

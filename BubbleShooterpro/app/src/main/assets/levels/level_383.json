@@ -1,11 +1,11 @@
 {
   "level": 383,
-  "shots": 19,
+  "shots": 22,
   "colors": [
-    "BLUE",
-    "ORANGE",
-    "YELLOW",
+    "GREEN",
     "PURPLE",
+    "ORANGE",
+    "CYAN",
     "RED"
   ],
   "objective": {
@@ -13,16 +13,18 @@
     "target": 0
   },
   "starThresholds": [
-    5064,
-    11140,
-    19243
+    2800,
+    5250,
+    8100
   ],
   "rows": [
-    "YPR.OPYBB",
-    "YYYROBYB",
-    "YBPYRRO.R",
-    ".ROOYPBP",
-    "RPRPBP.OB",
-    ".OOBRPPB"
+    "CCCCRRRCC",
+    "GGCPRRCP",
+    "PGRPPGCCO",
+    "PPRPGGOO",
+    "PPRGGPPOO",
+    "RRPOLOPC",
+    "PPPRROOCC",
+    "OOORRRCC"
   ]
 }

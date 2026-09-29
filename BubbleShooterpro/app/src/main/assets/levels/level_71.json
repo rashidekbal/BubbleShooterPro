@@ -1,9 +1,10 @@
 {
-  "shots": 20,
+  "level": 71,
+  "shots": 19,
   "colors": [
     "PURPLE",
+    "ORANGE",
     "CYAN",
-    "YELLOW",
     "RED"
   ],
   "objective": {
@@ -11,17 +12,17 @@
     "target": 0
   },
   "starThresholds": [
-    1536,
-    3445,
-    5923
+    2500,
+    4650,
+    7200
   ],
   "rows": [
-    "PCYRPCYRP",
-    "PYYRPYYR",
-    "RYCPRYCPR",
-    "RYYPRYYP",
-    "CCYYRRPPC",
-    "CYYRRPPC"
-  ],
-  "level": 71
+    "CPPPPOOOP",
+    "PPPPPOPP",
+    "POORRRPRR",
+    "COOCROPR",
+    "CORRLRORR",
+    "CCCRCOOP",
+    "CCCRRCPPP"
+  ]
 }

@@ -1,30 +1,31 @@
 {
   "level": 340,
-  "shots": 15,
+  "shots": 24,
   "colors": [
-    "RED",
     "BLUE",
-    "ORANGE",
+    "YELLOW",
     "GREEN",
-    "PURPLE"
+    "PURPLE",
+    "ORANGE"
   ],
   "objective": {
-    "type": "SCORE_TARGET",
-    "target": 9502
+    "type": "CLEAR_ALL",
+    "target": 0
   },
   "starThresholds": [
-    4720,
-    10384,
-    17936
+    3150,
+    5850,
+    9050
   ],
   "rows": [
-    "PBBBP.BPB",
-    ".B.BRR.R",
-    "GORBRPR.G",
-    "RG..R.PO",
-    "PGG.PBBGR",
-    "OOG.ROP.",
-    "PRGRPRBGR",
-    "POGPP.O."
+    "OPPYGOOYO",
+    "OPPYGSYO",
+    "OOPYGOYYO",
+    "BTBG*PTP",
+    "YYYBOPPBB",
+    "YYPOSYGB",
+    "GPSOGFGGB",
+    "GYPOYYYY",
+    "GGYYPPPPP"
   ]
 }

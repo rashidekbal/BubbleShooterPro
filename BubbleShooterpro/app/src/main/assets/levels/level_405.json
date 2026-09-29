@@ -1,11 +1,11 @@
 {
   "level": 405,
-  "shots": 16,
+  "shots": 24,
   "colors": [
     "GREEN",
-    "BLUE",
     "PURPLE",
     "ORANGE",
+    "CYAN",
     "RED"
   ],
   "objective": {
@@ -13,16 +13,19 @@
     "target": 0
   },
   "starThresholds": [
-    5240,
-    11528,
-    19912
+    3150,
+    5850,
+    9050
   ],
   "rows": [
-    ".BGBOGROP",
-    "BRGRP.BO",
-    ".GPGRBO.B",
-    "BBGBOBRO",
-    "PO.PBRBRG",
-    "PBOPBBGR"
+    "GGGCPCCGG",
+    "GGCOXCGP",
+    "PTCCOOSTP",
+    "PPCROGOP",
+    "PRRRPOGOO",
+    "GOOPPGRR",
+    "GOGGPGRCC",
+    "GSGGPGRC",
+    "GCCCCCRCC"
   ]
 }

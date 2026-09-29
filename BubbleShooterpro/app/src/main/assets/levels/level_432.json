@@ -1,30 +1,29 @@
 {
   "level": 432,
-  "shots": 15,
+  "shots": 20,
   "colors": [
-    "YELLOW",
-    "GREEN",
+    "PURPLE",
     "ORANGE",
-    "RED",
-    "PURPLE"
+    "CYAN",
+    "RED"
   ],
   "objective": {
     "type": "CLEAR_ALL",
     "target": 0
   },
   "starThresholds": [
-    5456,
-    12003,
-    20732
+    2750,
+    5150,
+    7900
   ],
   "rows": [
-    "YPPPRP.OG",
-    "RGOPRO.P",
-    "ORYPORYOR",
-    "RGY.YGRO",
-    "ROOOPRRRG",
-    "YOGYRRYG",
-    "PPROGRO.R",
-    "GGGGO..R"
+    "OCOOPRRCR",
+    "OOPPPCRR",
+    "CTPOORPTP",
+    "COORRCCP",
+    "CRORSPCCP",
+    "RRCRPPCR",
+    "RSCCOPPRC",
+    "CCOOORRR"
   ]
 }
