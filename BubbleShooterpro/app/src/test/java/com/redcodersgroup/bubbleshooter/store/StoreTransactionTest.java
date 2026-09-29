@@ -7,14 +7,14 @@ public class StoreTransactionTest {
 
     @Test
     public void testCatalogConstants() {
-        assertEquals(5, StoreManager.DIAMONDS_DAILY_FREE);
-        assertEquals(150, StoreManager.DIAMONDS_POUCH);
+        assertEquals(3, StoreManager.DIAMONDS_DAILY_FREE);
+        assertEquals(140, StoreManager.DIAMONDS_POUCH);
         assertEquals(500, StoreManager.DIAMONDS_SACK);
-        assertEquals(1500, StoreManager.DIAMONDS_CHEST);
+        assertEquals(1600, StoreManager.DIAMONDS_CHEST);
 
         assertEquals(40, StoreManager.COST_BOMB_PACK);
         assertEquals(40, StoreManager.COST_FIREBALL_PACK);
-        assertEquals(40, StoreManager.COST_LIGHTNING_PACK);
+        assertEquals(45, StoreManager.COST_LIGHTNING_PACK);
         assertEquals(50, StoreManager.COST_RAINBOW_PACK);
         assertEquals(120, StoreManager.COST_MEGA_BUNDLE);
         assertEquals(25, StoreManager.COST_LIVES_REFILL);

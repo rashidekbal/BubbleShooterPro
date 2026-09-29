@@ -388,7 +388,7 @@ public class WorldMapPagerAdapter extends RecyclerView.Adapter<WorldMapPagerAdap
                     } else {
                         prefs.setClaimedWorldGift(world.worldNumber, giftIndex, true);
                         ivGift.setAlpha(0.55f);
-                        int bonusDiamonds = gift.rewardDiamonds;
+                        int bonusDiamonds = (gift != null && gift.rewardDiamonds > 0) ? gift.rewardDiamonds : 5;
                         if (listener != null) {
                             listener.onWorldGiftClaimed(world.worldNumber, giftIndex, bonusDiamonds);
                         }
