@@ -30,6 +30,8 @@ import com.redcodersgroup.bubbleshooter.ui.dialogs.StarChestDialog;
 import com.redcodersgroup.bubbleshooter.ui.dialogs.StoreDialog;
 import com.redcodersgroup.bubbleshooter.analytics.AnalyticsManager;
 import com.redcodersgroup.bubbleshooter.ui.dialogs.HeartStoreDialog;
+import com.redcodersgroup.bubbleshooter.ui.dialogs.ExitConfirmDialog;
+import androidx.activity.OnBackPressedCallback;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -47,6 +49,7 @@ public class MainActivity extends AppCompatActivity {
     private StoreDialog storeDialog;
     private HeartStoreDialog heartStoreDialog;
     private Dialog activePreviewDialog;
+    private ExitConfirmDialog activeExitDialog;
 
     private androidx.activity.result.ActivityResultLauncher<android.content.Intent> googleSignInLauncher;
     private com.redcodersgroup.bubbleshooter.auth.PlayGamesAuthManager.AuthCallback activeAuthCallback;
@@ -66,6 +69,13 @@ public class MainActivity extends AppCompatActivity {
         setupAuthLauncher();
         initViews();
         checkPlayGamesSignIn();
+
+        getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                showExitConfirmDialog();
+            }
+        });
     }
 
     private void setupAuthLauncher() {
@@ -312,6 +322,7 @@ public class MainActivity extends AppCompatActivity {
         if (storeDialog != null && storeDialog.isShowing()) storeDialog.dismiss();
         if (heartStoreDialog != null && heartStoreDialog.isShowing()) heartStoreDialog.dismiss();
         if (activePreviewDialog != null && activePreviewDialog.isShowing()) activePreviewDialog.dismiss();
+        if (activeExitDialog != null && activeExitDialog.isShowing()) activeExitDialog.dismiss();
     }
 
     private void showLevelPreviewDialog(int level) {
@@ -455,5 +466,15 @@ public class MainActivity extends AppCompatActivity {
         if (worldMapAdapter != null) {
             worldMapAdapter.notifyDataSetChanged();
         }
+    }
+
+    private void showExitConfirmDialog() {
+        if (isFinishing() || isDestroyed()) return;
+        if (activeExitDialog != null && activeExitDialog.isShowing()) return;
+
+        activeExitDialog = new ExitConfirmDialog(this, () -> {
+            finishAffinity();
+        });
+        activeExitDialog.show();
     }
 }

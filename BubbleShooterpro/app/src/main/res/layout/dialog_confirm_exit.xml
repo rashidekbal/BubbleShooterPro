@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/rootExitConfirmDialog"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center"
+    android:clipChildren="false"
+    android:clipToPadding="false"
+    android:paddingStart="@dimen/dp_16"
+    android:paddingEnd="@dimen/dp_16"
+    android:paddingTop="@dimen/dp_12"
+    android:paddingBottom="@dimen/dp_12">
+
+    <!-- Main Dialog Card Body -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center_horizontal"
+        android:background="@drawable/bg_dialog_frame"
+        android:paddingStart="@dimen/dp_20"
+        android:paddingEnd="@dimen/dp_20"
+        android:paddingTop="@dimen/dp_48"
+        android:paddingBottom="@dimen/dp_24">
+
+        <!-- Inset Content Panel -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:background="@drawable/bg_dialog_inset_panel"
+            android:paddingStart="@dimen/dp_16"
+            android:paddingEnd="@dimen/dp_16"
+            android:paddingTop="@dimen/dp_18"
+            android:paddingBottom="@dimen/dp_18"
+            android:layout_marginTop="@dimen/dp_6"
+            android:layout_marginBottom="@dimen/dp_20">
+
+            <!-- Category / Urgency Tag -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="LEAVING THE GAME?"
+                android:textColor="#D97706"
+                android:textSize="@dimen/sp_12"
+                android:textStyle="bold"
+                android:letterSpacing="0.08" />
+
+            <!-- Prominent Callout -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/dp_4"
+                android:text="QUIT GAME"
+                android:textColor="#1E293B"
+                android:textSize="@dimen/sp_22"
+                android:textStyle="bold"
+                android:gravity="center" />
+
+            <!-- Subtitle Notice -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/dp_6"
+                android:text="Are you sure you want to exit Bubble Shooter Pro?"
+                android:textColor="#64748B"
+                android:textSize="@dimen/sp_13"
+                android:gravity="center" />
+        </LinearLayout>
+
+        <!-- Action Buttons Row -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center">
+
+            <!-- Stay / Keep Playing Button -->
+            <Button
+                android:id="@+id/btnStay"
+                android:layout_width="0dp"
+                android:layout_height="@dimen/dp_50"
+                android:layout_weight="1"
+                android:layout_marginEnd="@dimen/dp_8"
+                android:background="@drawable/btn_pill_blank_yellow"
+                android:text="STAY"
+                android:textColor="#FFFFFF"
+                android:textSize="@dimen/sp_16"
+                android:textStyle="bold"
+                android:letterSpacing="0.03"
+                android:shadowColor="#80000000"
+                android:shadowDx="1"
+                android:shadowDy="2"
+                android:shadowRadius="3" />
+
+            <!-- Exit Game Button -->
+            <Button
+                android:id="@+id/btnExit"
+                android:layout_width="0dp"
+                android:layout_height="@dimen/dp_50"
+                android:layout_weight="1"
+                android:layout_marginStart="@dimen/dp_8"
+                android:background="@drawable/btn_pill_blank_rose"
+                android:text="EXIT"
+                android:textColor="#FFFFFF"
+                android:textSize="@dimen/sp_16"
+                android:textStyle="bold"
+                android:letterSpacing="0.03"
+                android:shadowColor="#80000000"
+                android:shadowDx="1"
+                android:shadowDy="2"
+                android:shadowRadius="3" />
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <!-- Top Curved Header Plaque ("EXIT GAME") -->
+    <LinearLayout
+        android:layout_width="@dimen/dp_200"
+        android:layout_height="@dimen/dp_46"
+        android:layout_gravity="top|center_horizontal"
+        android:background="@drawable/bg_dialog_header_plaque"
+        android:gravity="center"
+        android:elevation="@dimen/dp_4">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="EXIT GAME"
+            android:textColor="#FFFFFF"
+            android:textSize="@dimen/sp_18"
+            android:textStyle="bold"
+            android:shadowColor="#B0000000"
+            android:shadowDx="1"
+            android:shadowDy="2"
+            android:shadowRadius="4" />
+    </LinearLayout>
+
+    <!-- Top-Right Close Button -->
+    <ImageButton
+        android:id="@+id/btnCloseExit"
+        android:layout_width="@dimen/dp_44"
+        android:layout_height="@dimen/dp_44"
+        android:layout_gravity="top|end"
+        android:layout_marginTop="@dimen/dp_2"
+        android:layout_marginEnd="@dimen/dp_4"
+        android:background="@android:color/transparent"
+        android:scaleType="fitCenter"
+        android:src="@drawable/btn_close_red"
+        android:elevation="@dimen/dp_6"
+        android:contentDescription="Close" />
+
+</FrameLayout>
