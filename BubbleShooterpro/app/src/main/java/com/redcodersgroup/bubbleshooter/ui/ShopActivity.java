@@ -8,14 +8,15 @@ import android.os.Handler;
 import android.os.Looper;
 import android.view.View;
 import android.widget.ImageView;
-
+import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-
+import androidx.appcompat.widget.AppCompatButton;
 import com.redcodersgroup.bubbleshooter.R;
 import com.redcodersgroup.bubbleshooter.ads.AdManager;
 import com.redcodersgroup.bubbleshooter.analytics.AnalyticsManager;
 import com.redcodersgroup.bubbleshooter.audio.SoundManager;
+import com.redcodersgroup.bubbleshooter.bubble.BubbleType;
 import com.redcodersgroup.bubbleshooter.data.PreferencesManager;
 import com.redcodersgroup.bubbleshooter.databinding.ActivityShopBinding;
 import com.redcodersgroup.bubbleshooter.store.IapBillingManager;
@@ -229,18 +230,107 @@ public class ShopActivity extends BaseActivity {
         int rainbow = prefs.getRainbowBoosters();
         int lightning = prefs.getLightningBoosters();
 
-        binding.tvShopInventoryBomb.setText(
-                android.text.Html.fromHtml("Explodes radius • In bag: <b>" + bomb + "</b>", android.text.Html.FROM_HTML_MODE_LEGACY)
+        updateSingleBoosterShopUI(
+                binding.cardShopBuyBomb1, binding.btnShopBuyBomb1,
+                binding.cardShopBuyBomb3, binding.btnShopBuyBomb3,
+                binding.tvShopInventoryBomb,
+                BubbleType.BOMB,
+                "Explodes radius",
+                bomb,
+                StoreManager.COST_BOMB_SINGLE,
+                StoreManager.COST_BOMB_PACK,
+                PreferencesManager.UNLOCK_LEVEL_BOMB,
+                "World 2"
         );
-        binding.tvShopInventoryFireball.setText(
-                android.text.Html.fromHtml("Pierces column • In bag: <b>" + fireball + "</b>", android.text.Html.FROM_HTML_MODE_LEGACY)
+
+        updateSingleBoosterShopUI(
+                binding.cardShopBuyFireball1, binding.btnShopBuyFireball1,
+                binding.cardShopBuyFireball3, binding.btnShopBuyFireball3,
+                binding.tvShopInventoryFireball,
+                BubbleType.FIREBALL,
+                "Pierces column",
+                fireball,
+                StoreManager.COST_FIREBALL_SINGLE,
+                StoreManager.COST_FIREBALL_PACK,
+                PreferencesManager.UNLOCK_LEVEL_FIREBALL,
+                "World 4"
         );
-        binding.tvShopInventoryRainbow.setText(
-                android.text.Html.fromHtml("Matches any color • In bag: <b>" + rainbow + "</b>", android.text.Html.FROM_HTML_MODE_LEGACY)
+
+        updateSingleBoosterShopUI(
+                binding.cardShopBuyRainbow1, binding.btnShopBuyRainbow1,
+                binding.cardShopBuyRainbow3, binding.btnShopBuyRainbow3,
+                binding.tvShopInventoryRainbow,
+                BubbleType.RAINBOW,
+                "Matches any color",
+                rainbow,
+                StoreManager.COST_RAINBOW_SINGLE,
+                StoreManager.COST_RAINBOW_PACK,
+                PreferencesManager.UNLOCK_LEVEL_RAINBOW,
+                "World 3"
         );
-        binding.tvShopInventoryLightning.setText(
-                android.text.Html.fromHtml("Clears full row • In bag: <b>" + lightning + "</b>", android.text.Html.FROM_HTML_MODE_LEGACY)
+
+        updateSingleBoosterShopUI(
+                binding.cardShopBuyLightning1, binding.btnShopBuyLightning1,
+                binding.cardShopBuyLightning3, binding.btnShopBuyLightning3,
+                binding.tvShopInventoryLightning,
+                BubbleType.LIGHTNING,
+                "Clears full row",
+                lightning,
+                StoreManager.COST_LIGHTNING_SINGLE,
+                StoreManager.COST_LIGHTNING_PACK,
+                PreferencesManager.UNLOCK_LEVEL_LIGHTNING,
+                "World 5"
         );
+    }
+
+    private void updateSingleBoosterShopUI(
+            View card1, AppCompatButton btn1,
+            View card3, AppCompatButton btn3,
+            TextView tvInventory,
+            BubbleType type,
+            String desc,
+            int count,
+            int costSingle,
+            int costPack,
+            int unlockLevel,
+            String worldName
+    ) {
+        boolean isUnlocked = prefs.isBoosterUnlockedGlobally(type);
+        if (isUnlocked) {
+            card1.setAlpha(1.0f);
+            card3.setAlpha(1.0f);
+
+            tvInventory.setText(
+                    android.text.Html.fromHtml(desc + " • In bag: <b>" + count + "</b>", android.text.Html.FROM_HTML_MODE_LEGACY)
+            );
+            tvInventory.setTextColor(Color.parseColor("#64748B"));
+
+            btn1.setText("💎 " + costSingle);
+            btn1.setBackgroundResource(R.drawable.btn_pill_blank_yellow);
+            btn1.setTextColor(Color.WHITE);
+            btn1.setAlpha(1.0f);
+
+            btn3.setText("💎 " + costPack);
+            btn3.setBackgroundResource(R.drawable.btn_pill_blank_green);
+            btn3.setTextColor(Color.WHITE);
+            btn3.setAlpha(1.0f);
+        } else {
+            card1.setAlpha(0.55f);
+            card3.setAlpha(0.55f);
+
+            tvInventory.setText("🔒 Unlocks at Level " + unlockLevel + " (" + worldName + ")");
+            tvInventory.setTextColor(Color.parseColor("#E11D48"));
+
+            btn1.setText("🔒 LVL " + unlockLevel);
+            btn1.setBackgroundResource(R.drawable.btn_pill_blank_disabled);
+            btn1.setTextColor(Color.parseColor("#94A3B8"));
+            btn1.setAlpha(0.8f);
+
+            btn3.setText("🔒 LVL " + unlockLevel);
+            btn3.setBackgroundResource(R.drawable.btn_pill_blank_disabled);
+            btn3.setTextColor(Color.parseColor("#94A3B8"));
+            btn3.setAlpha(0.8f);
+        }
     }
 
     private void updateDailyFreeUI() {
@@ -431,6 +521,27 @@ public class ShopActivity extends BaseActivity {
     }
 
     private void handleBoosterPurchase(String type, int count, int cost) {
+        BubbleType boosterType;
+        try {
+            boosterType = BubbleType.valueOf(type);
+        } catch (Exception e) {
+            boosterType = null;
+        }
+
+        if (boosterType != null && !prefs.isBoosterUnlockedGlobally(boosterType)) {
+            soundManager.playClick();
+            int reqLevel = prefs.getBoosterUnlockLevel(boosterType);
+            String worldName = getWorldName(boosterType);
+            NoticeDialog.showWarning(
+                    this,
+                    "BOOSTER LOCKED",
+                    "UNLOCKS AT LEVEL " + reqLevel,
+                    "LOCKED POWER-UP",
+                    "Reach Level " + reqLevel + " (" + worldName + ") to unlock and purchase this booster!"
+            );
+            return;
+        }
+
         if (prefs.spendDiamonds(cost)) {
             soundManager.playPurchase();
             String name = "";
@@ -458,6 +569,22 @@ public class ShopActivity extends BaseActivity {
         } else {
             soundManager.playClick();
             NoticeDialog.showWarning(this, "WARNING", "INSUFFICIENT DIAMONDS", "NEED MORE DIAMONDS", "You do not have enough diamonds to purchase this booster.");
+        }
+    }
+
+    private String getWorldName(BubbleType type) {
+        if (type == null) return "Later Worlds";
+        switch (type) {
+            case BOMB:
+                return "World 2";
+            case RAINBOW:
+                return "World 3";
+            case FIREBALL:
+                return "World 4";
+            case LIGHTNING:
+                return "World 5";
+            default:
+                return "Later Worlds";
         }
     }
 }

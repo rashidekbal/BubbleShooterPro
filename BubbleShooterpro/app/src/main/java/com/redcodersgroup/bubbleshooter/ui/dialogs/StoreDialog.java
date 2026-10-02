@@ -6,13 +6,16 @@ import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
+import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import com.redcodersgroup.bubbleshooter.R;
 import com.redcodersgroup.bubbleshooter.analytics.AnalyticsManager;
 import com.redcodersgroup.bubbleshooter.audio.SoundManager;
+import com.redcodersgroup.bubbleshooter.bubble.BubbleType;
 import com.redcodersgroup.bubbleshooter.data.PreferencesManager;
 import com.redcodersgroup.bubbleshooter.databinding.DialogStoreBinding;
 import com.redcodersgroup.bubbleshooter.store.IapBillingManager;
@@ -190,6 +193,27 @@ public class StoreDialog extends Dialog {
     }
 
     private void handleBoosterPurchase(String type, int cost) {
+        BubbleType boosterType;
+        try {
+            boosterType = BubbleType.valueOf(type);
+        } catch (Exception e) {
+            boosterType = null;
+        }
+
+        if (boosterType != null && !prefs.isBoosterUnlockedGlobally(boosterType)) {
+            soundManager.playClick();
+            int reqLevel = prefs.getBoosterUnlockLevel(boosterType);
+            String worldName = getWorldName(boosterType);
+            NoticeDialog.showWarning(
+                    getContext(),
+                    "BOOSTER LOCKED",
+                    "UNLOCKS AT LEVEL " + reqLevel,
+                    "LOCKED POWER-UP",
+                    "Reach Level " + reqLevel + " (" + worldName + ") to unlock and purchase this booster!"
+            );
+            return;
+        }
+
         if (prefs.spendDiamonds(cost)) {
             soundManager.playPurchase();
             String name = "";
@@ -232,6 +256,18 @@ public class StoreDialog extends Dialog {
     }
 
     private void handleMegaBundlePurchase() {
+        if (!prefs.isBoosterUnlockedGlobally(BubbleType.BOMB)) {
+            soundManager.playClick();
+            NoticeDialog.showWarning(
+                    getContext(),
+                    "BUNDLE LOCKED",
+                    "UNLOCKS AT LEVEL " + PreferencesManager.UNLOCK_LEVEL_BOMB,
+                    "LOCKED BUNDLE",
+                    "Reach Level " + PreferencesManager.UNLOCK_LEVEL_BOMB + " (World 2) to unlock power-up bundles!"
+            );
+            return;
+        }
+
         int cost = 120;
         if (prefs.spendDiamonds(cost)) {
             soundManager.playPurchase();
@@ -296,5 +332,91 @@ public class StoreDialog extends Dialog {
 
         int lives = prefs.getLives();
         binding.tvStoreLivesStatus.setText(lives >= 5 ? "Lives are FULL (5/5)" : "Current: " + lives + "/5 Hearts");
+
+        updateBoostersUI();
+    }
+
+    private void updateBoostersUI() {
+        if (binding == null) return;
+
+        // Bomb (Level 21)
+        boolean bombUnlocked = prefs.isBoosterUnlockedGlobally(BubbleType.BOMB);
+        updateSingleBoosterUI(
+                binding.cardBuyBomb,
+                binding.btnBuyBomb,
+                bombUnlocked,
+                StoreManager.COST_BOMB_PACK,
+                PreferencesManager.UNLOCK_LEVEL_BOMB
+        );
+
+        // Fireball (Level 61)
+        boolean fireballUnlocked = prefs.isBoosterUnlockedGlobally(BubbleType.FIREBALL);
+        updateSingleBoosterUI(
+                binding.cardBuyFireball,
+                binding.btnBuyFireball,
+                fireballUnlocked,
+                StoreManager.COST_FIREBALL_PACK,
+                PreferencesManager.UNLOCK_LEVEL_FIREBALL
+        );
+
+        // Lightning (Level 81)
+        boolean lightningUnlocked = prefs.isBoosterUnlockedGlobally(BubbleType.LIGHTNING);
+        updateSingleBoosterUI(
+                binding.cardBuyLightning,
+                binding.btnBuyLightning,
+                lightningUnlocked,
+                StoreManager.COST_LIGHTNING_PACK,
+                PreferencesManager.UNLOCK_LEVEL_LIGHTNING
+        );
+
+        // Rainbow (Level 41)
+        boolean rainbowUnlocked = prefs.isBoosterUnlockedGlobally(BubbleType.RAINBOW);
+        updateSingleBoosterUI(
+                binding.cardBuyRainbow,
+                binding.btnBuyRainbow,
+                rainbowUnlocked,
+                StoreManager.COST_RAINBOW_PACK,
+                PreferencesManager.UNLOCK_LEVEL_RAINBOW
+        );
+
+        // Mega Bundle (Requires at least World 2 / Bomb unlocked at Level 21)
+        boolean megaBundleUnlocked = prefs.isBoosterUnlockedGlobally(BubbleType.BOMB);
+        if (megaBundleUnlocked) {
+            binding.cardBuyMegaBundle.setAlpha(1.0f);
+            binding.btnBuyMegaBundle.setText("120 💎");
+            binding.btnBuyMegaBundle.setBackgroundResource(R.drawable.bg_store_btn_amber);
+        } else {
+            binding.cardBuyMegaBundle.setAlpha(0.55f);
+            binding.btnBuyMegaBundle.setText("🔒 LVL " + PreferencesManager.UNLOCK_LEVEL_BOMB);
+            binding.btnBuyMegaBundle.setBackgroundResource(R.drawable.bg_store_btn_disabled);
+        }
+    }
+
+    private void updateSingleBoosterUI(View card, TextView btn, boolean isUnlocked, int cost, int unlockLevel) {
+        if (isUnlocked) {
+            card.setAlpha(1.0f);
+            btn.setText(cost + " 💎");
+            btn.setBackgroundResource(R.drawable.bg_store_btn_green);
+        } else {
+            card.setAlpha(0.55f);
+            btn.setText("🔒 LVL " + unlockLevel);
+            btn.setBackgroundResource(R.drawable.bg_store_btn_disabled);
+        }
+    }
+
+    private String getWorldName(BubbleType type) {
+        if (type == null) return "Later Worlds";
+        switch (type) {
+            case BOMB:
+                return "World 2";
+            case RAINBOW:
+                return "World 3";
+            case FIREBALL:
+                return "World 4";
+            case LIGHTNING:
+                return "World 5";
+            default:
+                return "Later Worlds";
+        }
     }
 }

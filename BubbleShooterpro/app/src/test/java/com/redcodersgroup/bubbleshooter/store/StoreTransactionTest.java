@@ -50,4 +50,12 @@ public class StoreTransactionTest {
         int individualBoostersCost = StoreManager.COST_BOMB_PACK + StoreManager.COST_FIREBALL_PACK + StoreManager.COST_LIGHTNING_PACK + StoreManager.COST_RAINBOW_PACK;
         assertTrue("Mega bundle cost should be less than buying separate boosters", StoreManager.COST_MEGA_BUNDLE < individualBoostersCost);
     }
+
+    @Test
+    public void testBoosterUnlockLevels() {
+        assertEquals(21, com.redcodersgroup.bubbleshooter.data.PreferencesManager.UNLOCK_LEVEL_BOMB);
+        assertEquals(41, com.redcodersgroup.bubbleshooter.data.PreferencesManager.UNLOCK_LEVEL_RAINBOW);
+        assertEquals(61, com.redcodersgroup.bubbleshooter.data.PreferencesManager.UNLOCK_LEVEL_FIREBALL);
+        assertEquals(81, com.redcodersgroup.bubbleshooter.data.PreferencesManager.UNLOCK_LEVEL_LIGHTNING);
+    }
 }

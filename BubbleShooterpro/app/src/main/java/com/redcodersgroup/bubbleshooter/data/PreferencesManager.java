@@ -144,6 +144,22 @@ public class PreferencesManager {
         return isBoosterUnlocked(type, getHighestUnlockedLevel());
     }
 
+    public int getBoosterUnlockLevel(com.redcodersgroup.bubbleshooter.bubble.BubbleType type) {
+        if (type == null) return 1;
+        switch (type) {
+            case BOMB:
+                return UNLOCK_LEVEL_BOMB;
+            case RAINBOW:
+                return UNLOCK_LEVEL_RAINBOW;
+            case FIREBALL:
+                return UNLOCK_LEVEL_FIREBALL;
+            case LIGHTNING:
+                return UNLOCK_LEVEL_LIGHTNING;
+            default:
+                return 1;
+        }
+    }
+
     public boolean hasSeenBoosterIntro(String boosterType) {
         if (boosterType == null) return true;
         return prefs.getBoolean("seen_booster_intro_" + boosterType.toUpperCase(java.util.Locale.ROOT), false);
