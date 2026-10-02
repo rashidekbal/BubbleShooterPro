@@ -336,8 +336,8 @@ public class GameEngine {
             }
         }
 
-        // Initialize launcher bubbles with smart frontier and danger-aware colors
-        BubbleColor firstColor = pickSmartLauncherColor(null);
+        // Initialize launcher bubbles with random colors from available active colors
+        BubbleColor firstColor = pickRandomLauncherColor(null);
         this.currentBubble = new Bubble(firstColor, BubbleType.NORMAL, null);
         this.currentBubble.setX(launcherX);
         this.currentBubble.setY(launcherY);
@@ -346,7 +346,7 @@ public class GameEngine {
         this.currentBubble.setAlpha(1.0f);
 
         if (isEndlessMode || shotsRemaining > 1) {
-            BubbleColor secondColor = pickSmartLauncherColor(firstColor);
+            BubbleColor secondColor = pickRandomLauncherColor(firstColor);
             this.nextBubble = new Bubble(secondColor, BubbleType.NORMAL, null);
             this.nextBubble.setX(previewX);
             this.nextBubble.setY(previewY);
@@ -417,7 +417,7 @@ public class GameEngine {
         EndlessPatternGenerator.populateInitialBoard(grid, 5, initialActiveColors, random);
 
         // Initialize launcher bubbles
-        BubbleColor firstColor = pickSmartLauncherColor(null);
+        BubbleColor firstColor = pickRandomLauncherColor(null);
         this.currentBubble = new Bubble(firstColor, BubbleType.NORMAL, null);
         this.currentBubble.setX(launcherX);
         this.currentBubble.setY(launcherY);
@@ -425,7 +425,7 @@ public class GameEngine {
         this.currentBubble.setScale(1.0f);
         this.currentBubble.setAlpha(1.0f);
 
-        BubbleColor secondColor = pickSmartLauncherColor(firstColor);
+        BubbleColor secondColor = pickRandomLauncherColor(firstColor);
         this.nextBubble = new Bubble(secondColor, BubbleType.NORMAL, null);
         this.nextBubble.setX(previewX);
         this.nextBubble.setY(previewY);
@@ -466,7 +466,7 @@ public class GameEngine {
     }
 
     private BubbleColor pickRandomColor() {
-        return pickSmartLauncherColor(currentBubble != null ? currentBubble.getColor() : null);
+        return pickRandomLauncherColor(currentBubble != null ? currentBubble.getColor() : null);
     }
 
     public Set<BubbleColor> getRequiredColors(BubbleColor launcherColor) {
@@ -489,116 +489,25 @@ public class GameEngine {
         return requiredColors;
     }
 
-    private BubbleColor pickSmartLauncherColor(BubbleColor avoidColorIfPossible) {
+    private BubbleColor pickRandomLauncherColor(BubbleColor avoidColorIfPossible) {
         Set<BubbleColor> requiredSet = getRequiredColors(avoidColorIfPossible);
 
+        // Pick purely at random from required colors on the board
+        if (!requiredSet.isEmpty()) {
+            List<BubbleColor> requiredColors = new ArrayList<>(requiredSet);
+            return requiredColors.get(random.nextInt(requiredColors.size()));
+        }
+
         // Fallback if no bubbles are present on the board or in launcher
-        if (requiredSet.isEmpty()) {
-            if (isEndlessMode) {
-                List<BubbleColor> active = EndlessPatternGenerator.getActiveColors(endlessWaveCount, endlessColorsPool);
-                return !active.isEmpty() ? active.get(random.nextInt(active.size())) : BubbleColor.RED;
-            }
-            if (currentLevel != null && !currentLevel.getAvailableColors().isEmpty()) {
-                return currentLevel.getAvailableColors().get(random.nextInt(currentLevel.getAvailableColors().size()));
-            }
-            return BubbleColor.RED;
+        if (isEndlessMode) {
+            List<BubbleColor> active = EndlessPatternGenerator.getActiveColors(endlessWaveCount, endlessColorsPool);
+            return !active.isEmpty() ? active.get(random.nextInt(active.size())) : BubbleColor.RED;
         }
-
-        List<BubbleColor> requiredColors = new ArrayList<>(requiredSet);
-
-        // 1. Identify all active normal bubbles on the board
-        List<Bubble> allBubbles = new ArrayList<>();
-        for (Bubble b : grid.getAllBubbles()) {
-            if (b != null && !b.isPopping() && !b.isFalling()
-                    && b.getType() == BubbleType.NORMAL && b.getColor() != BubbleColor.NONE) {
-                allBubbles.add(b);
-            }
+        if (currentLevel != null && !currentLevel.getAvailableColors().isEmpty()) {
+            List<BubbleColor> available = currentLevel.getAvailableColors();
+            return available.get(random.nextInt(available.size()));
         }
-
-        // 2. Identify exposed bottom frontier bubbles and lowest danger bubble
-        List<Bubble> frontierBubbles = new ArrayList<>();
-        Bubble lowestDangerBubble = null;
-        float maxDangerY = -1f;
-
-        for (Bubble b : allBubbles) {
-            GridPosition pos = b.getGridPosition();
-            if (pos == null) continue;
-
-            boolean isBottomExposed = false;
-            List<GridPosition> neighbors = NeighborCalculator.getNeighbors(pos, grid.getRowParity());
-            for (GridPosition n : neighbors) {
-                if (n.row > pos.row && grid.getBubble(n) == null) {
-                    isBottomExposed = true;
-                    break;
-                }
-            }
-            if (pos.row == BubbleGrid.MAX_ROWS - 1 || isBottomExposed) {
-                frontierBubbles.add(b);
-            }
-
-            if (deadlineY > 0 && (b.getY() + b.getRadius()) >= (deadlineY - bubbleRadius * 3.5f)) {
-                if (b.getY() > maxDangerY) {
-                    maxDangerY = b.getY();
-                    lowestDangerBubble = b;
-                }
-            }
-        }
-
-        if (frontierBubbles.isEmpty()) {
-            frontierBubbles = allBubbles;
-        }
-
-        // Priority 1: If in critical danger zone, 75% chance to give danger bubble's color (if in requiredColors)
-        if (lowestDangerBubble != null && requiredColors.contains(lowestDangerBubble.getColor()) && random.nextInt(100) < 75) {
-            return lowestDangerBubble.getColor();
-        }
-
-        // Priority 2: Look for match clusters on the exposed frontier (groups of 2+ connected same color)
-        List<BubbleColor> matchableColors = new ArrayList<>();
-        List<BubbleColor> frontierColors = new ArrayList<>();
-        for (Bubble b : frontierBubbles) {
-            BubbleColor c = b.getColor();
-            if (requiredColors.contains(c) && !frontierColors.contains(c)) {
-                frontierColors.add(c);
-            }
-            GridPosition pos = b.getGridPosition();
-            if (pos != null) {
-                for (GridPosition n : NeighborCalculator.getNeighbors(pos, grid.getRowParity())) {
-                    Bubble nb = grid.getBubble(n);
-                    if (nb != null && !nb.isPopping() && !nb.isFalling()
-                            && nb.getColor() == c && requiredColors.contains(c) && !matchableColors.contains(c)) {
-                        matchableColors.add(c);
-                    }
-                }
-            }
-        }
-
-        // Select candidate pool strictly from required colors
-        List<BubbleColor> candidatePool;
-        if (!matchableColors.isEmpty() && random.nextInt(100) < 70) {
-            candidatePool = new ArrayList<>(matchableColors);
-        } else if (!frontierColors.isEmpty()) {
-            candidatePool = new ArrayList<>(frontierColors);
-        } else {
-            candidatePool = new ArrayList<>(requiredColors);
-        }
-
-        // Enforce candidatePool strictly never contains any color outside requiredColors
-        candidatePool.retainAll(requiredColors);
-        if (candidatePool.isEmpty()) {
-            candidatePool = new ArrayList<>(requiredColors);
-        }
-
-        // If possible, pick a color different from avoidColorIfPossible to provide shot versatility
-        if (avoidColorIfPossible != null && candidatePool.size() > 1) {
-            List<BubbleColor> diversePool = new ArrayList<>(candidatePool);
-            diversePool.remove(avoidColorIfPossible);
-            if (!diversePool.isEmpty() && random.nextInt(100) < 80) {
-                return diversePool.get(random.nextInt(diversePool.size()));
-            }
-        }
-
-        return candidatePool.get(random.nextInt(candidatePool.size()));
+        return BubbleColor.RED;
     }
 
     private void sanitizeNextBubble() {
@@ -606,7 +515,7 @@ public class GameEngine {
         BubbleColor currColor = currentBubble != null ? currentBubble.getColor() : null;
         Set<BubbleColor> required = getRequiredColors(currColor);
         if (!required.isEmpty() && !required.contains(nextBubble.getColor())) {
-            nextBubble.setColor(pickSmartLauncherColor(currColor));
+            nextBubble.setColor(pickRandomLauncherColor(currColor));
         }
     }
 
@@ -698,7 +607,7 @@ public class GameEngine {
         isBoosterEquipping = false;
 
         currentBubble.setType(BubbleType.NORMAL);
-        BubbleColor color = pickSmartLauncherColor(nextBubble != null ? nextBubble.getColor() : null);
+        BubbleColor color = pickRandomLauncherColor(nextBubble != null ? nextBubble.getColor() : null);
         currentBubble.setColor(color);
         soundManager.playClick();
         updateTrajectory();
@@ -969,8 +878,8 @@ public class GameEngine {
             // Reserve check: (shotsRemaining - 2) > 0 because this shot (1) is in flight,
             // currentBubble holds 1, leaving (shotsRemaining - 2) in reserve for nextBubble refill
             if (isEndlessMode || (shotsRemaining - 2) > 0) {
-                // 2. Pick a new smart nextBubble and prepare it to pop into the preview position
-                nextBubble.setColor(pickSmartLauncherColor(currentBubble.getColor()));
+                // 2. Pick a new random nextBubble and prepare it to pop into the preview position
+                nextBubble.setColor(pickRandomLauncherColor(currentBubble.getColor()));
                 nextBubble.setType(BubbleType.NORMAL);
                 nextBubble.setRadius(bubbleRadius * 0.75f);
                 nextBubble.setX(previewX);
@@ -1285,7 +1194,7 @@ public class GameEngine {
                         currentBubble.setY(launcherY);
                         currentBubble.setScale(1.0f);
                         if (shotsRemaining > 1) {
-                            nextBubble = new Bubble(pickSmartLauncherColor(currentBubble.getColor()), BubbleType.NORMAL, null);
+                            nextBubble = new Bubble(pickRandomLauncherColor(currentBubble.getColor()), BubbleType.NORMAL, null);
                             nextBubble.setRadius(bubbleRadius * 0.75f);
                             nextBubble.setX(previewX);
                             nextBubble.setY(previewY);
@@ -2208,7 +2117,7 @@ public class GameEngine {
 
         // Re-initialize launcher bubbles if they were removed upon losing
         if (currentBubble == null) {
-            BubbleColor firstColor = pickSmartLauncherColor(null);
+            BubbleColor firstColor = pickRandomLauncherColor(null);
             currentBubble = new Bubble(firstColor, BubbleType.NORMAL, null);
             currentBubble.setX(launcherX);
             currentBubble.setY(launcherY);
@@ -2217,7 +2126,7 @@ public class GameEngine {
             currentBubble.setAlpha(1.0f);
         }
         if (nextBubble == null && shotsRemaining > 1) {
-            BubbleColor secondColor = pickSmartLauncherColor(currentBubble.getColor());
+            BubbleColor secondColor = pickRandomLauncherColor(currentBubble.getColor());
             nextBubble = new Bubble(secondColor, BubbleType.NORMAL, null);
             nextBubble.setX(previewX);
             nextBubble.setY(previewY);
