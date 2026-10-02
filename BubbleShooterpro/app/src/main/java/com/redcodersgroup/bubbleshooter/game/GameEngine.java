@@ -469,41 +469,12 @@ public class GameEngine {
         return pickRandomLauncherColor(currentBubble != null ? currentBubble.getColor() : null);
     }
 
-    public Set<BubbleColor> getRequiredColors(BubbleColor launcherColor) {
-        Set<BubbleColor> requiredColors = new LinkedHashSet<>();
-
-        // 1. Collect all distinct normal bubble colors on the board grid
-        for (Bubble b : grid.getAllBubbles()) {
-            if (b != null && !b.isPopping() && !b.isFalling()
-                    && b.getType() == BubbleType.NORMAL
-                    && b.getColor() != null && b.getColor() != BubbleColor.NONE) {
-                requiredColors.add(b.getColor());
-            }
-        }
-
-        // 2. If launcher has a color, include it as well (up to that color count)
-        if (launcherColor != null && launcherColor != BubbleColor.NONE) {
-            requiredColors.add(launcherColor);
-        }
-
-        return requiredColors;
-    }
-
     private BubbleColor pickRandomLauncherColor(BubbleColor avoidColorIfPossible) {
-        Set<BubbleColor> requiredSet = getRequiredColors(avoidColorIfPossible);
-
-        // Pick purely at random from required colors on the board
-        if (!requiredSet.isEmpty()) {
-            List<BubbleColor> requiredColors = new ArrayList<>(requiredSet);
-            return requiredColors.get(random.nextInt(requiredColors.size()));
-        }
-
-        // Fallback if no bubbles are present on the board or in launcher
         if (isEndlessMode) {
             List<BubbleColor> active = EndlessPatternGenerator.getActiveColors(endlessWaveCount, endlessColorsPool);
             return !active.isEmpty() ? active.get(random.nextInt(active.size())) : BubbleColor.RED;
         }
-        if (currentLevel != null && !currentLevel.getAvailableColors().isEmpty()) {
+        if (currentLevel != null && currentLevel.getAvailableColors() != null && !currentLevel.getAvailableColors().isEmpty()) {
             List<BubbleColor> available = currentLevel.getAvailableColors();
             return available.get(random.nextInt(available.size()));
         }
@@ -511,12 +482,7 @@ public class GameEngine {
     }
 
     private void sanitizeNextBubble() {
-        if (nextBubble == null || nextBubble.getType() != BubbleType.NORMAL) return;
-        BubbleColor currColor = currentBubble != null ? currentBubble.getColor() : null;
-        Set<BubbleColor> required = getRequiredColors(currColor);
-        if (!required.isEmpty() && !required.contains(nextBubble.getColor())) {
-            nextBubble.setColor(pickRandomLauncherColor(currColor));
-        }
+        // Dynamic shot alteration when colors disappear from the board is disabled.
     }
 
     public void swapBubbles() {
