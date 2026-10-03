@@ -15,9 +15,9 @@
     <string name="haptics">Vibration</string>
     <string translatable="false"  name="game_services_project_id">378965108331</string>
 
-    <!-- Google AdMob Configuration (Replace with production IDs when releasing) -->
-    <string translatable="false" name="admob_app_id">ca-app-pub-3940256099942544~3347511713</string>
-    <string translatable="false" name="admob_banner_unit_id">ca-app-pub-3940256099942544/9214589741</string>
-    <string translatable="false" name="admob_interstitial_unit_id">ca-app-pub-3940256099942544/1033173712</string>
-    <string translatable="false" name="admob_rewarded_unit_id">ca-app-pub-3940256099942544/5224354917</string>
+    <!-- Google AdMob Configuration -->
+    <string translatable="false" name="admob_app_id">ca-app-pub-1147620738869495~5638413366</string>
+    <string translatable="false" name="admob_banner_unit_id">ca-app-pub-1147620738869495/2081302570</string>
+    <string translatable="false" name="admob_interstitial_unit_id">ca-app-pub-1147620738869495/1996707949</string>
+    <string translatable="false" name="admob_rewarded_unit_id">ca-app-pub-1147620738869495/4622871284</string>
 </resources>
