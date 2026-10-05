@@ -421,9 +421,9 @@ flowchart TD
   - **Piled Rewards Section**: `RecyclerView` powered by `StarRewardCardAdapter.java`. Each completed milestone renders as a stacked reward card with chest art, diamond rewards, and an individual "COLLECT" button.
   - **Single Claim**: Tapping "COLLECT" on an individual card credits diamonds, plays audio feedback, increments claimed count, and animates that specific card out of the list.
   - **Collect All**: Tapping "COLLECT ALL" claims both pending milestone cards and the daily free gift simultaneously, credits cumulative diamonds in a single step, clears the list, and reveals the celebratory empty state ("All Rewards Claimed!").
-- **Custom Milestone Visual Assets**:
-  - `ic_star_chest_closed.png`: Beautiful closed golden treasure chest with ruby gem clasp, rendered on the Home screen launcher button and in the dialog empty state.
-  - `ic_star_chest_open.png`: Open golden treasure chest spilling radiant cyan diamonds, rendered on each milestone reward card.
+- **Custom Milestone & World Path Visual Assets**:
+  - `ic_star_chest_closed.png`: Beautiful closed golden treasure chest with ruby gem clasp, rendered on the Home screen launcher button, dialog empty state, preview in `ClaimGiftDialog`, and for unclaimed mystery gift chests along the World Map saga path.
+  - `ic_star_chest_open.png`: Open golden treasure chest spilling radiant cyan diamonds, rendered on each milestone reward card, in `ClaimGiftDialog` once claimed, and on the World Map path once collected.
 
 ---
 

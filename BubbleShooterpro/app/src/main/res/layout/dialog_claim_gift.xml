@@ -44,7 +44,7 @@
                 android:layout_width="@dimen/dp_70"
                 android:layout_height="@dimen/dp_70"
                 android:layout_gravity="center"
-                android:src="@drawable/ic_star_chest_gold"
+                android:src="@drawable/ic_star_chest_closed"
                 android:contentDescription="Gift Chest" />
         </FrameLayout>
 

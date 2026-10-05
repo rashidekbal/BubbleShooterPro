@@ -16,6 +16,7 @@ import android.view.animation.AccelerateDecelerateInterpolator;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.redcodersgroup.bubbleshooter.R;
 import com.redcodersgroup.bubbleshooter.analytics.AnalyticsManager;
 import com.redcodersgroup.bubbleshooter.audio.SoundManager;
 import com.redcodersgroup.bubbleshooter.data.PreferencesManager;
@@ -69,11 +70,13 @@ public class ClaimGiftDialog extends Dialog {
 
         boolean alreadyClaimed = prefs.hasClaimedWorldGift(worldNumber, giftIndex);
         if (alreadyClaimed) {
+            binding.ivGiftChestIcon.setImageResource(R.drawable.ic_star_chest_open);
             binding.btnClaimGift.setText("CLAIMED");
             binding.btnClaimGift.setEnabled(false);
             binding.btnClaimGift.setAlpha(0.6f);
             binding.tvGiftDescription.setText("You have already collected this chest reward!");
         } else {
+            binding.ivGiftChestIcon.setImageResource(R.drawable.ic_star_chest_closed);
             startPulseAnimation();
         }
 
@@ -89,6 +92,7 @@ public class ClaimGiftDialog extends Dialog {
             }
             hasClaimedInThisDialog = true;
             soundManager.playPurchase();
+            binding.ivGiftChestIcon.setImageResource(R.drawable.ic_star_chest_open);
             prefs.setClaimedWorldGift(worldNumber, giftIndex, true);
             prefs.addDiamonds(rewardDiamonds);
             AnalyticsManager.getInstance(getContext()).logGiftChestClaimed(worldNumber, giftIndex, rewardDiamonds);

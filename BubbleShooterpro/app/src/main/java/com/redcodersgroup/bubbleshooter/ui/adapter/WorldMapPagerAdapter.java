@@ -347,18 +347,18 @@ public class WorldMapPagerAdapter extends RecyclerView.Adapter<WorldMapPagerAdap
                 int gX = (int) (mapWidth * gift.x - giftSize / 2f);
                 int gY = (int) (mapHeight * gift.y - giftSize / 2f);
 
+                boolean isClaimed = prefs.hasClaimedWorldGift(world.worldNumber, giftIndex);
+                boolean isUnlocked = highestUnlocked > requiredLevel;
+
                 ImageView ivGift = new ImageView(context);
-                ivGift.setImageResource(R.drawable.ic_star_chest_gold);
+                ivGift.setImageResource(isClaimed ? R.drawable.ic_star_chest_open : R.drawable.ic_star_chest_closed);
                 ivGift.setBackgroundResource(R.drawable.bg_chest_floating_badge);
                 int pad = Math.max(2, (int) (3 * density));
                 ivGift.setPadding(pad, pad, pad, pad);
                 ivGift.setElevation(context.getResources().getDimension(R.dimen.dp_8));
 
-                boolean isClaimed = prefs.hasClaimedWorldGift(world.worldNumber, giftIndex);
-                boolean isUnlocked = highestUnlocked > requiredLevel;
-
                 if (isClaimed) {
-                    ivGift.setAlpha(0.55f);
+                    ivGift.setAlpha(0.65f);
                 } else if (isUnlocked) {
                     ivGift.setAlpha(1.0f);
                     ivGift.animate().scaleX(1.15f).scaleY(1.15f).setDuration(600)
@@ -395,7 +395,8 @@ public class WorldMapPagerAdapter extends RecyclerView.Adapter<WorldMapPagerAdap
                                 giftIndex,
                                 bonusDiamonds,
                                 (wNum, gIdx, diamondsEarned) -> {
-                                    ivGift.setAlpha(0.55f);
+                                    ivGift.setImageResource(R.drawable.ic_star_chest_open);
+                                    ivGift.setAlpha(0.65f);
                                     ivGift.animate().cancel();
                                     ivGift.setScaleX(1.0f);
                                     ivGift.setScaleY(1.0f);
