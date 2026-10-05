@@ -319,9 +319,11 @@ Located in [`com.redcodersgroup.bubbleshooter.audio`](file:///d:/projects/bubble
 - **`SoundManager`**: Uses Android's low-latency `SoundPool` API to play simultaneous short audio effects (`bubble_pop.mp3`, `bubble_shot.mp3`, `win_sound.wav`, `level_fail.mp3`, `purchase_success.mp3`, `bomb.mp3`, `fire.wav`, `lightning.mp3`). Features pitch variation to make rapid pops sound musically dynamic.
   - **Power Bubble & Booster Sound Design**:
     - **Equipping Boosters**: Plays standard tactile click sound (`playClick()`) upon selection in the launcher HUD.
-    - **Bomb / Blast (`bomb.mp3`)**: High-impact explosive blast audio triggered when firing a Bomb projectile and upon detonating a 2-ring hex cluster or chain-reaction explosion.
-    - **Fireball (`fire.wav`)**: Calibrated to 70% duration (2.54s with smooth fade-out) and 70% playback volume (`0.7f`), triggered on fireball launch, bubble piercing, and ceiling impact.
-    - **Lightning (`lightning.mp3`)**: Electric plasma arc crackle triggered when launching Lightning and vaporizing horizontal rows across the grid.
+    - **Launching Boosters**: All powerup bubbles play the standard launch audio (`playShoot()`) upon firing from the launcher.
+    - **Target Impact Audio**: Specialized audio plays strictly upon striking targets on the board:
+      - **Bomb / Blast (`bomb.mp3`)**: High-impact explosive blast audio triggered upon hitting the board and detonating a 2-ring hex cluster or chain-reaction explosion.
+      - **Fireball (`fire.wav`)**: Calibrated to 70% duration (2.54s with smooth fade-out) and 70% playback volume (`0.7f`), triggered on first target bubble penetration or ceiling collision.
+      - **Lightning (`lightning.mp3`)**: Electric plasma arc crackle triggered upon striking the board and vaporizing horizontal rows across the grid.
 - **`MusicManager`**: Manages background ambient music (`bgm.mp3`) trimmed to 60% duration (144s, optimized to 4.60MB) with volume configured at 60%, with smooth fade-in / fade-out transitions and app background pause handling.
 
 ---
@@ -329,7 +331,7 @@ Located in [`com.redcodersgroup.bubbleshooter.audio`](file:///d:/projects/bubble
 ### 3.9 Meta Game: Economy, Energy, Ads & Cloud Save
 
 #### Economy & Lives (`ProgressRepository.java`, `PreferencesManager.java`)
-- **Coins & Diamonds**: In-game soft & hard currencies used to buy boosters and extra shots.
+- **Coins & Diamonds**: In-game soft & hard currencies used to buy boosters and extra shots. On a fresh installation, initial player diamonds start at **0 💎** (`INITIAL_DIAMONDS = 0`).
 - **Heart System**: 5 max lives. Failing a level consumes 1 heart. Hearts regenerate on a 30-minute countdown timer stored via unix timestamps in `SharedPreferences`.
 
 #### Full-Screen Shop Activity (`ShopActivity.java`, `activity_shop.xml`)
@@ -337,19 +339,19 @@ Located in [`com.redcodersgroup.bubbleshooter.audio`](file:///d:/projects/bubble
 - **Responsive 2-Column Grid Architecture**:
   - All buyable items across all tabs are organized into a standardized 2-column grid (`match_parent` height with equal weight `0dp`, centered icon art, descriptive tags/badges, and uniform action buttons pinned to card bottoms).
   - Streamlined, minimal text layout eliminating redundant badges ("SINGLE", "3x VALUE") and repetitive copy ("3x Pack • Save 5💎").
+  - **Standardized 0 or 5 Price Endings**: All diamond costs for hearts and boosters end cleanly in 0 or 5.
   - **Hearts & Energy (2x2 Grid)**:
-    - Row 1: Rewarded Ad (1 Heart, Free) | Single Heart (1 Heart, +1 Life, 6 💎)
-    - Row 2: Triple Hearts (3 Hearts, +3 Lives, Save 17%, 15 💎) | Full Refill (Full Refill, Restore 5 lives, 25 💎, Best Value)
+    - Row 1: Rewarded Ad (1 Heart, Free) | Single Heart (1 Heart, +1 Life, 10 💎)
+    - Row 2: Triple Hearts (3 Hearts, +3 Lives, Save 17%, 25 💎) | Full Refill (Full Refill, Restore 5 lives, 40 💎, Best Value)
   - **Diamond Vault (Top Ad Banner + 2x2 Grid)**:
     - Top Banner: Rewarded Video Ad Card (+2 Free Gems)
     - Row 1: Pocket of Gems (50 💎, ₹29) | Handful of Gems (140 💎, ₹75)
     - Row 2: Sack of Gems (500 💎, ₹249) | Royal Vault Chest (1,600 💎, ₹699, Best Value)
     - *(Note: Daily Free Diamonds +3 💎 has been relocated to the Reward Center to centralize all free daily player claims).*
-  - **Power-Up Boosters (4x2 Grid)**:
-    - Row 1: Bomb x1 (15 💎) | Bomb x3 (40 💎, SAVE 5 💎)
-    - Row 2: Fireball x1 (15 💎) | Fireball x3 (40 💎, SAVE 5 💎)
-    - Row 3: Rainbow x1 (20 💎) | Rainbow x3 (50 💎, SAVE 10 💎)
-    - Row 4: Lightning x1 (20 💎) | Lightning x3 (45 💎, SAVE 15 💎)
+  - **Power-Up Boosters (4x2 Grid - Unified Pricing)**:
+    - All single (+1) boosters cost identically **25 💎** (Bomb x1, Fireball x1, Rainbow x1, Lightning x1).
+    - All bundle (+3) packs cost identically **60 💎** with uniform badge **`SAVE 15 💎`** (Bomb x3, Fireball x3, Rainbow x3, Lightning x3).
+    - Mega Bundle: **180 💎** (all 4 booster packs + lives refill).
 - **Original Graphic Assets (100% Royalty-Free & Copyright-Safe)**:
   - `ic_diamond_currency.png`: High-resolution, brilliant-cut cyan gemstone with specular glints and crystal facets (256x256 32-bit transparent PNG), utilized globally on the Home screen header pill, Shop tabs, Victory bonus cards, and dialogs.
   - `store_diamond_pile.png`: Sparkling pile of cut cyan diamonds used for Daily Free and Pocket of Gems (50 Diamonds).
@@ -358,8 +360,14 @@ Located in [`com.redcodersgroup.bubbleshooter.audio`](file:///d:/projects/bubble
   - `store_diamond_chest.png`: Royal arched wooden and gold chest overflowing with brilliant cyan diamonds (1,600 Diamonds).
 
 #### Life Deduction & Mid-Level Exit Safeguard (`GameActivity.java`)
-- **Single Deduction Guarantee**: When abandoning a match mid-game (e.g. Pause Menu -> Home, Pause Menu -> Restart, Back press, or when Android triggers `onDestroy()` on background dismissal), a strict `hasDeductedLifeForMatch` boolean flag ensures that exactly **one** life is deducted per abandoned match attempt.
+- **Single Deduction Guarantee**: When abandoning a match mid-game in Level Campaign mode (e.g. Pause Menu -> Home, Pause Menu -> Restart, Back press, or when Android triggers `onDestroy()` on background dismissal), a strict `hasDeductedLifeForMatch` boolean flag ensures that exactly **one** life is deducted per abandoned match attempt.
 - **Race Condition Prevention**: Prevents duplicate deductions where an explicit navigation event (`onHomeClicked()`) deducted a heart, and the subsequent asynchronous `onDestroy()` lifecycle event deducted another heart due to lingering `PLAYING` match state.
+- **Endless Mode Zero-Heart Invariance**: Endless Survival Mode is completely exempt from heart consumption:
+  - Playing Endless Mode does not consume hearts upon launch.
+  - Losing Endless Mode (bubbles crossing deadline) never deducts hearts (`isEndlessMode || gameEngine.isEndlessMode()` guard).
+  - "Cutting" Endless Mode (quitting via Pause Menu Home/Restart, swiping the app away, back pressing, or process kill) strictly bypasses heart deduction.
+  - Lifecycle state persistence: `onSaveInstanceState` and `onCreate(savedInstanceState)` preserve `isEndlessMode` across process recreation.
+  - Endless Game Over Overlay UI: Replaces defeat heartbreak artwork (`ic_heart_broken` and red glow) with survival rocket iconography (`ic_endless_survival_rocket`), golden amber glow (`bg_circle_gold_glow`), and upbeat stage-cleared titling (`"STAGE OVER"` / `"NEW BEST!"` in `#4ADE80` or `#FBBF24`) to eliminate visual heartbreak ambiguity.
 
 #### Monetization & Dual Revive Mechanics (`AdManager.java`, `GameEngine.java`, `IapBillingManager.java`)
 - **Level Campaign Revive**:

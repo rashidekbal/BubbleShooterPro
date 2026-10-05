@@ -453,7 +453,7 @@
                             android:background="@drawable/btn_pill_blank_yellow"
                             app:backgroundTint="@null"
                             android:paddingBottom="@dimen/dp_4"
-                            android:text="💎 6"
+                            android:text="💎 10"
                             android:textColor="#FFFFFF"
                             android:textSize="@dimen/sp_13"
                             android:textStyle="bold"
@@ -470,7 +470,7 @@
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">
 
-                    <!-- 3. Triple Hearts (15 Diamonds) -->
+                    <!-- 3. Triple Hearts (25 Diamonds) -->
                     <LinearLayout
                         android:id="@+id/cardShopBuyTripleHearts"
                         android:layout_width="0dp"
@@ -537,7 +537,7 @@
                             android:background="@drawable/btn_pill_blank_yellow"
                             app:backgroundTint="@null"
                             android:paddingBottom="@dimen/dp_4"
-                            android:text="💎 15"
+                            android:text="💎 25"
                             android:textColor="#FFFFFF"
                             android:textSize="@dimen/sp_13"
                             android:textStyle="bold"
@@ -547,7 +547,7 @@
                             android:shadowRadius="2" />
                     </LinearLayout>
 
-                    <!-- 4. Full Refill (25 Diamonds) -->
+                    <!-- 4. Full Refill (40 Diamonds) -->
                     <LinearLayout
                         android:id="@+id/cardShopBuyFullRefill"
                         android:layout_width="0dp"
@@ -614,7 +614,7 @@
                             android:background="@drawable/btn_pill_blank_green"
                             app:backgroundTint="@null"
                             android:paddingBottom="@dimen/dp_4"
-                            android:text="💎 25"
+                            android:text="💎 40"
                             android:textColor="#FFFFFF"
                             android:textSize="@dimen/sp_13"
                             android:textStyle="bold"
@@ -1153,7 +1153,7 @@
                             android:background="@drawable/btn_pill_blank_yellow"
                             app:backgroundTint="@null"
                             android:paddingBottom="@dimen/dp_4"
-                            android:text="💎 15"
+                            android:text="💎 25"
                             android:textColor="#FFFFFF"
                             android:textSize="@dimen/sp_13"
                             android:textStyle="bold"
@@ -1188,7 +1188,7 @@
                             android:paddingEnd="@dimen/dp_8"
                             android:paddingTop="@dimen/dp_2"
                             android:paddingBottom="@dimen/dp_2"
-                            android:text="SAVE 5 💎"
+                            android:text="SAVE 15 💎"
                             android:textColor="#FFFFFF"
                             android:textSize="@dimen/sp_10"
                             android:textStyle="bold" />
@@ -1230,7 +1230,7 @@
                             android:background="@drawable/btn_pill_blank_green"
                             app:backgroundTint="@null"
                             android:paddingBottom="@dimen/dp_4"
-                            android:text="💎 40"
+                            android:text="💎 60"
                             android:textColor="#FFFFFF"
                             android:textSize="@dimen/sp_13"
                             android:textStyle="bold"
@@ -1315,7 +1315,7 @@
                             android:background="@drawable/btn_pill_blank_yellow"
                             app:backgroundTint="@null"
                             android:paddingBottom="@dimen/dp_4"
-                            android:text="💎 15"
+                            android:text="💎 25"
                             android:textColor="#FFFFFF"
                             android:textSize="@dimen/sp_13"
                             android:textStyle="bold"
@@ -1350,7 +1350,7 @@
                             android:paddingEnd="@dimen/dp_8"
                             android:paddingTop="@dimen/dp_2"
                             android:paddingBottom="@dimen/dp_2"
-                            android:text="SAVE 5 💎"
+                            android:text="SAVE 15 💎"
                             android:textColor="#FFFFFF"
                             android:textSize="@dimen/sp_10"
                             android:textStyle="bold" />
@@ -1392,7 +1392,7 @@
                             android:background="@drawable/btn_pill_blank_green"
                             app:backgroundTint="@null"
                             android:paddingBottom="@dimen/dp_4"
-                            android:text="💎 40"
+                            android:text="💎 60"
                             android:textColor="#FFFFFF"
                             android:textSize="@dimen/sp_13"
                             android:textStyle="bold"
@@ -1477,7 +1477,7 @@
                             android:background="@drawable/btn_pill_blank_yellow"
                             app:backgroundTint="@null"
                             android:paddingBottom="@dimen/dp_4"
-                            android:text="💎 20"
+                            android:text="💎 25"
                             android:textColor="#FFFFFF"
                             android:textSize="@dimen/sp_13"
                             android:textStyle="bold"
@@ -1512,7 +1512,7 @@
                             android:paddingEnd="@dimen/dp_8"
                             android:paddingTop="@dimen/dp_2"
                             android:paddingBottom="@dimen/dp_2"
-                            android:text="SAVE 10 💎"
+                            android:text="SAVE 15 💎"
                             android:textColor="#FFFFFF"
                             android:textSize="@dimen/sp_10"
                             android:textStyle="bold" />
@@ -1554,7 +1554,7 @@
                             android:background="@drawable/btn_pill_blank_green"
                             app:backgroundTint="@null"
                             android:paddingBottom="@dimen/dp_4"
-                            android:text="💎 50"
+                            android:text="💎 60"
                             android:textColor="#FFFFFF"
                             android:textSize="@dimen/sp_13"
                             android:textStyle="bold"
@@ -1638,7 +1638,7 @@
                             android:background="@drawable/btn_pill_blank_yellow"
                             app:backgroundTint="@null"
                             android:paddingBottom="@dimen/dp_4"
-                            android:text="💎 20"
+                            android:text="💎 25"
                             android:textColor="#FFFFFF"
                             android:textSize="@dimen/sp_13"
                             android:textStyle="bold"
@@ -1715,7 +1715,7 @@
                             android:background="@drawable/btn_pill_blank_green"
                             app:backgroundTint="@null"
                             android:paddingBottom="@dimen/dp_4"
-                            android:text="💎 45"
+                            android:text="💎 60"
                             android:textColor="#FFFFFF"
                             android:textSize="@dimen/sp_13"
                             android:textStyle="bold"

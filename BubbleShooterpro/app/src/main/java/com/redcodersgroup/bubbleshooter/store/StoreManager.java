@@ -18,22 +18,22 @@ public class StoreManager {
     public static final String SKU_DIAMONDS_500 = "diamonds_500";
     public static final String SKU_DIAMONDS_1500 = "diamonds_1500";
 
-    // Power-Up & Booster Costs (in Diamonds)
-    public static final int COST_BOMB_SINGLE = 15;
-    public static final int COST_FIREBALL_SINGLE = 15;
-    public static final int COST_LIGHTNING_SINGLE = 20;
-    public static final int COST_RAINBOW_SINGLE = 20;
+    // Power-Up & Booster Costs (in Diamonds) - Unified: all +1 = 25 💎, all +3 = 60 💎 (ends in 0 or 5)
+    public static final int COST_BOMB_SINGLE = 25;
+    public static final int COST_FIREBALL_SINGLE = 25;
+    public static final int COST_LIGHTNING_SINGLE = 25;
+    public static final int COST_RAINBOW_SINGLE = 25;
 
-    public static final int COST_BOMB_PACK = 40;
-    public static final int COST_FIREBALL_PACK = 40;
-    public static final int COST_LIGHTNING_PACK = 45;
-    public static final int COST_RAINBOW_PACK = 50;
-    public static final int COST_MEGA_BUNDLE = 120;
+    public static final int COST_BOMB_PACK = 60;
+    public static final int COST_FIREBALL_PACK = 60;
+    public static final int COST_LIGHTNING_PACK = 60;
+    public static final int COST_RAINBOW_PACK = 60;
+    public static final int COST_MEGA_BUNDLE = 180;
 
-    // Hearts / Lives Refill Cost
-    public static final int COST_ONE_HEART = 6;
-    public static final int COST_TRIPLE_HEARTS = 15;
-    public static final int COST_LIVES_REFILL = 25;
+    // Hearts / Lives Refill Cost - Increased by ~50% (ends in 0 or 5)
+    public static final int COST_ONE_HEART = 10;
+    public static final int COST_TRIPLE_HEARTS = 25;
+    public static final int COST_LIVES_REFILL = 40;
     public static final int MAX_LIVES = 5;
     
 

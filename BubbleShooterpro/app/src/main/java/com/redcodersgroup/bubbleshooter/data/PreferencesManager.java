@@ -243,7 +243,7 @@ public class PreferencesManager {
         }
     }
 
-    public static final int INITIAL_DIAMONDS = 25;
+    public static final int INITIAL_DIAMONDS = 0;
 
     public int getDiamonds() {
         if (!prefs.contains(KEY_DIAMONDS)) {

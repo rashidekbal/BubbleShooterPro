@@ -765,6 +765,7 @@ public class GameEngine {
 
     // Fireball piercing trajectory tracking
     private final Set<GridPosition> fireballPoppedPositions = new HashSet<>();
+    private boolean fireballHitSoundPlayed = false;
 
     private void updateTrajectory() {
         if (currentBubble == null) {
@@ -922,22 +923,13 @@ public class GameEngine {
 
         state = GameState.SHOOTING;
         fireballPoppedPositions.clear();
+        fireballHitSoundPlayed = false;
         activeProjectile = new BubbleProjectile(currentBubble.getColor(), currentBubble.getType(), bubbleRadius);
         float dirX = (float) Math.cos(aimAngleRad);
         float dirY = (float) Math.sin(aimAngleRad);
         activeProjectile.launch(launcherX, launcherY, dirX, dirY);
 
-        BubbleType shotType = activeProjectile.getType();
-        BubbleColor shotColor = activeProjectile.getColor();
-        if (shotType == BubbleType.FIREBALL || shotColor == BubbleColor.FIREBALL) {
-            soundManager.playFire();
-        } else if (shotType == BubbleType.BOMB || shotColor == BubbleColor.BOMB) {
-            soundManager.playBomb();
-        } else if (shotType == BubbleType.LIGHTNING || shotColor == BubbleColor.LIGHTNING) {
-            soundManager.playLightning();
-        } else {
-            soundManager.playShoot();
-        }
+        soundManager.playShoot();
 
         // 1. Promote queued bubble into currentBubble, starting at preview position
         if (nextBubble != null) {
@@ -1522,8 +1514,13 @@ public class GameEngine {
             }
         }
 
-        if (poppedAny && bombsToExplode.isEmpty() && lightningToTrigger.isEmpty()) {
-            soundManager.playPop(1);
+        if (poppedAny) {
+            if (!fireballHitSoundPlayed) {
+                soundManager.playFire();
+                fireballHitSoundPlayed = true;
+            } else if (bombsToExplode.isEmpty() && lightningToTrigger.isEmpty()) {
+                soundManager.playPop(1);
+            }
         }
     }
 
@@ -1535,7 +1532,10 @@ public class GameEngine {
             float burstY = Math.max(boardTop + bubbleRadius, activeProjectile.getY());
             confettiSystem.spawnCelebrationBurst(activeProjectile.getX(), burstY, 30);
         }
-        soundManager.playFire();
+        if (!fireballHitSoundPlayed) {
+            soundManager.playFire();
+            fireballHitSoundPlayed = true;
+        }
 
         // 1. Identify and drop unsupported floating bubbles
         List<Bubble> floating = board.findFloatingBubbles();

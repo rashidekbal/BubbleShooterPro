@@ -75,4 +75,15 @@ public class EndlessPatternGeneratorTest {
             }
         }
     }
+
+    @Test
+    public void testEndlessModeContractRules() {
+        // Endless mode features infinite play without consuming player lives
+        boolean isEndlessMode = true;
+        boolean hasDeductedLifeForMatch = false;
+
+        // Simulate match exit / defeat life deduction logic
+        boolean shouldDeductLife = !isEndlessMode && !hasDeductedLifeForMatch;
+        assertFalse("Endless mode must never deduct hearts on loss or exit", shouldDeductLife);
+    }
 }

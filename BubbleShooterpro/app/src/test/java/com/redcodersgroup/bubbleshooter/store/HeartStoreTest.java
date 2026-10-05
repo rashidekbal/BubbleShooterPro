@@ -16,10 +16,11 @@ public class HeartStoreTest {
     @Test
     public void testAffordability() {
         assertTrue(StoreManager.canAfford(10, HeartStoreDialog.COST_ONE_HEART));
-        assertTrue(StoreManager.canAfford(15, HeartStoreDialog.COST_TRIPLE_HEARTS));
-        assertFalse(StoreManager.canAfford(14, HeartStoreDialog.COST_TRIPLE_HEARTS));
-        assertTrue(StoreManager.canAfford(25, HeartStoreDialog.COST_FULL_REFILL));
-        assertFalse(StoreManager.canAfford(24, HeartStoreDialog.COST_FULL_REFILL));
+        assertFalse(StoreManager.canAfford(9, HeartStoreDialog.COST_ONE_HEART));
+        assertTrue(StoreManager.canAfford(25, HeartStoreDialog.COST_TRIPLE_HEARTS));
+        assertFalse(StoreManager.canAfford(24, HeartStoreDialog.COST_TRIPLE_HEARTS));
+        assertTrue(StoreManager.canAfford(40, HeartStoreDialog.COST_FULL_REFILL));
+        assertFalse(StoreManager.canAfford(39, HeartStoreDialog.COST_FULL_REFILL));
     }
 
     @Test

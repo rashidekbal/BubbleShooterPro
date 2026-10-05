@@ -16,6 +16,7 @@ import android.widget.TextView;
 import java.util.Locale;
 
 import androidx.activity.OnBackPressedCallback;
+import androidx.annotation.NonNull;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -96,7 +97,11 @@ public class GameActivity extends BaseActivity implements GameEngine.GameEventLi
         setContentView(binding.getRoot());
 
         wasBackgrounded = false;
-        isEndlessMode = getIntent().getBooleanExtra(EXTRA_IS_ENDLESS, false);
+        if (savedInstanceState != null) {
+            isEndlessMode = savedInstanceState.getBoolean(EXTRA_IS_ENDLESS, getIntent().getBooleanExtra(EXTRA_IS_ENDLESS, false));
+        } else {
+            isEndlessMode = getIntent().getBooleanExtra(EXTRA_IS_ENDLESS, false);
+        }
         currentLevelNumber = getIntent().getIntExtra(EXTRA_LEVEL_NUMBER, 1);
         repository = ProgressRepository.getInstance(this);
         prefs = repository.getPreferences();
@@ -112,6 +117,12 @@ public class GameActivity extends BaseActivity implements GameEngine.GameEventLi
                 handleBackPress();
             }
         });
+    }
+
+    @Override
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putBoolean(EXTRA_IS_ENDLESS, isEndlessMode);
     }
 
     private void initViews() {
@@ -327,6 +338,7 @@ public class GameActivity extends BaseActivity implements GameEngine.GameEventLi
     }
 
     private void loadCurrentLevel() {
+        isEndlessMode = false;
         continueBubblePurchasesCount = 0;
         matchState = MatchState.PLAYING;
         hasDeductedLifeForMatch = false;
@@ -421,6 +433,7 @@ public class GameActivity extends BaseActivity implements GameEngine.GameEventLi
     }
 
     private void loadEndlessMode() {
+        isEndlessMode = true;
         continueBubblePurchasesCount = 0;
         AnalyticsManager.getInstance(this).logEndlessStart();
         matchState = MatchState.PLAYING;
@@ -1041,10 +1054,16 @@ public class GameActivity extends BaseActivity implements GameEngine.GameEventLi
 
         // UI Texts
         if (isEndlessMode) {
+            binding.overlayGameOver.ivGameOverGlow.setImageResource(R.drawable.bg_circle_gold_glow);
+            binding.overlayGameOver.ivGameOverHeartBreak.setImageResource(R.drawable.ic_endless_survival_rocket);
             binding.overlayGameOver.tvGameOverTitle.setText(score > personalBest && personalBest > 0 ? "NEW BEST!" : "STAGE OVER");
+            binding.overlayGameOver.tvGameOverTitle.setTextColor(score > personalBest && personalBest > 0 ? Color.parseColor("#4ADE80") : Color.parseColor("#FBBF24"));
             binding.overlayGameOver.tvGameOverSubtitle.setText(reason != null && !reason.isEmpty() ? reason : "Wave complete! Keep practicing!");
         } else {
+            binding.overlayGameOver.ivGameOverGlow.setImageResource(R.drawable.bg_circle_red_glow);
+            binding.overlayGameOver.ivGameOverHeartBreak.setImageResource(R.drawable.ic_heart_broken);
             binding.overlayGameOver.tvGameOverTitle.setText("LEVEL FAILED");
+            binding.overlayGameOver.tvGameOverTitle.setTextColor(Color.parseColor("#F87171"));
             binding.overlayGameOver.tvGameOverSubtitle.setText(reason != null && !reason.isEmpty() ? reason : "Out of shots! Don't give up!");
         }
 
@@ -1188,10 +1207,10 @@ public class GameActivity extends BaseActivity implements GameEngine.GameEventLi
         binding.overlayGameOver.rootGameOverOverlay.setAlpha(0f);
         binding.overlayGameOver.rootGameOverOverlay.animate().alpha(1f).setDuration(240).start();
 
-        // Animate Heartbreak Icon popping in with dramatic bounce
+        // Animate Icon popping in with dramatic bounce (upright rocket for Endless mode, tilted heartbreak for Level mode)
         binding.overlayGameOver.ivGameOverHeartBreak.setScaleX(0f);
         binding.overlayGameOver.ivGameOverHeartBreak.setScaleY(0f);
-        binding.overlayGameOver.ivGameOverHeartBreak.setRotation(-25f);
+        binding.overlayGameOver.ivGameOverHeartBreak.setRotation(isEndlessMode ? 0f : -25f);
         binding.overlayGameOver.ivGameOverHeartBreak.animate()
                 .scaleX(1.15f)
                 .scaleY(1.15f)
@@ -1308,7 +1327,7 @@ public class GameActivity extends BaseActivity implements GameEngine.GameEventLi
     }
 
     private void deductLifeIfApplicable() {
-        if (isEndlessMode || hasDeductedLifeForMatch) return;
+        if (isEndlessMode || (gameEngine != null && gameEngine.isEndlessMode()) || hasDeductedLifeForMatch) return;
         boolean isWon = (matchState == MatchState.WON) || (gameEngine != null && gameEngine.isWonOrCelebrating()) ||
                 (binding != null && binding.overlayVictory != null && binding.overlayVictory.rootVictoryOverlay.getVisibility() == View.VISIBLE) ||
                 (activeVictoryDialog != null && activeVictoryDialog.isShowing());

@@ -12,36 +12,36 @@ public class StoreTransactionTest {
         assertEquals(500, StoreManager.DIAMONDS_SACK);
         assertEquals(1600, StoreManager.DIAMONDS_CHEST);
 
-        assertEquals(40, StoreManager.COST_BOMB_PACK);
-        assertEquals(40, StoreManager.COST_FIREBALL_PACK);
-        assertEquals(45, StoreManager.COST_LIGHTNING_PACK);
-        assertEquals(50, StoreManager.COST_RAINBOW_PACK);
-        assertEquals(120, StoreManager.COST_MEGA_BUNDLE);
-        assertEquals(25, StoreManager.COST_LIVES_REFILL);
+        assertEquals(60, StoreManager.COST_BOMB_PACK);
+        assertEquals(60, StoreManager.COST_FIREBALL_PACK);
+        assertEquals(60, StoreManager.COST_LIGHTNING_PACK);
+        assertEquals(60, StoreManager.COST_RAINBOW_PACK);
+        assertEquals(180, StoreManager.COST_MEGA_BUNDLE);
+        assertEquals(40, StoreManager.COST_LIVES_REFILL);
         assertEquals(5, StoreManager.MAX_LIVES);
     }
 
     @Test
     public void testCanAfford() {
-        assertTrue(StoreManager.canAfford(100, 40));
-        assertTrue(StoreManager.canAfford(40, 40));
-        assertFalse(StoreManager.canAfford(39, 40));
-        assertFalse(StoreManager.canAfford(0, 25));
+        assertTrue(StoreManager.canAfford(100, 60));
+        assertTrue(StoreManager.canAfford(60, 60));
+        assertFalse(StoreManager.canAfford(59, 60));
+        assertFalse(StoreManager.canAfford(0, 40));
     }
 
     @Test
     public void testDeductDiamondsSuccess() {
-        int startingBalance = 150;
+        int startingBalance = 250;
         int remaining = StoreManager.deductDiamonds(startingBalance, StoreManager.COST_MEGA_BUNDLE);
-        assertEquals(30, remaining);
+        assertEquals(70, remaining);
 
         remaining = StoreManager.deductDiamonds(remaining, StoreManager.COST_LIVES_REFILL);
-        assertEquals(5, remaining);
+        assertEquals(30, remaining);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testDeductDiamondsInsufficientThrows() {
-        StoreManager.deductDiamonds(30, StoreManager.COST_BOMB_PACK);
+        StoreManager.deductDiamonds(50, StoreManager.COST_BOMB_PACK);
     }
 
     @Test
