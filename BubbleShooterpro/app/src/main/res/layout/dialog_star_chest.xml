@@ -36,8 +36,17 @@
             android:layout_width="match_parent"
             android:layout_height="@dimen/dp_32"
             android:layout_marginTop="@dimen/dp_16"
-            android:layout_marginBottom="@dimen/dp_16"
-            android:background="@drawable/bg_star_progress_track">
+            android:layout_marginBottom="@dimen/dp_16">
+
+            <!-- Horizontal Progress Bar -->
+            <ProgressBar
+                android:id="@+id/progressBarStarChest"
+                style="?android:attr/progressBarStyleHorizontal"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:max="20"
+                android:progress="0"
+                android:progressDrawable="@drawable/progress_drawable_star_chest" />
 
             <!-- Progress Text -->
             <TextView
@@ -64,6 +73,38 @@
                 android:contentDescription="Star" />
         </FrameLayout>
 
+        <!-- Reward Display Pill (Visible when chest target reached) -->
+        <LinearLayout
+            android:id="@+id/layoutStarChestReward"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/dp_10"
+            android:background="@drawable/bg_hud_pill"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:paddingStart="@dimen/dp_14"
+            android:paddingEnd="@dimen/dp_16"
+            android:paddingTop="@dimen/dp_4"
+            android:paddingBottom="@dimen/dp_4"
+            android:visibility="gone">
+
+            <ImageView
+                android:layout_width="@dimen/dp_24"
+                android:layout_height="@dimen/dp_24"
+                android:src="@drawable/ic_hud_diamond"
+                android:contentDescription="Diamonds" />
+
+            <TextView
+                android:id="@+id/tvStarChestRewardAmount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/dp_6"
+                android:text="+2 DIAMONDS"
+                android:textColor="#0284C7"
+                android:textSize="@dimen/sp_16"
+                android:textStyle="bold" />
+        </LinearLayout>
+
         <!-- Description Subtitle -->
         <TextView
             android:id="@+id/tvChestSubtitle"
@@ -74,17 +115,17 @@
             android:textColor="#92400E"
             android:textSize="@dimen/sp_15"
             android:textStyle="bold"
-            android:layout_marginBottom="@dimen/dp_20" />
+            android:layout_marginBottom="@dimen/dp_16" />
 
-        <!-- Big Glossy Green OK Button -->
+        <!-- Big Glossy Green OK / Claim Button -->
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/btnChestOk"
-            android:layout_width="@dimen/dp_200"
+            android:layout_width="@dimen/dp_220"
             android:layout_height="@dimen/dp_54"
             android:background="@drawable/btn_pill_blank_green"
             android:text="OK"
             android:textColor="#FFFFFF"
-            android:textSize="@dimen/sp_20"
+            android:textSize="@dimen/sp_18"
             android:textStyle="bold"
             android:letterSpacing="0.04"
             android:shadowColor="#80000000"

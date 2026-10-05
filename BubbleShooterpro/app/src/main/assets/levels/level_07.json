@@ -3,9 +3,9 @@
   "shots": 18,
   "colors": [
     "RED",
+    "GREEN",
     "BLUE",
-    "YELLOW",
-    "GREEN"
+    "YELLOW"
   ],
   "objective": {
     "type": "CLEAR_ALL",

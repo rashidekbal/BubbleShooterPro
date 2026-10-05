@@ -3,9 +3,9 @@
   "shots": 20,
   "colors": [
     "RED",
+    "GREEN",
     "BLUE",
-    "YELLOW",
-    "GREEN"
+    "YELLOW"
   ],
   "objective": {
     "type": "CLEAR_ALL",
@@ -22,7 +22,7 @@
     "GBBGYBRYR",
     "BYBYYBYR",
     "YTGGSBRTR",
-    "BYBXBGSG",
+    "BYBBBGSG",
     "BBBYGBGYG"
   ]
 }

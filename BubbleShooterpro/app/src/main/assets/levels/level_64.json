@@ -2,14 +2,14 @@
   "level": 64,
   "shots": 23,
   "colors": [
+    "GREEN",
     "BLUE",
     "YELLOW",
-    "GREEN",
     "PURPLE"
   ],
   "objective": {
     "type": "CLEAR_ALL",
-    "target": 0
+    "target": 5000
   },
   "starThresholds": [
     2850,

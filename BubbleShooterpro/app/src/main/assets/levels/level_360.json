@@ -2,11 +2,11 @@
   "level": 360,
   "shots": 24,
   "colors": [
-    "CYAN",
     "RED",
+    "GREEN",
     "BLUE",
     "YELLOW",
-    "GREEN"
+    "CYAN"
   ],
   "objective": {
     "type": "CLEAR_ALL",
@@ -21,9 +21,9 @@
     "BBGBBBBYY",
     "BYGSCCBY",
     "BTYGRYCTR",
-    "RYRSFRRR",
+    "RYRSRRRR",
     "RCYRYSBBB",
-    "RCCY*GGB",
+    "RCCYYGGB",
     "RCYBBGYYY",
     "CYYYCGRY",
     "GGGGCCGYR"

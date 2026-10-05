@@ -2,11 +2,11 @@
   "level": 380,
   "shots": 24,
   "colors": [
+    "RED",
+    "BLUE",
     "PURPLE",
     "ORANGE",
-    "CYAN",
-    "RED",
-    "BLUE"
+    "CYAN"
   ],
   "objective": {
     "type": "CLEAR_ALL",
@@ -19,8 +19,8 @@
   ],
   "rows": [
     "CCRBBBOOO",
-    "CCRSFCOP",
-    "RRPP*BCCP",
+    "CCRSCCOP",
+    "RRPPPBCCP",
     "RTPBBCTP",
     "OOOBBROSB",
     "PCCRROBB",

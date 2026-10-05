@@ -23,7 +23,7 @@
         <!-- Google AdMob App ID -->
         <meta-data
             android:name="com.google.android.gms.ads.APPLICATION_ID"
-            android:value="@string/admob_app_id"/>
+            android:value="ca-app-pub-1147620738869495~5638413366"/>
 
         <!-- Splash Screen Launcher Activity -->
         <activity

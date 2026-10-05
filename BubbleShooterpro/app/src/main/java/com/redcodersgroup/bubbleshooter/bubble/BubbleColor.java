@@ -29,7 +29,7 @@ public enum BubbleColor {
     }
 
     public static java.util.List<BubbleColor> getPlayableColors() {
-        return java.util.Arrays.asList(RED, GREEN, BLUE, YELLOW, PURPLE, ORANGE);
+        return java.util.Arrays.asList(RED, GREEN, BLUE, YELLOW, PURPLE, ORANGE, CYAN);
     }
 
     public static BubbleColor fromChar(char c) {

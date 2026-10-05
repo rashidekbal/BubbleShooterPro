@@ -19,12 +19,13 @@ public class EndlessPatternGenerator {
             BubbleColor.GREEN,
             BubbleColor.YELLOW,
             BubbleColor.PURPLE,
-            BubbleColor.ORANGE
+            BubbleColor.ORANGE,
+            BubbleColor.CYAN
     );
 
     /**
      * Returns an active color palette scaled by wave progression.
-     * Starts with 3 colors for introductory flow and gradually unlocks 4th, 5th, and 6th colors.
+     * Starts with 3 colors for introductory flow and gradually unlocks 4th, 5th, 6th, and 7th colors.
      */
     public static List<BubbleColor> getActiveColors(int waveCount, List<BubbleColor> basePool) {
         List<BubbleColor> pool = (basePool != null && !basePool.isEmpty()) ? basePool : DEFAULT_PALETTE;
@@ -33,10 +34,12 @@ public class EndlessPatternGenerator {
             colorCount = 3; // Waves 1-5: 3 colors (quick comfortable start)
         } else if (waveCount <= 16) {
             colorCount = 4; // Waves 6-16: 4 colors (moderate puzzle complexity)
-        } else if (waveCount <= 32) {
-            colorCount = 5; // Waves 17-32: 5 colors (healthy tactical challenge)
+        } else if (waveCount <= 28) {
+            colorCount = 5; // Waves 17-28: 5 colors (healthy tactical challenge)
+        } else if (waveCount <= 40) {
+            colorCount = 6; // Waves 29-40: 6 colors
         } else {
-            colorCount = Math.min(pool.size(), 6); // Wave 33+: full 6-color palette
+            colorCount = Math.min(pool.size(), 7); // Wave 41+: full 7-color palette
         }
         colorCount = Math.min(colorCount, pool.size());
 
@@ -113,22 +116,6 @@ public class EndlessPatternGenerator {
             }
         }
 
-        // Occasional tactical booster/special spawn (Bomb, Rainbow, or Transparent)
-        if (random.nextInt(100) < 6 || (waveCount > 0 && waveCount % 8 == 0 && random.nextBoolean())) {
-            int boosterCol = (cols > 2) ? (1 + random.nextInt(cols - 2)) : 0;
-            int roll = random.nextInt(3);
-            if (roll == 0) {
-                rowTypes[boosterCol] = BubbleType.BOMB;
-                rowColors[boosterCol] = BubbleColor.BOMB;
-            } else if (roll == 1) {
-                rowTypes[boosterCol] = BubbleType.RAINBOW;
-                rowColors[boosterCol] = BubbleColor.RAINBOW;
-            } else {
-                rowTypes[boosterCol] = BubbleType.TRANSPARENT;
-                rowColors[boosterCol] = BubbleColor.TRANSPARENT;
-            }
-        }
-
         List<Bubble> result = new ArrayList<>(cols);
         for (int c = 0; c < cols; c++) {
             BubbleColor color = (rowColors[c] != null) ? rowColors[c] : activeColors.get(0);
@@ -174,15 +161,10 @@ public class EndlessPatternGenerator {
 
                 BubbleType[] rowTypes = new BubbleType[cols];
                 Arrays.fill(rowTypes, BubbleType.NORMAL);
-                if (r == numRows / 2 && random.nextInt(100) < 16) {
-                    int mid = cols / 2;
-                    rowTypes[mid] = random.nextBoolean() ? BubbleType.BOMB : BubbleType.RAINBOW;
-                    rowColors[mid] = (rowTypes[mid] == BubbleType.BOMB) ? BubbleColor.BOMB : BubbleColor.RAINBOW;
-                }
 
                 List<Bubble> row = new ArrayList<>(cols);
                 for (int c = 0; c < cols; c++) {
-                    row.add(new Bubble(rowColors[c], rowTypes[c], new GridPosition(0, c)));
+                    row.add(new Bubble(rowColors[c], BubbleType.NORMAL, new GridPosition(0, c)));
                 }
                 chunk.add(row);
                 currentParity ^= 1;
@@ -217,12 +199,7 @@ public class EndlessPatternGenerator {
                 for (int c = 0; c < cols; c++) {
                     boolean isOuter = (c < border || c >= (cols - border));
                     BubbleColor col = isOuter ? outer : inner;
-                    BubbleType type = BubbleType.NORMAL;
-                    if (!isOuter && r == numRows - 1 && c == cols / 2 && random.nextInt(100) < 20) {
-                        type = BubbleType.BOMB;
-                        col = BubbleColor.BOMB;
-                    }
-                    row.add(new Bubble(col, type, new GridPosition(0, c)));
+                    row.add(new Bubble(col, BubbleType.NORMAL, new GridPosition(0, c)));
                 }
                 chunk.add(row);
                 currentParity ^= 1;

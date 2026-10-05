@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.view.animation.CycleInterpolator;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import com.redcodersgroup.bubbleshooter.ui.dialogs.ClaimGiftDialog;
 import com.redcodersgroup.bubbleshooter.ui.dialogs.NoticeDialog;
 
 import androidx.annotation.NonNull;
@@ -360,7 +361,7 @@ public class WorldMapPagerAdapter extends RecyclerView.Adapter<WorldMapPagerAdap
                     ivGift.setAlpha(0.55f);
                 } else if (isUnlocked) {
                     ivGift.setAlpha(1.0f);
-                    ivGift.animate().scaleX(1.12f).scaleY(1.12f).setDuration(600)
+                    ivGift.animate().scaleX(1.15f).scaleY(1.15f).setDuration(600)
                             .setInterpolator(new CycleInterpolator(1))
                             .start();
                 } else {
@@ -369,6 +370,7 @@ public class WorldMapPagerAdapter extends RecyclerView.Adapter<WorldMapPagerAdap
 
                 ivGift.setOnClickListener(v -> {
                     soundManager.playClick();
+                    boolean currentlyClaimed = prefs.hasClaimedWorldGift(world.worldNumber, giftIndex);
                     if (!isUnlocked) {
                         NoticeDialog.showWarning(
                                 context,
@@ -377,7 +379,7 @@ public class WorldMapPagerAdapter extends RecyclerView.Adapter<WorldMapPagerAdap
                                 "MYSTERY GIFT",
                                 "Complete Level " + requiredLevel + " to open this mystery chest."
                         );
-                    } else if (isClaimed) {
+                    } else if (currentlyClaimed) {
                         NoticeDialog.showInfo(
                                 context,
                                 "NOTICE",
@@ -386,12 +388,23 @@ public class WorldMapPagerAdapter extends RecyclerView.Adapter<WorldMapPagerAdap
                                 "You have already collected this reward. Keep progressing!"
                         );
                     } else {
-                        prefs.setClaimedWorldGift(world.worldNumber, giftIndex, true);
-                        ivGift.setAlpha(0.55f);
-                        int bonusDiamonds = (gift != null && gift.rewardDiamonds > 0) ? gift.rewardDiamonds : 5;
-                        if (listener != null) {
-                            listener.onWorldGiftClaimed(world.worldNumber, giftIndex, bonusDiamonds);
-                        }
+                        int bonusDiamonds = (gift != null && gift.rewardDiamonds > 0) ? gift.rewardDiamonds : 2;
+                        ClaimGiftDialog claimDialog = new ClaimGiftDialog(
+                                context,
+                                world.worldNumber,
+                                giftIndex,
+                                bonusDiamonds,
+                                (wNum, gIdx, diamondsEarned) -> {
+                                    ivGift.setAlpha(0.55f);
+                                    ivGift.animate().cancel();
+                                    ivGift.setScaleX(1.0f);
+                                    ivGift.setScaleY(1.0f);
+                                    if (listener != null) {
+                                        listener.onWorldGiftClaimed(wNum, gIdx, diamondsEarned);
+                                    }
+                                }
+                        );
+                        claimDialog.show();
                     }
                 });
 

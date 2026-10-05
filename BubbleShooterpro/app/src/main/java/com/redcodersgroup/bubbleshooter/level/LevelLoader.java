@@ -1,6 +1,8 @@
 package com.redcodersgroup.bubbleshooter.level;
 
 import android.content.Context;
+import android.util.Log;
+
 import com.redcodersgroup.bubbleshooter.bubble.BubbleColor;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -44,7 +46,9 @@ public class LevelLoader {
             for (int i = 0; i < colorsArr.length(); i++) {
                 try {
                     colors.add(BubbleColor.valueOf(colorsArr.getString(i).toUpperCase()));
-                } catch (Exception ignored) {}
+                } catch (Exception ignored) {
+                    Log.d("parseJson",ignored.toString());
+                }
             }
         }
         if (colors.isEmpty()) {

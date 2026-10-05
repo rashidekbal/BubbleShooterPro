@@ -5,7 +5,8 @@
     "RED",
     "BLUE",
     "YELLOW",
-    "ORANGE"
+    "ORANGE",
+    "CYAN"
   ],
   "objective": {
     "type": "CLEAR_ALL",
@@ -20,10 +21,10 @@
     "RYYYRROYY",
     "RRBORROY",
     "RSBBOOROY",
-    "OOBR*CCC",
+    "OOBRRCCC",
     "OOBORRRSC",
     "OYYOOOYY",
-    "YTRCFOYTC",
+    "YTRCOOYTC",
     "BYRCCBCC",
     "BBBRRBBBB"
   ]

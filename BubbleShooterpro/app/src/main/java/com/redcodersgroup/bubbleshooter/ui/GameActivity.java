@@ -36,6 +36,7 @@ import com.redcodersgroup.bubbleshooter.ui.dialogs.BoosterIntroDialog;
 import com.redcodersgroup.bubbleshooter.ui.dialogs.BuyBoosterDialog;
 import com.redcodersgroup.bubbleshooter.ui.dialogs.GameOverDialog;
 import com.redcodersgroup.bubbleshooter.ui.dialogs.NoticeDialog;
+import com.redcodersgroup.bubbleshooter.ui.dialogs.OutOfHeartsDialog;
 import com.redcodersgroup.bubbleshooter.ui.dialogs.PauseDialog;
 import com.redcodersgroup.bubbleshooter.ui.dialogs.VictoryDialog;
 
@@ -532,10 +533,16 @@ public class GameActivity extends BaseActivity implements GameEngine.GameEventLi
             @Override
             public void onRestartClicked() {
                 activePauseDialog = null;
-                if (!isEndlessMode && matchState == MatchState.PLAYING) {
+                boolean isWon = (matchState == MatchState.WON) || (gameEngine != null && gameEngine.isWonOrCelebrating()) ||
+                        (binding != null && binding.overlayVictory != null && binding.overlayVictory.rootVictoryOverlay.getVisibility() == View.VISIBLE) ||
+                        (activeVictoryDialog != null && activeVictoryDialog.isShowing());
+                if (!isEndlessMode && matchState == MatchState.PLAYING && !isWon) {
                     prefs.deductLife();
                     if (prefs.getLives() <= 0) {
-                        showNoHeartsDialog();
+                        showOutOfHeartsDialog(() -> {
+                            loadCurrentLevel();
+                            enableImmersiveStickyMode();
+                        });
                         return;
                     }
                 }
@@ -550,7 +557,10 @@ public class GameActivity extends BaseActivity implements GameEngine.GameEventLi
             @Override
             public void onHomeClicked() {
                 activePauseDialog = null;
-                if (!isEndlessMode && matchState == MatchState.PLAYING) {
+                boolean isWon = (matchState == MatchState.WON) || (gameEngine != null && gameEngine.isWonOrCelebrating()) ||
+                        (binding != null && binding.overlayVictory != null && binding.overlayVictory.rootVictoryOverlay.getVisibility() == View.VISIBLE) ||
+                        (activeVictoryDialog != null && activeVictoryDialog.isShowing());
+                if (!isEndlessMode && matchState == MatchState.PLAYING && !isWon) {
                     prefs.deductLife();
                 }
                 Intent intent = new Intent(GameActivity.this, MainActivity.class);
@@ -565,10 +575,13 @@ public class GameActivity extends BaseActivity implements GameEngine.GameEventLi
     private void handleBackPress() {
         if (isFinishing() || isDestroyed()) return;
 
-        // If full-screen victory overlay is active, back press finishes cleanly
-        if (binding != null && binding.overlayVictory != null &&
-                binding.overlayVictory.rootVictoryOverlay.getVisibility() == View.VISIBLE) {
+        // If full-screen victory overlay is active or match is won, back press finishes cleanly without deducting heart
+        boolean isWon = (matchState == MatchState.WON) || (gameEngine != null && gameEngine.isWonOrCelebrating()) ||
+                (binding != null && binding.overlayVictory != null && binding.overlayVictory.rootVictoryOverlay.getVisibility() == View.VISIBLE) ||
+                (activeVictoryDialog != null && activeVictoryDialog.isShowing());
+        if (isWon) {
             matchState = MatchState.WON;
+            stopDoubleBonusPulseAnimation();
             finish();
             return;
         }
@@ -1146,7 +1159,14 @@ public class GameActivity extends BaseActivity implements GameEngine.GameEventLi
             if (!isEndlessMode && matchState == MatchState.LOST) {
                 prefs.deductLife();
                 if (prefs.getLives() <= 0) {
-                    showNoHeartsDialog();
+                    showOutOfHeartsDialog(() -> {
+                        stopReviveAdPulseAnimation();
+                        if (binding != null && binding.overlayGameOver != null) {
+                            binding.overlayGameOver.rootGameOverOverlay.setVisibility(View.GONE);
+                        }
+                        loadCurrentLevel();
+                        enableImmersiveStickyMode();
+                    });
                     return;
                 }
             }
@@ -1224,10 +1244,31 @@ public class GameActivity extends BaseActivity implements GameEngine.GameEventLi
         }
     }
 
-    private void showNoHeartsDialog() {
+    private void showOutOfHeartsDialog(@androidx.annotation.Nullable Runnable onPlayAction) {
         if (isFinishing() || isDestroyed()) return;
-        startActivity(com.redcodersgroup.bubbleshooter.ui.ShopActivity.createIntent(this, com.redcodersgroup.bubbleshooter.ui.ShopActivity.TAB_HEARTS));
-        overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+        OutOfHeartsDialog dialog = new OutOfHeartsDialog(this, new OutOfHeartsDialog.OutOfHeartsDialogListener() {
+            @Override
+            public void onPlayLevelWithAdReward() {
+                if (onPlayAction != null) {
+                    onPlayAction.run();
+                }
+            }
+
+            @Override
+            public void onOpenShop() {
+                startActivity(com.redcodersgroup.bubbleshooter.ui.ShopActivity.createIntent(GameActivity.this, com.redcodersgroup.bubbleshooter.ui.ShopActivity.TAB_HEARTS));
+                overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+            }
+
+            @Override
+            public void onGoHome() {
+                Intent intent = new Intent(GameActivity.this, MainActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                startActivity(intent);
+                finish();
+            }
+        });
+        dialog.show();
     }
 
     @Override
@@ -1275,8 +1316,11 @@ public class GameActivity extends BaseActivity implements GameEngine.GameEventLi
         super.onDestroy();
         stopDoubleBonusPulseAnimation();
         stopReviveAdPulseAnimation();
-        // If exiting or killed while actively playing a level mid-match, deduct 1 life
-        if (!isEndlessMode && matchState == MatchState.PLAYING) {
+        // If exiting or killed while actively playing a level mid-match (and level is not won), deduct 1 life
+        boolean isWon = (matchState == MatchState.WON) || (gameEngine != null && gameEngine.isWonOrCelebrating()) ||
+                (binding != null && binding.overlayVictory != null && binding.overlayVictory.rootVictoryOverlay.getVisibility() == View.VISIBLE) ||
+                (activeVictoryDialog != null && activeVictoryDialog.isShowing());
+        if (!isEndlessMode && matchState == MatchState.PLAYING && !isWon) {
             prefs.deductLife();
         }
         if (progressAnimator != null) {

@@ -2,9 +2,9 @@
   "level": 156,
   "shots": 22,
   "colors": [
+    "GREEN",
     "BLUE",
     "YELLOW",
-    "GREEN",
     "PURPLE"
   ],
   "objective": {

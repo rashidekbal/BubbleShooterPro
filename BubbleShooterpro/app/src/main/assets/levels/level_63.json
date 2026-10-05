@@ -3,14 +3,14 @@
   "shots": 19,
   "colors": [
     "RED",
+    "GREEN",
     "BLUE",
     "YELLOW",
-    "GREEN",
     "PURPLE"
   ],
   "objective": {
     "type": "CLEAR_ALL",
-    "target": 0
+    "target": 5000
   },
   "starThresholds": [
     2500,
@@ -19,7 +19,7 @@
   ],
   "rows": [
     "RRRGGPYYY",
-    "PRGGLPPB",
+    "PRGGGPPB",
     "PPRGYPYBP",
     "PYBPYYPB",
     "PSTBBBYTB",

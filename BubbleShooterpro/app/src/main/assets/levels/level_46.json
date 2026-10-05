@@ -2,11 +2,11 @@
   "level": 46,
   "shots": 24,
   "colors": [
-    "YELLOW",
+    "RED",
     "GREEN",
+    "YELLOW",
     "PURPLE",
-    "ORANGE",
-    "RED"
+    "ORANGE"
   ],
   "objective": {
     "type": "CLEAR_ALL",

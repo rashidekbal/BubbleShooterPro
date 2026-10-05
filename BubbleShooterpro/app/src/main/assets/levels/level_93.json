@@ -5,7 +5,8 @@
     "RED",
     "BLUE",
     "PURPLE",
-    "ORANGE"
+    "ORANGE",
+    "CYAN"
   ],
   "objective": {
     "type": "CLEAR_ALL",
@@ -22,7 +23,7 @@
     "OSTPOOCTO",
     "PPBROOCP",
     "PPPRBOCPP",
-    "BBROXBRP",
+    "BBROOBRP",
     "BBRROOBRR"
   ]
 }

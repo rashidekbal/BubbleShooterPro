@@ -2,11 +2,11 @@
   "level": 83,
   "shots": 21,
   "colors": [
-    "ORANGE",
-    "CYAN",
     "RED",
     "BLUE",
-    "YELLOW"
+    "YELLOW",
+    "ORANGE",
+    "CYAN"
   ],
   "objective": {
     "type": "CLEAR_ALL",
@@ -20,7 +20,7 @@
   "rows": [
     "RROOCRRRY",
     "ROOCRYYY",
-    "RBBCLOYCC",
+    "RBBCCOYCC",
     "OBBOOOCC",
     "ROOYYYBRC",
     "RRYCOOBB",

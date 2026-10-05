@@ -2,11 +2,11 @@
   "level": 163,
   "shots": 20,
   "colors": [
+    "RED",
+    "BLUE",
     "PURPLE",
     "ORANGE",
-    "CYAN",
-    "RED",
-    "BLUE"
+    "CYAN"
   ],
   "objective": {
     "type": "CLEAR_ALL",
@@ -21,7 +21,7 @@
     "PCBRROOOB",
     "CCBRPPOB",
     "CCBBRPRRB",
-    "PPCPLBBR",
+    "PPCPPBBR",
     "POCCCCOBO",
     "POOBBBOO",
     "POOPBPBPO"

@@ -2,8 +2,8 @@
   "level": 190,
   "shots": 23,
   "colors": [
-    "YELLOW",
     "GREEN",
+    "YELLOW",
     "PURPLE",
     "ORANGE",
     "CYAN"
@@ -19,12 +19,12 @@
   ],
   "rows": [
     "YYGGGYYCC",
-    "YYPG*CCG",
+    "YYPGGCCG",
     "YOOPPYGSO",
     "OOOSOYGO",
     "YTYYPOGTO",
     "YGGOOPPO",
-    "CSGGCFPPP",
+    "CSGGCCPPP",
     "PCCGCCYY",
     "PPOOOOYYY"
   ]

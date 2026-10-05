@@ -68,7 +68,7 @@
           "x": 0.412,
           "y": 0.413,
           "requiredLevelOffset": 5,
-          "rewardDiamonds": 5
+          "rewardDiamonds": 2
         },
         {
           "giftIndex": 2,
@@ -76,7 +76,7 @@
           "x": 0.5583,
           "y": 0.1331,
           "requiredLevelOffset": 10,
-          "rewardDiamonds": 5
+          "rewardDiamonds": 2
         }
       ]
     },
@@ -146,7 +146,7 @@
           "x": 0.397,
           "y": 0.408,
           "requiredLevelOffset": 5,
-          "rewardDiamonds": 5
+          "rewardDiamonds": 2
         },
         {
           "giftIndex": 2,
@@ -154,7 +154,7 @@
           "x": 0.5583,
           "y": 0.1331,
           "requiredLevelOffset": 10,
-          "rewardDiamonds": 5
+          "rewardDiamonds": 2
         }
       ]
     },
@@ -224,7 +224,7 @@
           "x": 0.455,
           "y": 0.416,
           "requiredLevelOffset": 5,
-          "rewardDiamonds": 5
+          "rewardDiamonds": 2
         },
         {
           "giftIndex": 2,
@@ -232,7 +232,7 @@
           "x": 0.49,
           "y": 0.145,
           "requiredLevelOffset": 10,
-          "rewardDiamonds": 5
+          "rewardDiamonds": 2
         }
       ]
     },
@@ -302,7 +302,7 @@
           "x": 0.512,
           "y": 0.435,
           "requiredLevelOffset": 5,
-          "rewardDiamonds": 5
+          "rewardDiamonds": 2
         },
         {
           "giftIndex": 2,
@@ -310,7 +310,7 @@
           "x": 0.477,
           "y": 0.15,
           "requiredLevelOffset": 10,
-          "rewardDiamonds": 5
+          "rewardDiamonds": 2
         }
       ]
     },
@@ -380,7 +380,7 @@
           "x": 0.448,
           "y": 0.422,
           "requiredLevelOffset": 5,
-          "rewardDiamonds": 5
+          "rewardDiamonds": 2
         },
         {
           "giftIndex": 2,
@@ -388,7 +388,7 @@
           "x": 0.546,
           "y": 0.135,
           "requiredLevelOffset": 10,
-          "rewardDiamonds": 5
+          "rewardDiamonds": 2
         }
       ]
     },
@@ -458,7 +458,7 @@
           "x": 0.428,
           "y": 0.401,
           "requiredLevelOffset": 5,
-          "rewardDiamonds": 5
+          "rewardDiamonds": 2
         },
         {
           "giftIndex": 2,
@@ -466,7 +466,7 @@
           "x": 0.5583,
           "y": 0.1331,
           "requiredLevelOffset": 10,
-          "rewardDiamonds": 5
+          "rewardDiamonds": 2
         }
       ]
     },
@@ -536,7 +536,7 @@
           "x": 0.419,
           "y": 0.432,
           "requiredLevelOffset": 5,
-          "rewardDiamonds": 5
+          "rewardDiamonds": 2
         },
         {
           "giftIndex": 2,
@@ -544,7 +544,7 @@
           "x": 0.535,
           "y": 0.196,
           "requiredLevelOffset": 10,
-          "rewardDiamonds": 5
+          "rewardDiamonds": 2
         }
       ]
     },
@@ -614,7 +614,7 @@
           "x": 0.406,
           "y": 0.412,
           "requiredLevelOffset": 5,
-          "rewardDiamonds": 5
+          "rewardDiamonds": 2
         },
         {
           "giftIndex": 2,
@@ -622,7 +622,7 @@
           "x": 0.5583,
           "y": 0.1331,
           "requiredLevelOffset": 10,
-          "rewardDiamonds": 5
+          "rewardDiamonds": 2
         }
       ]
     },
@@ -692,7 +692,7 @@
           "x": 0.432,
           "y": 0.412,
           "requiredLevelOffset": 5,
-          "rewardDiamonds": 5
+          "rewardDiamonds": 2
         },
         {
           "giftIndex": 2,
@@ -700,7 +700,7 @@
           "x": 0.515,
           "y": 0.137,
           "requiredLevelOffset": 10,
-          "rewardDiamonds": 5
+          "rewardDiamonds": 2
         }
       ]
     },
@@ -770,7 +770,7 @@
           "x": 0.648,
           "y": 0.485,
           "requiredLevelOffset": 5,
-          "rewardDiamonds": 5
+          "rewardDiamonds": 2
         },
         {
           "giftIndex": 2,
@@ -778,7 +778,7 @@
           "x": 0.639,
           "y": 0.211,
           "requiredLevelOffset": 10,
-          "rewardDiamonds": 5
+          "rewardDiamonds": 2
         }
       ]
     },
@@ -848,7 +848,7 @@
           "x": 0.377,
           "y": 0.393,
           "requiredLevelOffset": 5,
-          "rewardDiamonds": 5
+          "rewardDiamonds": 2
         },
         {
           "giftIndex": 2,
@@ -856,7 +856,7 @@
           "x": 0.5583,
           "y": 0.1331,
           "requiredLevelOffset": 10,
-          "rewardDiamonds": 5
+          "rewardDiamonds": 2
         }
       ]
     },
@@ -926,7 +926,7 @@
           "x": 0.477,
           "y": 0.373,
           "requiredLevelOffset": 5,
-          "rewardDiamonds": 5
+          "rewardDiamonds": 2
         },
         {
           "giftIndex": 2,
@@ -934,7 +934,7 @@
           "x": 0.521,
           "y": 0.151,
           "requiredLevelOffset": 10,
-          "rewardDiamonds": 5
+          "rewardDiamonds": 2
         }
       ]
     },
@@ -1004,7 +1004,7 @@
           "x": 0.415,
           "y": 0.412,
           "requiredLevelOffset": 5,
-          "rewardDiamonds": 5
+          "rewardDiamonds": 2
         },
         {
           "giftIndex": 2,
@@ -1012,7 +1012,7 @@
           "x": 0.5583,
           "y": 0.1331,
           "requiredLevelOffset": 10,
-          "rewardDiamonds": 5
+          "rewardDiamonds": 2
         }
       ]
     },
@@ -1082,7 +1082,7 @@
           "x": 0.397,
           "y": 0.408,
           "requiredLevelOffset": 5,
-          "rewardDiamonds": 5
+          "rewardDiamonds": 2
         },
         {
           "giftIndex": 2,
@@ -1090,7 +1090,7 @@
           "x": 0.519,
           "y": 0.127,
           "requiredLevelOffset": 10,
-          "rewardDiamonds": 5
+          "rewardDiamonds": 2
         }
       ]
     },
@@ -1160,7 +1160,7 @@
           "x": 0.415,
           "y": 0.412,
           "requiredLevelOffset": 5,
-          "rewardDiamonds": 5
+          "rewardDiamonds": 2
         },
         {
           "giftIndex": 2,
@@ -1168,7 +1168,7 @@
           "x": 0.5583,
           "y": 0.1331,
           "requiredLevelOffset": 10,
-          "rewardDiamonds": 5
+          "rewardDiamonds": 2
         }
       ]
     },
@@ -1238,7 +1238,7 @@
           "x": 0.408,
           "y": 0.411,
           "requiredLevelOffset": 5,
-          "rewardDiamonds": 5
+          "rewardDiamonds": 2
         },
         {
           "giftIndex": 2,
@@ -1246,7 +1246,7 @@
           "x": 0.5583,
           "y": 0.1331,
           "requiredLevelOffset": 10,
-          "rewardDiamonds": 5
+          "rewardDiamonds": 2
         }
       ]
     },
@@ -1316,7 +1316,7 @@
           "x": 0.406,
           "y": 0.413,
           "requiredLevelOffset": 5,
-          "rewardDiamonds": 5
+          "rewardDiamonds": 2
         },
         {
           "giftIndex": 2,
@@ -1324,7 +1324,7 @@
           "x": 0.5583,
           "y": 0.1331,
           "requiredLevelOffset": 10,
-          "rewardDiamonds": 5
+          "rewardDiamonds": 2
         }
       ]
     },
@@ -1394,7 +1394,7 @@
           "x": 0.526,
           "y": 0.447,
           "requiredLevelOffset": 5,
-          "rewardDiamonds": 5
+          "rewardDiamonds": 2
         },
         {
           "giftIndex": 2,
@@ -1402,7 +1402,7 @@
           "x": 0.615,
           "y": 0.148,
           "requiredLevelOffset": 10,
-          "rewardDiamonds": 5
+          "rewardDiamonds": 2
         }
       ]
     },
@@ -1472,7 +1472,7 @@
           "x": 0.406,
           "y": 0.416,
           "requiredLevelOffset": 5,
-          "rewardDiamonds": 5
+          "rewardDiamonds": 2
         },
         {
           "giftIndex": 2,
@@ -1480,7 +1480,7 @@
           "x": 0.5583,
           "y": 0.1331,
           "requiredLevelOffset": 10,
-          "rewardDiamonds": 5
+          "rewardDiamonds": 2
         }
       ]
     },
@@ -1550,7 +1550,7 @@
           "x": 0.406,
           "y": 0.411,
           "requiredLevelOffset": 5,
-          "rewardDiamonds": 5
+          "rewardDiamonds": 2
         },
         {
           "giftIndex": 2,
@@ -1558,7 +1558,7 @@
           "x": 0.5583,
           "y": 0.1331,
           "requiredLevelOffset": 10,
-          "rewardDiamonds": 5
+          "rewardDiamonds": 2
         }
       ]
     },
@@ -1628,7 +1628,7 @@
           "x": 0.426,
           "y": 0.416,
           "requiredLevelOffset": 5,
-          "rewardDiamonds": 5
+          "rewardDiamonds": 2
         },
         {
           "giftIndex": 2,
@@ -1636,7 +1636,7 @@
           "x": 0.5583,
           "y": 0.1331,
           "requiredLevelOffset": 10,
-          "rewardDiamonds": 5
+          "rewardDiamonds": 2
         }
       ]
     },
@@ -1706,7 +1706,7 @@
           "x": 0.406,
           "y": 0.4,
           "requiredLevelOffset": 5,
-          "rewardDiamonds": 5
+          "rewardDiamonds": 2
         },
         {
           "giftIndex": 2,
@@ -1714,7 +1714,7 @@
           "x": 0.495,
           "y": 0.13,
           "requiredLevelOffset": 10,
-          "rewardDiamonds": 5
+          "rewardDiamonds": 2
         }
       ]
     },
@@ -1784,7 +1784,7 @@
           "x": 0.706,
           "y": 0.441,
           "requiredLevelOffset": 5,
-          "rewardDiamonds": 5
+          "rewardDiamonds": 2
         },
         {
           "giftIndex": 2,
@@ -1792,7 +1792,7 @@
           "x": 0.615,
           "y": 0.18,
           "requiredLevelOffset": 10,
-          "rewardDiamonds": 5
+          "rewardDiamonds": 2
         }
       ]
     },
@@ -1862,7 +1862,7 @@
           "x": 0.41,
           "y": 0.406,
           "requiredLevelOffset": 5,
-          "rewardDiamonds": 5
+          "rewardDiamonds": 2
         },
         {
           "giftIndex": 2,
@@ -1870,7 +1870,7 @@
           "x": 0.5583,
           "y": 0.1331,
           "requiredLevelOffset": 10,
-          "rewardDiamonds": 5
+          "rewardDiamonds": 2
         }
       ]
     },
@@ -1940,7 +1940,7 @@
           "x": 0.608,
           "y": 0.455,
           "requiredLevelOffset": 5,
-          "rewardDiamonds": 5
+          "rewardDiamonds": 2
         },
         {
           "giftIndex": 2,
@@ -1948,7 +1948,7 @@
           "x": 0.57,
           "y": 0.195,
           "requiredLevelOffset": 10,
-          "rewardDiamonds": 5
+          "rewardDiamonds": 2
         }
       ]
     },
@@ -2018,7 +2018,7 @@
           "x": 0.412,
           "y": 0.412,
           "requiredLevelOffset": 5,
-          "rewardDiamonds": 5
+          "rewardDiamonds": 2
         },
         {
           "giftIndex": 2,
@@ -2026,7 +2026,7 @@
           "x": 0.5583,
           "y": 0.1331,
           "requiredLevelOffset": 10,
-          "rewardDiamonds": 5
+          "rewardDiamonds": 2
         }
       ]
     },
@@ -2096,7 +2096,7 @@
           "x": 0.428,
           "y": 0.405,
           "requiredLevelOffset": 5,
-          "rewardDiamonds": 5
+          "rewardDiamonds": 2
         },
         {
           "giftIndex": 2,
@@ -2104,7 +2104,7 @@
           "x": 0.5583,
           "y": 0.1331,
           "requiredLevelOffset": 10,
-          "rewardDiamonds": 5
+          "rewardDiamonds": 2
         }
       ]
     },
@@ -2174,7 +2174,7 @@
           "x": 0.637,
           "y": 0.472,
           "requiredLevelOffset": 5,
-          "rewardDiamonds": 5
+          "rewardDiamonds": 2
         },
         {
           "giftIndex": 2,
@@ -2182,7 +2182,7 @@
           "x": 0.515,
           "y": 0.165,
           "requiredLevelOffset": 10,
-          "rewardDiamonds": 5
+          "rewardDiamonds": 2
         }
       ]
     },
@@ -2252,7 +2252,7 @@
           "x": 0.404,
           "y": 0.416,
           "requiredLevelOffset": 5,
-          "rewardDiamonds": 5
+          "rewardDiamonds": 2
         },
         {
           "giftIndex": 2,
@@ -2260,7 +2260,7 @@
           "x": 0.584,
           "y": 0.127,
           "requiredLevelOffset": 10,
-          "rewardDiamonds": 5
+          "rewardDiamonds": 2
         }
       ]
     },
@@ -2330,7 +2330,7 @@
           "x": 0.415,
           "y": 0.408,
           "requiredLevelOffset": 5,
-          "rewardDiamonds": 5
+          "rewardDiamonds": 2
         },
         {
           "giftIndex": 2,
@@ -2338,7 +2338,7 @@
           "x": 0.47,
           "y": 0.143,
           "requiredLevelOffset": 10,
-          "rewardDiamonds": 5
+          "rewardDiamonds": 2
         }
       ]
     },
@@ -2408,7 +2408,7 @@
           "x": 0.592,
           "y": 0.463,
           "requiredLevelOffset": 5,
-          "rewardDiamonds": 5
+          "rewardDiamonds": 2
         },
         {
           "giftIndex": 2,
@@ -2416,7 +2416,7 @@
           "x": 0.539,
           "y": 0.171,
           "requiredLevelOffset": 10,
-          "rewardDiamonds": 5
+          "rewardDiamonds": 2
         }
       ]
     },
@@ -2486,7 +2486,7 @@
           "x": 0.457,
           "y": 0.422,
           "requiredLevelOffset": 5,
-          "rewardDiamonds": 5
+          "rewardDiamonds": 2
         },
         {
           "giftIndex": 2,
@@ -2494,7 +2494,7 @@
           "x": 0.628,
           "y": 0.116,
           "requiredLevelOffset": 10,
-          "rewardDiamonds": 5
+          "rewardDiamonds": 2
         }
       ]
     },
@@ -2564,7 +2564,7 @@
           "x": 0.635,
           "y": 0.58,
           "requiredLevelOffset": 5,
-          "rewardDiamonds": 5
+          "rewardDiamonds": 2
         },
         {
           "giftIndex": 2,
@@ -2572,7 +2572,7 @@
           "x": 0.424,
           "y": 0.17,
           "requiredLevelOffset": 10,
-          "rewardDiamonds": 5
+          "rewardDiamonds": 2
         }
       ]
     },
@@ -2642,7 +2642,7 @@
           "x": 0.437,
           "y": 0.41,
           "requiredLevelOffset": 5,
-          "rewardDiamonds": 5
+          "rewardDiamonds": 2
         },
         {
           "giftIndex": 2,
@@ -2650,7 +2650,7 @@
           "x": 0.606,
           "y": 0.115,
           "requiredLevelOffset": 10,
-          "rewardDiamonds": 5
+          "rewardDiamonds": 2
         }
       ]
     },
@@ -2720,7 +2720,7 @@
           "x": 0.419,
           "y": 0.413,
           "requiredLevelOffset": 5,
-          "rewardDiamonds": 5
+          "rewardDiamonds": 2
         },
         {
           "giftIndex": 2,
@@ -2728,7 +2728,7 @@
           "x": 0.599,
           "y": 0.121,
           "requiredLevelOffset": 10,
-          "rewardDiamonds": 5
+          "rewardDiamonds": 2
         }
       ]
     },
@@ -2798,7 +2798,7 @@
           "x": 0.63,
           "y": 0.471,
           "requiredLevelOffset": 5,
-          "rewardDiamonds": 5
+          "rewardDiamonds": 2
         },
         {
           "giftIndex": 2,
@@ -2806,7 +2806,7 @@
           "x": 0.468,
           "y": 0.158,
           "requiredLevelOffset": 10,
-          "rewardDiamonds": 5
+          "rewardDiamonds": 2
         }
       ]
     },
@@ -2876,7 +2876,7 @@
           "x": 0.384,
           "y": 0.403,
           "requiredLevelOffset": 5,
-          "rewardDiamonds": 5
+          "rewardDiamonds": 2
         },
         {
           "giftIndex": 2,
@@ -2884,7 +2884,7 @@
           "x": 0.617,
           "y": 0.12,
           "requiredLevelOffset": 10,
-          "rewardDiamonds": 5
+          "rewardDiamonds": 2
         }
       ]
     },
@@ -2954,7 +2954,7 @@
           "x": 0.217,
           "y": 0.502,
           "requiredLevelOffset": 5,
-          "rewardDiamonds": 5
+          "rewardDiamonds": 2
         },
         {
           "giftIndex": 2,
@@ -2962,7 +2962,7 @@
           "x": 0.504,
           "y": 0.162,
           "requiredLevelOffset": 10,
-          "rewardDiamonds": 5
+          "rewardDiamonds": 2
         }
       ]
     },
@@ -3032,7 +3032,7 @@
           "x": 0.424,
           "y": 0.415,
           "requiredLevelOffset": 5,
-          "rewardDiamonds": 5
+          "rewardDiamonds": 2
         },
         {
           "giftIndex": 2,
@@ -3040,7 +3040,7 @@
           "x": 0.628,
           "y": 0.118,
           "requiredLevelOffset": 10,
-          "rewardDiamonds": 5
+          "rewardDiamonds": 2
         }
       ]
     },
@@ -3110,7 +3110,7 @@
           "x": 0.615,
           "y": 0.468,
           "requiredLevelOffset": 5,
-          "rewardDiamonds": 5
+          "rewardDiamonds": 2
         },
         {
           "giftIndex": 2,
@@ -3118,7 +3118,7 @@
           "x": 0.465,
           "y": 0.136,
           "requiredLevelOffset": 10,
-          "rewardDiamonds": 5
+          "rewardDiamonds": 2
         }
       ]
     },
@@ -3188,7 +3188,7 @@
           "x": 0.413,
           "y": 0.406,
           "requiredLevelOffset": 5,
-          "rewardDiamonds": 5
+          "rewardDiamonds": 2
         },
         {
           "giftIndex": 2,
@@ -3196,7 +3196,7 @@
           "x": 0.581,
           "y": 0.117,
           "requiredLevelOffset": 10,
-          "rewardDiamonds": 5
+          "rewardDiamonds": 2
         }
       ]
     },
@@ -3266,7 +3266,7 @@
           "x": 0.309,
           "y": 0.457,
           "requiredLevelOffset": 5,
-          "rewardDiamonds": 5
+          "rewardDiamonds": 2
         },
         {
           "giftIndex": 2,
@@ -3274,7 +3274,7 @@
           "x": 0.505,
           "y": 0.151,
           "requiredLevelOffset": 10,
-          "rewardDiamonds": 5
+          "rewardDiamonds": 2
         }
       ]
     },
@@ -3344,7 +3344,7 @@
           "x": 0.646,
           "y": 0.464,
           "requiredLevelOffset": 5,
-          "rewardDiamonds": 5
+          "rewardDiamonds": 2
         },
         {
           "giftIndex": 2,
@@ -3352,7 +3352,7 @@
           "x": 0.484,
           "y": 0.142,
           "requiredLevelOffset": 10,
-          "rewardDiamonds": 5
+          "rewardDiamonds": 2
         }
       ]
     },
@@ -3422,7 +3422,7 @@
           "x": 0.426,
           "y": 0.413,
           "requiredLevelOffset": 5,
-          "rewardDiamonds": 5
+          "rewardDiamonds": 2
         },
         {
           "giftIndex": 2,
@@ -3430,7 +3430,7 @@
           "x": 0.604,
           "y": 0.117,
           "requiredLevelOffset": 10,
-          "rewardDiamonds": 5
+          "rewardDiamonds": 2
         }
       ]
     },
@@ -3500,7 +3500,7 @@
           "x": 0.528,
           "y": 0.433,
           "requiredLevelOffset": 5,
-          "rewardDiamonds": 5
+          "rewardDiamonds": 2
         },
         {
           "giftIndex": 2,
@@ -3508,7 +3508,7 @@
           "x": 0.434,
           "y": 0.106,
           "requiredLevelOffset": 10,
-          "rewardDiamonds": 5
+          "rewardDiamonds": 2
         }
       ]
     },
@@ -3578,7 +3578,7 @@
           "x": 0.39,
           "y": 0.404,
           "requiredLevelOffset": 5,
-          "rewardDiamonds": 5
+          "rewardDiamonds": 2
         },
         {
           "giftIndex": 2,
@@ -3586,7 +3586,7 @@
           "x": 0.688,
           "y": 0.091,
           "requiredLevelOffset": 10,
-          "rewardDiamonds": 5
+          "rewardDiamonds": 2
         }
       ]
     },
@@ -3656,7 +3656,7 @@
           "x": 0.688,
           "y": 0.523,
           "requiredLevelOffset": 5,
-          "rewardDiamonds": 5
+          "rewardDiamonds": 2
         },
         {
           "giftIndex": 2,
@@ -3664,7 +3664,7 @@
           "x": 0.489,
           "y": 0.154,
           "requiredLevelOffset": 10,
-          "rewardDiamonds": 5
+          "rewardDiamonds": 2
         }
       ]
     },
@@ -3734,7 +3734,7 @@
           "x": 0.56,
           "y": 0.481,
           "requiredLevelOffset": 5,
-          "rewardDiamonds": 5
+          "rewardDiamonds": 2
         },
         {
           "giftIndex": 2,
@@ -3742,7 +3742,7 @@
           "x": 0.518,
           "y": 0.158,
           "requiredLevelOffset": 10,
-          "rewardDiamonds": 5
+          "rewardDiamonds": 2
         }
       ]
     },
@@ -3812,7 +3812,7 @@
           "x": 0.552,
           "y": 0.488,
           "requiredLevelOffset": 5,
-          "rewardDiamonds": 5
+          "rewardDiamonds": 2
         },
         {
           "giftIndex": 2,
@@ -3820,7 +3820,7 @@
           "x": 0.494,
           "y": 0.21,
           "requiredLevelOffset": 10,
-          "rewardDiamonds": 5
+          "rewardDiamonds": 2
         }
       ]
     }

@@ -2,10 +2,10 @@
   "level": 35,
   "shots": 20,
   "colors": [
-    "PURPLE",
-    "ORANGE",
     "RED",
-    "BLUE"
+    "BLUE",
+    "PURPLE",
+    "ORANGE"
   ],
   "objective": {
     "type": "CLEAR_ALL",
@@ -18,7 +18,7 @@
   ],
   "rows": [
     "OOOBBRRRO",
-    "ORSBFRRO",
+    "ORSBBRRO",
     "PRRPBPOOB",
     "PPOPOPBB",
     "PPOOPOPSB",

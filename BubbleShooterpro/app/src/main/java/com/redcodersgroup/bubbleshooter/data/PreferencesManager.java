@@ -209,6 +209,14 @@ public class PreferencesManager {
         prefs.edit().putBoolean("world_gift_" + world + "_" + giftIndex, claimed).apply();
     }
 
+    public int getClaimedStarChestsCount() {
+        return prefs.getInt("key_claimed_star_chests_count", 0);
+    }
+
+    public void incrementClaimedStarChestsCount() {
+        prefs.edit().putInt("key_claimed_star_chests_count", getClaimedStarChestsCount() + 1).apply();
+    }
+
     public String getPlayerName() {
         return prefs.getString(KEY_PLAYER_NAME, "Player");
     }

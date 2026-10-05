@@ -2,8 +2,8 @@
   "level": 183,
   "shots": 21,
   "colors": [
-    "YELLOW",
     "GREEN",
+    "YELLOW",
     "PURPLE",
     "ORANGE",
     "CYAN"
@@ -23,7 +23,7 @@
     "YYOYCCGSP",
     "CGGYCGPY",
     "CTGGCGGTY",
-    "CCYYLOOP",
+    "CCYYYOOP",
     "CYYYOOPPP"
   ]
 }

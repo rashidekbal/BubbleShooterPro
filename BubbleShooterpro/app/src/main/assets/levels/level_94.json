@@ -4,7 +4,8 @@
   "colors": [
     "RED",
     "BLUE",
-    "ORANGE"
+    "ORANGE",
+    "CYAN"
   ],
   "objective": {
     "type": "CLEAR_ALL",

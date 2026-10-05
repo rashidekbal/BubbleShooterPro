@@ -37,6 +37,16 @@ const NAME_TO_CODE = {
   "CYAN": "C"
 };
 
+const ALL_PLAYABLE_COLORS = [
+  "RED",
+  "GREEN",
+  "BLUE",
+  "YELLOW",
+  "PURPLE",
+  "ORANGE",
+  "CYAN"
+];
+
 // Preset Patterns Library (14 Distinct Patterns)
 const PRESET_PATTERNS = [
   {
@@ -289,7 +299,7 @@ const appState = {
     mirrorMode: false,
     isMouseDown: false,
     isDirty: false,
-    colors: ['RED', 'GREEN', 'BLUE', 'YELLOW', 'PURPLE', 'ORANGE'],
+    colors: ['RED', 'GREEN', 'BLUE', 'YELLOW', 'PURPLE', 'ORANGE', 'CYAN'],
     objective: { type: 'CLEAR_ALL', target: 0 },
     starThresholds: [2000, 4500, 8000],
     rows: [
@@ -785,7 +795,7 @@ function setupEventListeners() {
   });
 
   // Color Checkbox Changes
-  ["RED", "GREEN", "BLUE", "YELLOW", "PURPLE", "ORANGE"].forEach(c => {
+  ALL_PLAYABLE_COLORS.forEach(c => {
     const el = document.getElementById("chkCol" + c);
     if (el) {
       el.addEventListener('change', () => {
@@ -1449,7 +1459,7 @@ async function loadLevel(levelNum) {
 
   if (data.colors) {
     appState.levelDesigner.colors = data.colors;
-    ["RED", "GREEN", "BLUE", "YELLOW", "PURPLE", "ORANGE"].forEach(c => {
+    ALL_PLAYABLE_COLORS.forEach(c => {
       const el = document.getElementById("chkCol" + c);
       if (el) el.checked = data.colors.includes(c);
     });
@@ -1558,7 +1568,7 @@ function onObjectiveTypeChange() {
 
 function syncColorsFromCheckboxes() {
   const selected = [];
-  ["RED", "GREEN", "BLUE", "YELLOW", "PURPLE", "ORANGE"].forEach(c => {
+  ALL_PLAYABLE_COLORS.forEach(c => {
     const el = document.getElementById("chkCol" + c);
     if (el && el.checked) selected.push(c);
   });
@@ -1585,7 +1595,7 @@ function autoDetectLevelColors(silent = true) {
     found.add("YELLOW");
   }
 
-  ["RED", "GREEN", "BLUE", "YELLOW", "PURPLE", "ORANGE"].forEach(c => {
+  ALL_PLAYABLE_COLORS.forEach(c => {
     const el = document.getElementById("chkCol" + c);
     if (el) el.checked = found.has(c);
   });
@@ -2742,8 +2752,8 @@ async function handleCreateNewWorld() {
   // Auto-generate Level Files if checked
   if (chkAutoGenerateLevels.checked) {
     const generatedLevelsList = [];
-    const allColors = ["RED", "GREEN", "BLUE", "YELLOW", "PURPLE", "ORANGE"];
-    const activeColorPalette = allColors.slice(0, Math.min(6, Math.max(3, colorVariety)));
+    const allColors = [...ALL_PLAYABLE_COLORS];
+    const activeColorPalette = allColors.slice(0, Math.min(allColors.length, Math.max(3, colorVariety)));
 
     for (let i = 0; i < levelsCount; i++) {
       const lvl = startLevelNum + i;
@@ -2890,7 +2900,7 @@ async function handleCreateNewLevel() {
   const template = selectNewLevelTemplate.value;
 
   let rows = [];
-  let colors = ["RED", "GREEN", "BLUE", "YELLOW", "PURPLE", "ORANGE"];
+  let colors = [...ALL_PLAYABLE_COLORS];
 
   if (template === "clone") {
     rows = [...appState.levelDesigner.rows];

@@ -2,10 +2,10 @@
   "level": 41,
   "shots": 18,
   "colors": [
-    "PURPLE",
-    "ORANGE",
     "RED",
-    "BLUE"
+    "BLUE",
+    "PURPLE",
+    "ORANGE"
   ],
   "objective": {
     "type": "CLEAR_ALL",
@@ -20,7 +20,7 @@
     "ORRRPPOBB",
     "RORBRPBB",
     "OOBBRRPPB",
-    "OBRRLORR",
+    "OBRRRORR",
     "OOBPPPRRO",
     "ORRPOBBR",
     "TTTTTTTTT"

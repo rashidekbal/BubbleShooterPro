@@ -2,9 +2,9 @@
   "level": 307,
   "shots": 24,
   "colors": [
+    "GREEN",
     "BLUE",
     "YELLOW",
-    "GREEN",
     "PURPLE",
     "ORANGE"
   ],
@@ -23,7 +23,7 @@
     "OGGYYBGPP",
     "OGPYBBGP",
     "OGPOBBPGY",
-    "OPOOLGPY",
+    "OPOOOGPY",
     "BBPOGGPPY",
     "OBPYGBBO",
     "BBYYYBBOO"

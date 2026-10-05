@@ -2,8 +2,8 @@
   "level": 102,
   "shots": 20,
   "colors": [
-    "YELLOW",
     "GREEN",
+    "YELLOW",
     "PURPLE",
     "ORANGE"
   ],

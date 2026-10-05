@@ -3,9 +3,9 @@
   "shots": 23,
   "colors": [
     "RED",
+    "GREEN",
     "BLUE",
     "YELLOW",
-    "GREEN",
     "PURPLE"
   ],
   "objective": {
@@ -23,7 +23,7 @@
     "PYGGRBYGB",
     "PGRRBBYG",
     "BBPPPPYGB",
-    "BRB*SRBB",
+    "BRBBSRBB",
     "BRRBRBRBG",
     "RRBRBBGG"
   ]

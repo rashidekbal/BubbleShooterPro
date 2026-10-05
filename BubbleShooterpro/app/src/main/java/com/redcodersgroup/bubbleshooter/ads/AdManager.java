@@ -28,10 +28,8 @@ public class AdManager {
     private static final String TAG = "AdManager";
     private static volatile AdManager instance;
 
-    // Smart Pacing Configuration
-    private static final long INTERSTITIAL_MIN_INTERVAL_MS = 180_000; // 3 minutes between interstitials
-    private static final long REWARDED_GRACE_PERIOD_MS = 300_000;     // 5 minutes no interstitials after rewarded ad
-    private static final int INTERSTITIAL_LEVEL_INTERVAL = 3;         // Every 3 completed levels
+    // Interstitial Configuration: Show strictly every 3 levels without conditions
+    private static final int INTERSTITIAL_LEVEL_INTERVAL = 3;
 
     private Context appContext;
     private InterstitialAd interstitialAd;
@@ -40,8 +38,6 @@ public class AdManager {
     private boolean isInterstitialLoading = false;
     private boolean isRewardedLoading = false;
 
-    private long lastInterstitialTime = 0;
-    private long lastRewardedWatchedTime = 0;
     private int completedLevelsCount = 0;
 
     public interface RewardCallback {
@@ -81,7 +77,7 @@ public class AdManager {
                 return appContext.getString(com.redcodersgroup.bubbleshooter.R.string.admob_banner_unit_id);
             } catch (Exception ignored) {}
         }
-        return "ca-app-pub-1147620738869495/2081302570";
+        return "ca-app-pub-3940256099942544/6300978111";
     }
 
     public String getInterstitialAdUnitId() {
@@ -90,7 +86,7 @@ public class AdManager {
                 return appContext.getString(com.redcodersgroup.bubbleshooter.R.string.admob_interstitial_unit_id);
             } catch (Exception ignored) {}
         }
-        return "ca-app-pub-1147620738869495/1996707949";
+        return "ca-app-pub-3940256099942544/1033173712";
     }
 
     public String getRewardedAdUnitId() {
@@ -99,11 +95,11 @@ public class AdManager {
                 return appContext.getString(com.redcodersgroup.bubbleshooter.R.string.admob_rewarded_unit_id);
             } catch (Exception ignored) {}
         }
-        return "ca-app-pub-1147620738869495/4622871284";
+        return "ca-app-pub-3940256099942544/5224354917";
     }
 
     // -------------------------------------------------------------
-    // INTERSTITIAL ADS (Smart Pacing & Grace Period Protected)
+    // INTERSTITIAL ADS (Triggered strictly every 3 levels)
     // -------------------------------------------------------------
 
     public void preloadInterstitial() {
@@ -130,27 +126,12 @@ public class AdManager {
     }
 
     public boolean canShowInterstitial(int currentLevel) {
-        // Suppress during introductory levels 1-3
-        if (currentLevel <= 3) return false;
-
-        long now = System.currentTimeMillis();
-        // Check 5-min grace period if user recently watched a rewarded ad
-        if ((now - lastRewardedWatchedTime) < REWARDED_GRACE_PERIOD_MS) {
-            Log.d(TAG, "Skipping interstitial: user is in rewarded grace period");
-            return false;
-        }
-
-        // Check time interval
-        if ((now - lastInterstitialTime) < INTERSTITIAL_MIN_INTERVAL_MS) {
-            return false;
-        }
-
         return interstitialAd != null;
     }
 
     public void onLevelCompleted(Activity activity, int currentLevel, @Nullable Runnable onComplete) {
         completedLevelsCount++;
-        if (completedLevelsCount % INTERSTITIAL_LEVEL_INTERVAL == 0 && canShowInterstitial(currentLevel)) {
+        if (completedLevelsCount % INTERSTITIAL_LEVEL_INTERVAL == 0) {
             showInterstitial(activity, onComplete);
         } else {
             if (onComplete != null) onComplete.run();
@@ -168,7 +149,6 @@ public class AdManager {
             @Override
             public void onAdDismissedFullScreenContent() {
                 interstitialAd = null;
-                lastInterstitialTime = System.currentTimeMillis();
                 preloadInterstitial();
                 if (onDismiss != null) onDismiss.run();
             }
@@ -228,7 +208,6 @@ public class AdManager {
             @Override
             public void onAdDismissedFullScreenContent() {
                 rewardedAd = null;
-                lastRewardedWatchedTime = System.currentTimeMillis();
                 preloadRewarded();
                 callback.onAdClosed(didEarnReward[0]);
             }
@@ -243,7 +222,6 @@ public class AdManager {
 
         rewardedAd.show(activity, (RewardItem rewardItem) -> {
             didEarnReward[0] = true;
-            lastRewardedWatchedTime = System.currentTimeMillis();
             callback.onRewardEarned(rewardItem.getAmount(), rewardItem.getType());
         });
     }

@@ -2,11 +2,11 @@
   "level": 370,
   "shots": 24,
   "colors": [
-    "ORANGE",
-    "CYAN",
     "RED",
     "BLUE",
-    "YELLOW"
+    "YELLOW",
+    "ORANGE",
+    "CYAN"
   ],
   "objective": {
     "type": "CLEAR_ALL",
@@ -24,8 +24,8 @@
     "YBCOCBBR",
     "YTBCYCBTR",
     "YRSYYOOO",
-    "RRSRY*ROO",
-    "OOBBFBBB",
+    "RRSRYYROO",
+    "OOBBBBBB",
     "OOOBRRBYB"
   ]
 }

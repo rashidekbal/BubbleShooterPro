@@ -2,15 +2,15 @@
   "level": 53,
   "shots": 19,
   "colors": [
+    "GREEN",
     "BLUE",
     "YELLOW",
-    "GREEN",
     "PURPLE",
     "ORANGE"
   ],
   "objective": {
     "type": "CLEAR_ALL",
-    "target": 0
+    "target": 5000
   },
   "starThresholds": [
     2500,
@@ -22,7 +22,7 @@
     "PPBBBYYB",
     "PPGYOOYYB",
     "GGYOOOGB",
-    "GGYBXPPBY",
+    "GGYBBPPBY",
     "PBBPPPYY",
     "PPPBGGGYY"
   ]

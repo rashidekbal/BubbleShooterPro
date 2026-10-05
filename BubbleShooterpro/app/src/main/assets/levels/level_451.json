@@ -2,9 +2,9 @@
   "level": 451,
   "shots": 24,
   "colors": [
+    "GREEN",
     "BLUE",
     "YELLOW",
-    "GREEN",
     "PURPLE"
   ],
   "objective": {
@@ -18,7 +18,7 @@
   ],
   "rows": [
     "PPPYYPPBB",
-    "PYPYLPBB",
+    "PYPYYPBB",
     "GYYBBPGYB",
     "GYGYBYGY",
     "GPGGYYGYG",

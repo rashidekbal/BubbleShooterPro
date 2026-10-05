@@ -185,6 +185,10 @@ public class GameEngine {
     private int celebratoryTotalBonus = 0;
     private int celebratoryStreak = 0;
 
+    // Consecutive shot color management: never give more than 2 consecutive same color shots (exception for last remaining color)
+    private BubbleColor lastFiredColor = null;
+    private int consecutiveSameColorCount = 0;
+
     public GameEngine(Context context) {
         this.context = context.getApplicationContext();
         this.soundManager = SoundManager.getInstance(context);
@@ -307,18 +311,12 @@ public class GameEngine {
 
                 BubbleType bType = BubbleType.NORMAL;
                 BubbleColor bColor;
-                if (ch == 'X' || ch == 'x') {
-                    bType = BubbleType.BOMB;
-                    bColor = BubbleColor.BOMB;
-                } else if (ch == '*') {
-                    bType = BubbleType.RAINBOW;
-                    bColor = BubbleColor.RAINBOW;
-                } else if (ch == 'L' || ch == 'l') {
-                    bType = BubbleType.LIGHTNING;
-                    bColor = BubbleColor.LIGHTNING;
-                } else if (ch == 'F' || ch == 'f') {
-                    bType = BubbleType.FIREBALL;
-                    bColor = BubbleColor.FIREBALL;
+                if (ch == 'X' || ch == 'x' || ch == '*' || ch == 'L' || ch == 'l' || ch == 'F' || ch == 'f') {
+                    List<BubbleColor> avail = (level != null && level.getAvailableColors() != null && !level.getAvailableColors().isEmpty())
+                            ? level.getAvailableColors()
+                            : BubbleColor.getPlayableColors();
+                    bColor = avail.get((r + c) % avail.size());
+                    bType = BubbleType.NORMAL;
                 } else if (ch == 'S' || ch == 's') {
                     bType = BubbleType.STONE;
                     bColor = BubbleColor.STONE;
@@ -337,6 +335,8 @@ public class GameEngine {
         }
 
         // Initialize launcher bubbles with random colors from available active colors
+        this.lastFiredColor = null;
+        this.consecutiveSameColorCount = 0;
         BubbleColor firstColor = pickRandomLauncherColor(null);
         this.currentBubble = new Bubble(firstColor, BubbleType.NORMAL, null);
         this.currentBubble.setX(launcherX);
@@ -346,7 +346,7 @@ public class GameEngine {
         this.currentBubble.setAlpha(1.0f);
 
         if (isEndlessMode || shotsRemaining > 1) {
-            BubbleColor secondColor = pickRandomLauncherColor(firstColor);
+            BubbleColor secondColor = pickRandomLauncherColor(null);
             this.nextBubble = new Bubble(secondColor, BubbleType.NORMAL, null);
             this.nextBubble.setX(previewX);
             this.nextBubble.setY(previewY);
@@ -417,6 +417,8 @@ public class GameEngine {
         EndlessPatternGenerator.populateInitialBoard(grid, 5, initialActiveColors, random);
 
         // Initialize launcher bubbles
+        this.lastFiredColor = null;
+        this.consecutiveSameColorCount = 0;
         BubbleColor firstColor = pickRandomLauncherColor(null);
         this.currentBubble = new Bubble(firstColor, BubbleType.NORMAL, null);
         this.currentBubble.setX(launcherX);
@@ -425,7 +427,7 @@ public class GameEngine {
         this.currentBubble.setScale(1.0f);
         this.currentBubble.setAlpha(1.0f);
 
-        BubbleColor secondColor = pickRandomLauncherColor(firstColor);
+        BubbleColor secondColor = pickRandomLauncherColor(null);
         this.nextBubble = new Bubble(secondColor, BubbleType.NORMAL, null);
         this.nextBubble.setX(previewX);
         this.nextBubble.setY(previewY);
@@ -466,56 +468,108 @@ public class GameEngine {
     }
 
     private BubbleColor pickRandomColor() {
-        return pickRandomLauncherColor(currentBubble != null ? currentBubble.getColor() : null);
+        return pickRandomLauncherColor(null);
     }
 
-    public Set<BubbleColor> getRequiredColors(BubbleColor launcherColor) {
-        Set<BubbleColor> requiredColors = new LinkedHashSet<>();
+    public List<BubbleColor> getCandidateLauncherColors() {
+        Set<BubbleColor> boardColors = new LinkedHashSet<>();
+        List<BubbleColor> levelColors = (currentLevel != null && currentLevel.getAvailableColors() != null && !currentLevel.getAvailableColors().isEmpty())
+                ? currentLevel.getAvailableColors()
+                : null;
 
-        // 1. Collect all distinct normal bubble colors on the board grid
         for (Bubble b : grid.getAllBubbles()) {
             if (b != null && !b.isPopping() && !b.isFalling()
                     && b.getType() == BubbleType.NORMAL
-                    && b.getColor() != null && b.getColor() != BubbleColor.NONE) {
-                requiredColors.add(b.getColor());
+                    && b.getColor() != null
+                    && BubbleColor.getPlayableColors().contains(b.getColor())) {
+                if (levelColors == null || levelColors.contains(b.getColor())) {
+                    boardColors.add(b.getColor());
+                }
             }
         }
 
-        // 2. If launcher has a color, include it as well (up to that color count)
-        if (launcherColor != null && launcherColor != BubbleColor.NONE) {
-            requiredColors.add(launcherColor);
+        if (!boardColors.isEmpty()) {
+            return new ArrayList<>(boardColors);
         }
 
+        // Fallback if no normal playable bubbles remain on the board (or endless mode before spawn)
+        if (isEndlessMode) {
+            List<BubbleColor> active = EndlessPatternGenerator.getActiveColors(endlessWaveCount, endlessColorsPool);
+            if (!active.isEmpty()) return new ArrayList<>(active);
+        }
+        if (levelColors != null) {
+            List<BubbleColor> validLevelColors = new ArrayList<>();
+            for (BubbleColor c : levelColors) {
+                if (c != null && BubbleColor.getPlayableColors().contains(c)) {
+                    validLevelColors.add(c);
+                }
+            }
+            if (!validLevelColors.isEmpty()) {
+                return validLevelColors;
+            }
+        }
+        return new ArrayList<>(BubbleColor.getPlayableColors());
+    }
+
+    public Set<BubbleColor> getRequiredColors(BubbleColor launcherColor) {
+        Set<BubbleColor> requiredColors = new LinkedHashSet<>(getCandidateLauncherColors());
+        if (launcherColor != null && launcherColor != BubbleColor.NONE && BubbleColor.getPlayableColors().contains(launcherColor)) {
+            requiredColors.add(launcherColor);
+        }
         return requiredColors;
     }
 
-    private BubbleColor pickRandomLauncherColor(BubbleColor avoidColorIfPossible) {
-        Set<BubbleColor> requiredSet = getRequiredColors(avoidColorIfPossible);
-
-        // Pick purely at random from required colors on the board
-        if (!requiredSet.isEmpty()) {
-            List<BubbleColor> requiredColors = new ArrayList<>(requiredSet);
-            return requiredColors.get(random.nextInt(requiredColors.size()));
+    public BubbleColor pickRandomLauncherColor(BubbleColor avoidColorIfPossible) {
+        List<BubbleColor> candidates = getCandidateLauncherColors();
+        if (candidates.isEmpty()) {
+            return BubbleColor.RED;
         }
 
-        // Fallback if no bubbles are present on the board or in launcher
-        if (isEndlessMode) {
-            List<BubbleColor> active = EndlessPatternGenerator.getActiveColors(endlessWaveCount, endlessColorsPool);
-            return !active.isEmpty() ? active.get(random.nextInt(active.size())) : BubbleColor.RED;
+        // Exception for last remaining color: if only 1 color is left on board / available, always use it
+        if (candidates.size() <= 1) {
+            return candidates.get(0);
         }
-        if (currentLevel != null && !currentLevel.getAvailableColors().isEmpty()) {
-            List<BubbleColor> available = currentLevel.getAvailableColors();
-            return available.get(random.nextInt(available.size()));
+
+        // When >1 colors exist, avoid avoidColorIfPossible if present to enforce the max-2 consecutive rule
+        if (avoidColorIfPossible != null && candidates.contains(avoidColorIfPossible)) {
+            List<BubbleColor> filtered = new ArrayList<>(candidates);
+            filtered.remove(avoidColorIfPossible);
+            if (!filtered.isEmpty()) {
+                return filtered.get(random.nextInt(filtered.size()));
+            }
         }
-        return BubbleColor.RED;
+
+        return candidates.get(random.nextInt(candidates.size()));
     }
 
-    private void sanitizeNextBubble() {
-        if (nextBubble == null || nextBubble.getType() != BubbleType.NORMAL) return;
-        BubbleColor currColor = currentBubble != null ? currentBubble.getColor() : null;
-        Set<BubbleColor> required = getRequiredColors(currColor);
-        if (!required.isEmpty() && !required.contains(nextBubble.getColor())) {
-            nextBubble.setColor(pickRandomLauncherColor(currColor));
+    private void sanitizeLauncherBubbles() {
+        List<BubbleColor> candidates = getCandidateLauncherColors();
+        if (candidates.isEmpty()) return;
+
+        // 1. Sanitize currentBubble:
+        // If currentBubble is a normal bubble and its color is no longer on the board / in candidates,
+        // reassign it to a valid candidate so the player is never stuck with an unnecessary shot!
+        if (currentBubble != null && currentBubble.getType() == BubbleType.NORMAL) {
+            if (!candidates.contains(currentBubble.getColor())) {
+                currentBubble.setColor(candidates.get(random.nextInt(candidates.size())));
+            }
+        }
+
+        // 2. Sanitize nextBubble:
+        if (nextBubble != null && nextBubble.getType() == BubbleType.NORMAL) {
+            BubbleColor avoidColor = null;
+            if (lastFiredColor != null && currentBubble != null
+                    && currentBubble.getType() == BubbleType.NORMAL
+                    && currentBubble.getColor() == lastFiredColor) {
+                avoidColor = lastFiredColor;
+            }
+
+            boolean isInvalidColor = !candidates.contains(nextBubble.getColor());
+            boolean violatesConsecutive = (avoidColor != null && candidates.size() > 1 && nextBubble.getColor() == avoidColor);
+
+            if (isInvalidColor || violatesConsecutive) {
+                nextBubble.setColor(pickRandomLauncherColor(avoidColor));
+            }
         }
     }
 
@@ -607,7 +661,13 @@ public class GameEngine {
         isBoosterEquipping = false;
 
         currentBubble.setType(BubbleType.NORMAL);
-        BubbleColor color = pickRandomLauncherColor(nextBubble != null ? nextBubble.getColor() : null);
+        BubbleColor avoidColor = null;
+        if (lastFiredColor != null && nextBubble != null
+                && nextBubble.getType() == BubbleType.NORMAL
+                && nextBubble.getColor() == lastFiredColor) {
+            avoidColor = lastFiredColor;
+        }
+        BubbleColor color = pickRandomLauncherColor(avoidColor);
         currentBubble.setColor(color);
         soundManager.playClick();
         updateTrajectory();
@@ -856,6 +916,10 @@ public class GameEngine {
             }
         }
 
+        BubbleColor firedShotColor = (currentBubble != null && currentBubble.getType() == BubbleType.NORMAL
+                && currentBubble.getColor() != null
+                && BubbleColor.getPlayableColors().contains(currentBubble.getColor())) ? currentBubble.getColor() : null;
+
         state = GameState.SHOOTING;
         fireballPoppedPositions.clear();
         activeProjectile = new BubbleProjectile(currentBubble.getColor(), currentBubble.getType(), bubbleRadius);
@@ -875,11 +939,30 @@ public class GameEngine {
             currentBubble.setScale(0.75f);
             currentBubble.setAlpha(1.0f);
 
+            // Update shot color history
+            if (firedShotColor != null) {
+                if (firedShotColor == lastFiredColor) {
+                    consecutiveSameColorCount++;
+                } else {
+                    lastFiredColor = firedShotColor;
+                    consecutiveSameColorCount = 1;
+                }
+            } else {
+                lastFiredColor = null;
+                consecutiveSameColorCount = 0;
+            }
+
             // Reserve check: (shotsRemaining - 2) > 0 because this shot (1) is in flight,
             // currentBubble holds 1, leaving (shotsRemaining - 2) in reserve for nextBubble refill
             if (isEndlessMode || (shotsRemaining - 2) > 0) {
-                // 2. Pick a new random nextBubble and prepare it to pop into the preview position
-                nextBubble.setColor(pickRandomLauncherColor(currentBubble.getColor()));
+                // 2. Pick a new random nextBubble: avoid same color if currentBubble has already matched lastFiredColor
+                BubbleColor avoidColor = null;
+                if (lastFiredColor != null && currentBubble != null
+                        && currentBubble.getType() == BubbleType.NORMAL
+                        && currentBubble.getColor() == lastFiredColor) {
+                    avoidColor = lastFiredColor;
+                }
+                nextBubble.setColor(pickRandomLauncherColor(avoidColor));
                 nextBubble.setType(BubbleType.NORMAL);
                 nextBubble.setRadius(bubbleRadius * 0.75f);
                 nextBubble.setX(previewX);
@@ -895,6 +978,17 @@ public class GameEngine {
             isLauncherReloading = true;
             reloadTimer = 0f;
         } else {
+            if (firedShotColor != null) {
+                if (firedShotColor == lastFiredColor) {
+                    consecutiveSameColorCount++;
+                } else {
+                    lastFiredColor = firedShotColor;
+                    consecutiveSameColorCount = 1;
+                }
+            } else {
+                lastFiredColor = null;
+                consecutiveSameColorCount = 0;
+            }
             // Final shot was fired — launcher is now empty
             currentBubble = null;
             isLauncherReloading = false;
@@ -1558,7 +1652,7 @@ public class GameEngine {
                 return;
             }
 
-            sanitizeNextBubble();
+            sanitizeLauncherBubbles();
             state = GameState.READY;
             updateTrajectory();
             return;
@@ -1635,7 +1729,7 @@ public class GameEngine {
             return;
         }
 
-        sanitizeNextBubble();
+        sanitizeLauncherBubbles();
         state = GameState.READY;
         updateTrajectory();
     }
@@ -2117,6 +2211,8 @@ public class GameEngine {
 
         // Re-initialize launcher bubbles if they were removed upon losing
         if (currentBubble == null) {
+            this.lastFiredColor = null;
+            this.consecutiveSameColorCount = 0;
             BubbleColor firstColor = pickRandomLauncherColor(null);
             currentBubble = new Bubble(firstColor, BubbleType.NORMAL, null);
             currentBubble.setX(launcherX);
@@ -2126,7 +2222,7 @@ public class GameEngine {
             currentBubble.setAlpha(1.0f);
         }
         if (nextBubble == null && shotsRemaining > 1) {
-            BubbleColor secondColor = pickRandomLauncherColor(currentBubble.getColor());
+            BubbleColor secondColor = pickRandomLauncherColor(null);
             nextBubble = new Bubble(secondColor, BubbleType.NORMAL, null);
             nextBubble.setX(previewX);
             nextBubble.setY(previewY);

@@ -29,8 +29,14 @@ import com.redcodersgroup.bubbleshooter.ui.dialogs.ProfileDialog;
 import com.redcodersgroup.bubbleshooter.ui.dialogs.SettingsDialog;
 import com.redcodersgroup.bubbleshooter.ui.dialogs.StarChestDialog;
 import com.redcodersgroup.bubbleshooter.ui.dialogs.StoreDialog;
+import android.animation.ObjectAnimator;
+import android.animation.PropertyValuesHolder;
+import android.animation.ValueAnimator;
+import android.view.animation.AccelerateDecelerateInterpolator;
 import com.redcodersgroup.bubbleshooter.analytics.AnalyticsManager;
+import com.redcodersgroup.bubbleshooter.ui.dialogs.ClaimGiftDialog;
 import com.redcodersgroup.bubbleshooter.ui.dialogs.HeartStoreDialog;
+import com.redcodersgroup.bubbleshooter.ui.dialogs.OutOfHeartsDialog;
 import com.redcodersgroup.bubbleshooter.ui.dialogs.ExitConfirmDialog;
 import androidx.activity.OnBackPressedCallback;
 
@@ -47,6 +53,8 @@ public class MainActivity extends AppCompatActivity {
     private SettingsDialog settingsDialog;
     private ProfileDialog profileDialog;
     private StarChestDialog starChestDialog;
+    private ClaimGiftDialog activeClaimGiftDialog;
+    private ObjectAnimator starChestBadgePulseAnimator;
     private StoreDialog storeDialog;
     private HeartStoreDialog heartStoreDialog;
     private Dialog activePreviewDialog;
@@ -162,8 +170,14 @@ public class MainActivity extends AppCompatActivity {
                 starChestDialog.dismiss();
             }
             int totalStars = repository.getTotalStarsEarned(levelManager.getTotalLevels());
+            int claimedCount = prefs.getClaimedStarChestsCount();
+            int currentStars = Math.max(0, totalStars - (claimedCount * 20));
             int chestTarget = 20;
-            starChestDialog = new StarChestDialog(this, totalStars % chestTarget, chestTarget);
+            starChestDialog = new StarChestDialog(this, currentStars, chestTarget, diamondsEarned -> {
+                updateDiamondsUI();
+                updateStarChestProgressUI();
+                checkAndPromptWorldGift();
+            });
             starChestDialog.show();
         });
 
@@ -188,7 +202,14 @@ public class MainActivity extends AppCompatActivity {
 
         binding.layoutLivesCounter.setOnClickListener(v -> {
             soundManager.playClick();
-            showHeartStoreDialog();
+            if (prefs.getLives() <= 0) {
+                showOutOfHeartsDialog(() -> {
+                    int highest = prefs.getHighestUnlockedLevel();
+                    showLevelPreviewDialog(highest);
+                });
+            } else {
+                showHeartStoreDialog();
+            }
         });
 
         // 7. World Map ViewPager2 setup
@@ -200,17 +221,10 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onWorldGiftClaimed(int worldNumber, int giftIndex, int bonusDiamonds) {
-                soundManager.playBounce();
-                prefs.addDiamonds(bonusDiamonds);
-                AnalyticsManager.getInstance(MainActivity.this).logGiftChestClaimed(worldNumber, giftIndex, bonusDiamonds);
                 updateDiamondsUI();
-                NoticeDialog.showReward(
-                        MainActivity.this,
-                        "REWARD",
-                        "MYSTERY GIFT UNLOCKED",
-                        "+" + bonusDiamonds + " DIAMONDS",
-                        "Bonus diamonds added to your vault."
-                );
+                if (worldMapAdapter != null) {
+                    worldMapAdapter.notifyDataSetChanged();
+                }
             }
         });
         binding.viewPagerWorldMaps.setAdapter(worldMapAdapter);
@@ -249,6 +263,30 @@ public class MainActivity extends AppCompatActivity {
         AnalyticsManager.getInstance(this).logStoreOpened("heart");
         startActivity(com.redcodersgroup.bubbleshooter.ui.ShopActivity.createIntent(this, com.redcodersgroup.bubbleshooter.ui.ShopActivity.TAB_HEARTS));
         overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+    }
+
+    private void showOutOfHeartsDialog(@androidx.annotation.Nullable Runnable onPlayAction) {
+        if (isFinishing() || isDestroyed()) return;
+        OutOfHeartsDialog outOfHeartsDialog = new OutOfHeartsDialog(this, new OutOfHeartsDialog.OutOfHeartsDialogListener() {
+            @Override
+            public void onPlayLevelWithAdReward() {
+                updateLivesUI();
+                if (onPlayAction != null) {
+                    onPlayAction.run();
+                }
+            }
+
+            @Override
+            public void onOpenShop() {
+                showHeartStoreDialog();
+            }
+
+            @Override
+            public void onGoHome() {
+                updateLivesUI();
+            }
+        });
+        outOfHeartsDialog.show();
     }
 
     private void updateDiamondsUI() {
@@ -291,10 +329,9 @@ public class MainActivity extends AppCompatActivity {
         updateDiamondsUI();
         updateLivesUI();
         int currentLevel = prefs.getHighestUnlockedLevel();
-        int totalStars = repository.getTotalStarsEarned(levelManager.getTotalLevels());
 
         binding.tvFloatingLevelNumber.setText(String.valueOf(currentLevel));
-        binding.tvStarChestProgress.setText((totalStars % 20) + "/20");
+        updateStarChestProgressUI();
 
         if (worldMapAdapter != null) {
             worldMapAdapter.notifyDataSetChanged();
@@ -312,14 +349,119 @@ public class MainActivity extends AppCompatActivity {
         } else {
             binding.tvEndlessBestTag.setText("🏆 Best: 0");
         }
+
+        checkAndPromptAvailableGifts();
+    }
+
+    private void updateStarChestProgressUI() {
+        if (binding == null || binding.tvStarChestProgress == null) return;
+        int totalStars = repository.getTotalStarsEarned(levelManager.getTotalLevels());
+        int claimedCount = prefs.getClaimedStarChestsCount();
+        int currentStars = Math.max(0, totalStars - (claimedCount * 20));
+
+        if (currentStars >= 20) {
+            binding.tvStarChestProgress.setText("CLAIM! 🎁");
+            startStarChestBadgePulse();
+        } else {
+            binding.tvStarChestProgress.setText(currentStars + "/20");
+            stopStarChestBadgePulse();
+        }
+    }
+
+    private void startStarChestBadgePulse() {
+        if (binding == null || binding.layoutStarChestBadge == null) return;
+        if (starChestBadgePulseAnimator != null && starChestBadgePulseAnimator.isRunning()) return;
+
+        PropertyValuesHolder pvhX = PropertyValuesHolder.ofFloat(View.SCALE_X, 1.0f, 1.08f);
+        PropertyValuesHolder pvhY = PropertyValuesHolder.ofFloat(View.SCALE_Y, 1.0f, 1.08f);
+        starChestBadgePulseAnimator = ObjectAnimator.ofPropertyValuesHolder(binding.layoutStarChestBadge, pvhX, pvhY);
+        starChestBadgePulseAnimator.setDuration(700);
+        starChestBadgePulseAnimator.setRepeatCount(ValueAnimator.INFINITE);
+        starChestBadgePulseAnimator.setRepeatMode(ValueAnimator.REVERSE);
+        starChestBadgePulseAnimator.setInterpolator(new AccelerateDecelerateInterpolator());
+        starChestBadgePulseAnimator.start();
+    }
+
+    private void stopStarChestBadgePulse() {
+        if (starChestBadgePulseAnimator != null) {
+            starChestBadgePulseAnimator.cancel();
+            starChestBadgePulseAnimator = null;
+        }
+        if (binding != null && binding.layoutStarChestBadge != null) {
+            binding.layoutStarChestBadge.setScaleX(1.0f);
+            binding.layoutStarChestBadge.setScaleY(1.0f);
+        }
+    }
+
+    private void checkAndPromptAvailableGifts() {
+        if (isFinishing() || isDestroyed()) return;
+
+        // 1. Check Sidebar Star Chest
+        int totalStars = repository.getTotalStarsEarned(levelManager.getTotalLevels());
+        int claimedCount = prefs.getClaimedStarChestsCount();
+        int currentStars = Math.max(0, totalStars - (claimedCount * 20));
+        if (currentStars >= 20) {
+            if (starChestDialog != null && starChestDialog.isShowing()) return;
+            binding.getRoot().postDelayed(() -> {
+                if (isFinishing() || isDestroyed()) return;
+                if (starChestDialog != null && starChestDialog.isShowing()) return;
+                starChestDialog = new StarChestDialog(MainActivity.this, currentStars, 20, diamondsEarned -> {
+                    updateDiamondsUI();
+                    updateStarChestProgressUI();
+                    checkAndPromptWorldGift();
+                });
+                starChestDialog.show();
+            }, 350);
+            return;
+        }
+
+        // 2. Check World Level Path Gifts
+        checkAndPromptWorldGift();
+    }
+
+    private void checkAndPromptWorldGift() {
+        if (isFinishing() || isDestroyed()) return;
+        if (activeClaimGiftDialog != null && activeClaimGiftDialog.isShowing()) return;
+
+        int currentLevel = prefs.getHighestUnlockedLevel();
+        int currentWorldIndex = worldConfigManager.getWorldIndexForLevel(currentLevel);
+        WorldModel world = worldConfigManager.getWorldByIndex(currentWorldIndex);
+        if (world != null && world.gifts != null) {
+            for (int i = 0; i < world.gifts.size(); i++) {
+                WorldConfigManager.GiftConfig gift = world.gifts.get(i);
+                final int giftIndex = gift.giftIndex;
+                int requiredLevel = (world.startLevel - 1) + gift.requiredLevelOffset;
+                boolean isUnlocked = currentLevel > requiredLevel;
+                boolean isClaimed = prefs.hasClaimedWorldGift(world.worldNumber, giftIndex);
+
+                if (isUnlocked && !isClaimed) {
+                    final int worldNum = world.worldNumber;
+                    final int bonusDiamonds = (gift.rewardDiamonds > 0) ? gift.rewardDiamonds : 2;
+                    binding.getRoot().postDelayed(() -> {
+                        if (isFinishing() || isDestroyed()) return;
+                        if (activeClaimGiftDialog != null && activeClaimGiftDialog.isShowing()) return;
+                        activeClaimGiftDialog = new ClaimGiftDialog(MainActivity.this, worldNum, giftIndex, bonusDiamonds, (wNum, gIdx, earned) -> {
+                            updateDiamondsUI();
+                            if (worldMapAdapter != null) {
+                                worldMapAdapter.notifyDataSetChanged();
+                            }
+                        });
+                        activeClaimGiftDialog.show();
+                    }, 350);
+                    return;
+                }
+            }
+        }
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        stopStarChestBadgePulse();
         if (settingsDialog != null && settingsDialog.isShowing()) settingsDialog.dismiss();
         if (profileDialog != null && profileDialog.isShowing()) profileDialog.dismiss();
         if (starChestDialog != null && starChestDialog.isShowing()) starChestDialog.dismiss();
+        if (activeClaimGiftDialog != null && activeClaimGiftDialog.isShowing()) activeClaimGiftDialog.dismiss();
         if (storeDialog != null && storeDialog.isShowing()) storeDialog.dismiss();
         if (heartStoreDialog != null && heartStoreDialog.isShowing()) heartStoreDialog.dismiss();
         if (activePreviewDialog != null && activePreviewDialog.isShowing()) activePreviewDialog.dismiss();
@@ -474,7 +616,14 @@ public class MainActivity extends AppCompatActivity {
         previewBinding.btnStartLevel.setOnClickListener(v -> {
             soundManager.playClick();
             if (prefs.getLives() <= 0) {
-                showHeartStoreDialog();
+                showOutOfHeartsDialog(() -> {
+                    if (dialog.isShowing()) {
+                        dialog.dismiss();
+                    }
+                    activePreviewDialog = null;
+                    String boosterExtra = selectedBooster[0] != null ? selectedBooster[0].name() : null;
+                    startActivity(GameActivity.createIntent(MainActivity.this, level, boosterExtra));
+                });
                 return;
             }
             dialog.dismiss();

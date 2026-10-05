@@ -5,7 +5,8 @@
     "RED",
     "GREEN",
     "BLUE",
-    "YELLOW"
+    "YELLOW",
+    "CYAN"
   ],
   "objective": {
     "type": "CLEAR_ALL",
@@ -23,7 +24,7 @@
     "BTYYYGTB",
     "BBGGGYCSB",
     "YYGGCCSY",
-    "YYBRLBBYY",
+    "YYBRRBBYY",
     "BYBBRBBY"
   ]
 }

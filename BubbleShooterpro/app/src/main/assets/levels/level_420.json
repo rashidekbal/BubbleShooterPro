@@ -3,9 +3,9 @@
   "shots": 23,
   "colors": [
     "RED",
+    "GREEN",
     "BLUE",
     "YELLOW",
-    "GREEN",
     "PURPLE"
   ],
   "objective": {
@@ -19,8 +19,8 @@
   ],
   "rows": [
     "RPGGGGBGG",
-    "RRBGFBBG",
-    "RRBB*RSRG",
+    "RRBGGBBG",
+    "RRBBBRSRG",
     "PBYSPRRR",
     "PTRRYPSTY",
     "PPRRGGYY",

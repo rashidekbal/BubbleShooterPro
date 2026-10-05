@@ -2,11 +2,11 @@
   "level": 47,
   "shots": 22,
   "colors": [
-    "PURPLE",
-    "ORANGE",
     "RED",
     "BLUE",
-    "YELLOW"
+    "YELLOW",
+    "PURPLE",
+    "ORANGE"
   ],
   "objective": {
     "type": "CLEAR_ALL",
@@ -22,7 +22,7 @@
     "PORRYYBY",
     "POOPYYBBY",
     "BBRPYRRB",
-    "BBRPLOROO",
+    "BBRPPOROO",
     "BRPOORRO",
     "OOPROOBBO",
     "OORRBBBO"

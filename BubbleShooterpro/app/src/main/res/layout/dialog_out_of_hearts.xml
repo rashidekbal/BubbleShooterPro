@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/rootOutOfHeartsDialog"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center"
+    android:clipChildren="false"
+    android:clipToPadding="false"
+    android:paddingStart="@dimen/dp_16"
+    android:paddingEnd="@dimen/dp_16"
+    android:paddingTop="@dimen/dp_12"
+    android:paddingBottom="@dimen/dp_12">
+
+    <!-- Main Dialog Card Body -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center_horizontal"
+        android:background="@drawable/bg_dialog_frame"
+        android:paddingStart="@dimen/dp_20"
+        android:paddingEnd="@dimen/dp_20"
+        android:paddingTop="@dimen/dp_42"
+        android:paddingBottom="@dimen/dp_22">
+
+        <!-- Inset Content Panel -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:background="@drawable/bg_dialog_inset_panel"
+            android:paddingStart="@dimen/dp_16"
+            android:paddingEnd="@dimen/dp_16"
+            android:paddingTop="@dimen/dp_14"
+            android:paddingBottom="@dimen/dp_14"
+            android:layout_marginTop="@dimen/dp_4"
+            android:layout_marginBottom="@dimen/dp_16">
+
+            <!-- Heart Illustration Container -->
+            <FrameLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/dp_2"
+                android:layout_marginBottom="@dimen/dp_4">
+
+                <ImageView
+                    android:id="@+id/ivOutOfHeartsGlow"
+                    android:layout_width="@dimen/dp_76"
+                    android:layout_height="@dimen/dp_76"
+                    android:layout_gravity="center"
+                    android:src="@drawable/bg_circle_red_glow"
+                    android:alpha="0.65"
+                    android:contentDescription="@null" />
+
+                <ImageView
+                    android:id="@+id/ivOutOfHeartsIcon"
+                    android:layout_width="@dimen/dp_58"
+                    android:layout_height="@dimen/dp_58"
+                    android:layout_gravity="center"
+                    android:src="@drawable/ic_heart_broken"
+                    android:contentDescription="@null" />
+            </FrameLayout>
+
+            <!-- Subtitle Title -->
+            <TextView
+                android:id="@+id/tvOutOfHeartsTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/dp_6"
+                android:text="NO LIVES LEFT!"
+                android:textColor="#EF4444"
+                android:textSize="@dimen/sp_18"
+                android:textStyle="bold"
+                android:gravity="center" />
+
+            <!-- Description -->
+            <TextView
+                android:id="@+id/tvOutOfHeartsDescription"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/dp_4"
+                android:text="Watch a short video to get a free life and play right now, or visit the shop for refills!"
+                android:textColor="#64748B"
+                android:textSize="@dimen/sp_13"
+                android:lineSpacingMultiplier="1.2"
+                android:gravity="center" />
+        </LinearLayout>
+
+        <!-- Primary Watch Ad to Play Button -->
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btnWatchAdToPlay"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/dp_52"
+            android:layout_marginBottom="@dimen/dp_10"
+            android:background="@drawable/btn_pill_blank_green"
+            android:text="🎬 WATCH AD TO PLAY"
+            android:textColor="#FFFFFF"
+            android:textSize="@dimen/sp_16"
+            android:textStyle="bold"
+            android:letterSpacing="0.03"
+            android:shadowColor="#80000000"
+            android:shadowDx="1"
+            android:shadowDy="2"
+            android:shadowRadius="3" />
+
+        <!-- Secondary Actions Row: Shop & Home -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center">
+
+            <!-- Shop Button -->
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btnGoToShop"
+                android:layout_width="0dp"
+                android:layout_height="@dimen/dp_48"
+                android:layout_weight="1"
+                android:layout_marginEnd="@dimen/dp_6"
+                android:background="@drawable/btn_pill_blank_yellow"
+                android:text="🛒 SHOP"
+                android:textColor="#FFFFFF"
+                android:textSize="@dimen/sp_15"
+                android:textStyle="bold"
+                android:letterSpacing="0.03"
+                android:shadowColor="#80000000"
+                android:shadowDx="1"
+                android:shadowDy="2"
+                android:shadowRadius="3" />
+
+            <!-- Home Button -->
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btnGoToHome"
+                android:layout_width="0dp"
+                android:layout_height="@dimen/dp_48"
+                android:layout_weight="1"
+                android:layout_marginStart="@dimen/dp_6"
+                android:background="@drawable/btn_pill_blank_rose"
+                android:text="🏠 HOME"
+                android:textColor="#FFFFFF"
+                android:textSize="@dimen/sp_15"
+                android:textStyle="bold"
+                android:letterSpacing="0.03"
+                android:shadowColor="#80000000"
+                android:shadowDx="1"
+                android:shadowDy="2"
+                android:shadowRadius="3" />
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <!-- Top Curved Header Plaque ("OUT OF HEARTS") -->
+    <LinearLayout
+        android:layout_width="@dimen/dp_210"
+        android:layout_height="@dimen/dp_46"
+        android:layout_gravity="top|center_horizontal"
+        android:background="@drawable/bg_dialog_header_plaque"
+        android:gravity="center"
+        android:elevation="@dimen/dp_4">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="OUT OF HEARTS"
+            android:textColor="#FFFFFF"
+            android:textSize="@dimen/sp_18"
+            android:textStyle="bold"
+            android:shadowColor="#B0000000"
+            android:shadowDx="1"
+            android:shadowDy="2"
+            android:shadowRadius="4" />
+    </LinearLayout>
+
+    <!-- Top-Right Glossy Red Close Button -->
+    <ImageButton
+        android:id="@+id/btnCloseOutOfHearts"
+        android:layout_width="@dimen/dp_44"
+        android:layout_height="@dimen/dp_44"
+        android:layout_gravity="top|end"
+        android:layout_marginTop="@dimen/dp_2"
+        android:layout_marginEnd="@dimen/dp_4"
+        android:background="@android:color/transparent"
+        android:scaleType="fitCenter"
+        android:src="@drawable/btn_close_red"
+        android:contentDescription="Close"
+        android:elevation="@dimen/dp_6" />
+
+</FrameLayout>

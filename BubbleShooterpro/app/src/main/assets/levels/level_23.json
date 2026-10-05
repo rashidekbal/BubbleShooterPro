@@ -3,9 +3,9 @@
   "shots": 21,
   "colors": [
     "RED",
+    "GREEN",
     "BLUE",
-    "YELLOW",
-    "GREEN"
+    "YELLOW"
   ],
   "objective": {
     "type": "CLEAR_ALL",
@@ -19,7 +19,7 @@
   "rows": [
     "GBBBGRBYY",
     "GBBGRBBY",
-    "GYYGXRBBY",
+    "GYYGGRBBY",
     "RYYGRGGG",
     "RBBBYBBGY",
     "RBGBYBYY",

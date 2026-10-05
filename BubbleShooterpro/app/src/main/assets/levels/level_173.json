@@ -2,11 +2,11 @@
   "level": 173,
   "shots": 20,
   "colors": [
+    "RED",
     "GREEN",
     "PURPLE",
     "ORANGE",
-    "CYAN",
-    "RED"
+    "CYAN"
   ],
   "objective": {
     "type": "CLEAR_ALL",
@@ -22,7 +22,7 @@
     "GGRGRRCC",
     "GGRRGGCGG",
     "OOCOOOOG",
-    "OROCXOPPG",
+    "OROCCOPPG",
     "ORCRRRPG",
     "RRRCROOOO"
   ]

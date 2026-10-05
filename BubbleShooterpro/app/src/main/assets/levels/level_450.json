@@ -2,11 +2,11 @@
   "level": 450,
   "shots": 23,
   "colors": [
+    "RED",
+    "BLUE",
     "PURPLE",
     "ORANGE",
-    "CYAN",
-    "RED",
-    "BLUE"
+    "CYAN"
   ],
   "objective": {
     "type": "CLEAR_ALL",
@@ -19,13 +19,13 @@
   ],
   "rows": [
     "CCCBBBRRR",
-    "PCBSFPPR",
+    "PCBSPPPR",
     "RTPPOCPTR",
     "RRRPOCCO",
     "ROSCOCBOO",
     "OPPCOBOC",
     "OBPPCBSPC",
-    "OBPO*PPC",
+    "OBPOOPPC",
     "BBOOOPPCC"
   ]
 }

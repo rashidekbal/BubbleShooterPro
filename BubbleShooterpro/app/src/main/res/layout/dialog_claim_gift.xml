@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/rootClaimGiftDialog"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center"
+    android:clipChildren="false"
+    android:clipToPadding="false"
+    android:paddingStart="@dimen/dp_16"
+    android:paddingEnd="@dimen/dp_16"
+    android:paddingTop="@dimen/dp_12"
+    android:paddingBottom="@dimen/dp_12">
+
+    <!-- Main Dialog Card Body -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center_horizontal"
+        android:background="@drawable/bg_dialog_frame"
+        android:paddingStart="@dimen/dp_20"
+        android:paddingEnd="@dimen/dp_20"
+        android:paddingTop="@dimen/dp_44"
+        android:paddingBottom="@dimen/dp_24">
+
+        <!-- Glowing Chest Icon Container -->
+        <FrameLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/dp_4"
+            android:layout_marginBottom="@dimen/dp_6">
+
+            <ImageView
+                android:id="@+id/ivGiftChestGlow"
+                android:layout_width="@dimen/dp_88"
+                android:layout_height="@dimen/dp_88"
+                android:layout_gravity="center"
+                android:src="@drawable/bg_circle_gold_glow"
+                android:alpha="0.75"
+                android:contentDescription="@null" />
+
+            <ImageView
+                android:id="@+id/ivGiftChestIcon"
+                android:layout_width="@dimen/dp_70"
+                android:layout_height="@dimen/dp_70"
+                android:layout_gravity="center"
+                android:src="@drawable/ic_star_chest_gold"
+                android:contentDescription="Gift Chest" />
+        </FrameLayout>
+
+        <!-- Inset Content Panel -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:background="@drawable/bg_dialog_inset_panel"
+            android:paddingStart="@dimen/dp_16"
+            android:paddingEnd="@dimen/dp_16"
+            android:paddingTop="@dimen/dp_14"
+            android:paddingBottom="@dimen/dp_14"
+            android:layout_marginBottom="@dimen/dp_16">
+
+            <!-- Category Tag -->
+            <TextView
+                android:id="@+id/tvGiftTag"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="WORLD PATH REWARD"
+                android:textColor="#D97706"
+                android:textSize="@dimen/sp_12"
+                android:textStyle="bold"
+                android:letterSpacing="0.08" />
+
+            <!-- Title -->
+            <TextView
+                android:id="@+id/tvGiftTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/dp_4"
+                android:text="GIFT BOX AVAILABLE!"
+                android:textColor="#1E293B"
+                android:textSize="@dimen/sp_19"
+                android:textStyle="bold"
+                android:gravity="center" />
+
+            <!-- Reward Display Pill -->
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/dp_10"
+                android:layout_marginBottom="@dimen/dp_6"
+                android:background="@drawable/bg_hud_pill"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:paddingStart="@dimen/dp_12"
+                android:paddingEnd="@dimen/dp_14"
+                android:paddingTop="@dimen/dp_4"
+                android:paddingBottom="@dimen/dp_4">
+
+                <ImageView
+                    android:layout_width="@dimen/dp_24"
+                    android:layout_height="@dimen/dp_24"
+                    android:src="@drawable/ic_hud_diamond"
+                    android:contentDescription="Diamonds" />
+
+                <TextView
+                    android:id="@+id/tvGiftRewardAmount"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/dp_6"
+                    android:text="+2 DIAMONDS"
+                    android:textColor="#0284C7"
+                    android:textSize="@dimen/sp_16"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <!-- Description -->
+            <TextView
+                android:id="@+id/tvGiftDescription"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/dp_4"
+                android:text="You cleared this path on the map! Open this gift box to claim your reward."
+                android:textColor="#64748B"
+                android:textSize="@dimen/sp_13"
+                android:lineSpacingMultiplier="1.2"
+                android:gravity="center" />
+        </LinearLayout>
+
+        <!-- Big Glossy Green Claim Button -->
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btnClaimGift"
+            android:layout_width="@dimen/dp_230"
+            android:layout_height="@dimen/dp_54"
+            android:background="@drawable/btn_pill_blank_green"
+            android:text="🎁 CLAIM REWARD"
+            android:textColor="#FFFFFF"
+            android:textSize="@dimen/sp_18"
+            android:textStyle="bold"
+            android:letterSpacing="0.03"
+            android:shadowColor="#80000000"
+            android:shadowDx="1"
+            android:shadowDy="2"
+            android:shadowRadius="3" />
+
+    </LinearLayout>
+
+    <!-- Top Curved Header Plaque ("MYSTERY GIFT") -->
+    <LinearLayout
+        android:layout_width="@dimen/dp_200"
+        android:layout_height="@dimen/dp_46"
+        android:layout_gravity="top|center_horizontal"
+        android:background="@drawable/bg_dialog_header_plaque"
+        android:gravity="center"
+        android:elevation="@dimen/dp_4">
+
+        <TextView
+            android:id="@+id/tvGiftPlaqueTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="MYSTERY GIFT"
+            android:textColor="#FFFFFF"
+            android:textSize="@dimen/sp_18"
+            android:textStyle="bold"
+            android:shadowColor="#B0000000"
+            android:shadowDx="1"
+            android:shadowDy="2"
+            android:shadowRadius="4" />
+    </LinearLayout>
+
+    <!-- Top-Right Glossy Red Close Button -->
+    <ImageButton
+        android:id="@+id/btnCloseClaimGift"
+        android:layout_width="@dimen/dp_44"
+        android:layout_height="@dimen/dp_44"
+        android:layout_gravity="top|end"
+        android:layout_marginTop="@dimen/dp_2"
+        android:layout_marginEnd="@dimen/dp_4"
+        android:background="@android:color/transparent"
+        android:scaleType="fitCenter"
+        android:src="@drawable/btn_close_red"
+        android:contentDescription="Close"
+        android:elevation="@dimen/dp_6" />
+
+</FrameLayout>
