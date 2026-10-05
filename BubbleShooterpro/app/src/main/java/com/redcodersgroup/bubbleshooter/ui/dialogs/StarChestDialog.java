@@ -76,7 +76,7 @@ public class StarChestDialog extends Dialog {
         int currentProgress = Math.max(0, totalStars % 20);
         int needed = 20 - currentProgress;
 
-        binding.tvChestProgress.setText(currentProgress + " / 20 ⭐");
+        binding.tvChestProgress.setText(currentProgress + " / 20");
         if (binding.progressBarStarChest != null) {
             binding.progressBarStarChest.setMax(20);
             binding.progressBarStarChest.setProgress(currentProgress);

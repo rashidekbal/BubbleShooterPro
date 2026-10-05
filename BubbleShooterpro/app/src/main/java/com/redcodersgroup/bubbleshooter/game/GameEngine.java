@@ -2242,6 +2242,84 @@ public class GameEngine {
         updateTrajectory();
     }
 
+    /**
+     * Revives the player in Endless Mode by clearing the bottom-most specified number of rows,
+     * dropping unsupported bubbles, ensuring valid launcher projectiles, and resuming gameplay.
+     */
+    public void reviveEndlessMode(int rowsToClear) {
+        this.state = GameState.READY;
+        this.activeProjectile = null;
+        grid.finishDescent();
+
+        // 1. Identify all occupied rows from bottom to top
+        List<Integer> occupiedRows = grid.getOccupiedRowsFromBottom();
+
+        // 2. Clear up to 'rowsToClear' bottom rows
+        int maxToClear = Math.min(rowsToClear, occupiedRows.size());
+        for (int i = 0; i < maxToClear; i++) {
+            int r = occupiedRows.get(i);
+            int cols = grid.getCols(r);
+            for (int c = 0; c < cols; c++) {
+                Bubble popped = grid.removeBubble(r, c);
+                if (popped != null) {
+                    popped.startPop();
+                    poppingBubbles.add(popped);
+                    int particleColor = (popped.getColor() != null) ? popped.getColor().primaryColor : Color.parseColor("#38BDF8");
+                    confettiSystem.spawnPopParticles(popped.getX(), popped.getY(), particleColor, 12);
+                }
+            }
+        }
+
+        // 3. Drop unsupported floating bubbles (if any were disconnected)
+        List<Bubble> floating = board.findFloatingBubbles();
+        for (Bubble fb : floating) {
+            float vx = (float) ((Math.random() - 0.5) * 450.0);
+            float vy = (float) (-150 - Math.random() * 200.0);
+            fb.startFalling(vx, vy);
+            fallingBubbles.add(fb);
+        }
+
+        // 4. If the board was completely cleared, replenish initial rows
+        if (grid.getBubbleCount() == 0) {
+            List<BubbleColor> activeColors = EndlessPatternGenerator.getActiveColors(endlessWaveCount, endlessColorsPool);
+            EndlessPatternGenerator.populateInitialBoard(grid, 5, activeColors, random);
+        }
+
+        // 5. Re-initialize launcher bubbles if needed
+        if (currentBubble == null) {
+            this.lastFiredColor = null;
+            this.consecutiveSameColorCount = 0;
+            BubbleColor firstColor = pickRandomLauncherColor(null);
+            currentBubble = new Bubble(firstColor, BubbleType.NORMAL, null);
+            currentBubble.setX(launcherX);
+            currentBubble.setY(launcherY);
+            currentBubble.setRadius(bubbleRadius);
+            currentBubble.setScale(1.0f);
+            currentBubble.setAlpha(1.0f);
+        }
+        if (nextBubble == null) {
+            BubbleColor secondColor = pickRandomLauncherColor(null);
+            nextBubble = new Bubble(secondColor, BubbleType.NORMAL, null);
+            nextBubble.setX(previewX);
+            nextBubble.setY(previewY);
+            nextBubble.setRadius(bubbleRadius * 0.75f);
+            nextBubble.setScale(1.0f);
+            nextBubble.setAlpha(1.0f);
+        }
+
+        sanitizeLauncherBubbles();
+        updateTrajectory();
+
+        // 6. Visual celebration burst & sound effects
+        soundManager.playBomb();
+        confettiSystem.spawnCelebrationBurst((boardLeft + boardRight) * 0.5f, boardBottom - bubbleRadius * 3f, 40);
+        floatingTexts.add(new FloatingText("⚡ REVIVED! 5 ROWS CLEARED", (boardLeft + boardRight) * 0.5f, (boardTop + boardBottom) * 0.45f, Color.parseColor("#38BDF8"), 50f, 2.2f));
+
+        if (listener != null) {
+            listener.onShotsUpdated(endlessWaveCount);
+        }
+    }
+
     public int getShotsRemaining() {
         return shotsRemaining;
     }

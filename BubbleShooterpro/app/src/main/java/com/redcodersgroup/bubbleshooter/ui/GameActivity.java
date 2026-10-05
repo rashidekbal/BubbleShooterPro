@@ -1052,19 +1052,18 @@ public class GameActivity extends BaseActivity implements GameEngine.GameEventLi
         int displayBest = Math.max(score, isEndlessMode ? prefs.getEndlessHighScore() : score);
         binding.overlayGameOver.tvGameOverHighScore.setText("BEST: " + String.format(Locale.getDefault(), "%,d", displayBest));
 
-        // Revive Options (Available in Level Mode)
-        if (!isEndlessMode) {
-            binding.overlayGameOver.btnGameOverReviveAd.setVisibility(View.VISIBLE);
-            binding.overlayGameOver.btnGameOverReviveAd.setText("🎬 FREE REVIVE • +5 EXTRA SHOTS");
-            binding.overlayGameOver.btnGameOverReviveAd.setEnabled(true);
-            binding.overlayGameOver.btnGameOverReviveAd.setAlpha(1.0f);
+        // Revive Options (Available in Level Mode and Endless Mode)
+        binding.overlayGameOver.btnGameOverReviveAd.setVisibility(View.VISIBLE);
+        binding.overlayGameOver.btnGameOverReviveAd.setText(isEndlessMode
+                ? "🎬 FREE REVIVE • CLEAR 5 ROWS"
+                : "🎬 FREE REVIVE • +5 EXTRA SHOTS");
+        binding.overlayGameOver.btnGameOverReviveAd.setEnabled(true);
+        binding.overlayGameOver.btnGameOverReviveAd.setAlpha(1.0f);
 
-            binding.overlayGameOver.btnGameOverReviveDiamonds.setVisibility(View.VISIBLE);
-            binding.overlayGameOver.btnGameOverReviveDiamonds.setText("💎 REVIVE (+5 EXTRA SHOTS • " + continueCost + " 💎)");
-        } else {
-            binding.overlayGameOver.btnGameOverReviveAd.setVisibility(View.GONE);
-            binding.overlayGameOver.btnGameOverReviveDiamonds.setVisibility(View.GONE);
-        }
+        binding.overlayGameOver.btnGameOverReviveDiamonds.setVisibility(View.VISIBLE);
+        binding.overlayGameOver.btnGameOverReviveDiamonds.setText(isEndlessMode
+                ? "💎 REVIVE (CLEAR 5 ROWS • " + continueCost + " 💎)"
+                : "💎 REVIVE (+5 EXTRA SHOTS • " + continueCost + " 💎)");
 
         // Attach Touch Feedback to Action Buttons
         attachButtonTouchFeedback(binding.overlayGameOver.btnGameOverHome);
@@ -1082,6 +1081,7 @@ public class GameActivity extends BaseActivity implements GameEngine.GameEventLi
                     matchState = MatchState.PLAYING;
                     Bundle bRevive = new Bundle();
                     bRevive.putInt("level", currentLevelNumber);
+                    bRevive.putBoolean("is_endless", isEndlessMode);
                     AnalyticsManager.getInstance(GameActivity.this).logEvent("rewarded_ad_revive", bRevive);
                     soundManager.playPurchase();
 
@@ -1091,7 +1091,11 @@ public class GameActivity extends BaseActivity implements GameEngine.GameEventLi
                             binding.overlayGameOver.rootGameOverOverlay.setVisibility(View.GONE);
                         }
                         if (gameEngine != null) {
-                            gameEngine.addExtraShots(5);
+                            if (isEndlessMode) {
+                                gameEngine.reviveEndlessMode(5);
+                            } else {
+                                gameEngine.addExtraShots(5);
+                            }
                         }
                         enableImmersiveStickyMode();
                     });
@@ -1105,7 +1109,9 @@ public class GameActivity extends BaseActivity implements GameEngine.GameEventLi
                                 "AD SKIPPED",
                                 "NO REVIVE",
                                 "AD INCOMPLETE",
-                                "Watch the full video to revive with +5 extra shots!"
+                                isEndlessMode
+                                        ? "Watch the full video to revive and clear 5 rows!"
+                                        : "Watch the full video to revive with +5 extra shots!"
                         ));
                     }
                 }
@@ -1124,7 +1130,11 @@ public class GameActivity extends BaseActivity implements GameEngine.GameEventLi
                 }
                 soundManager.playPurchase();
                 if (gameEngine != null) {
-                    gameEngine.addExtraShots(5);
+                    if (isEndlessMode) {
+                        gameEngine.reviveEndlessMode(5);
+                    } else {
+                        gameEngine.addExtraShots(5);
+                    }
                 }
                 enableImmersiveStickyMode();
             } else {
@@ -1199,9 +1209,7 @@ public class GameActivity extends BaseActivity implements GameEngine.GameEventLi
                 })
                 .start();
 
-        if (!isEndlessMode) {
-            startReviveAdPulseAnimation();
-        }
+        startReviveAdPulseAnimation();
     }
 
     private void startReviveAdPulseAnimation() {

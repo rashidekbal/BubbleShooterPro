@@ -203,48 +203,7 @@
                     android:elevation="@dimen/dp_4" />
             </FrameLayout>
 
-            <!-- Pill Tag: STARS -->
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="-8dp"
-                android:background="@drawable/bg_chest_floating_badge"
-                android:orientation="horizontal"
-                android:gravity="center_vertical"
-                android:paddingStart="@dimen/dp_6"
-                android:paddingEnd="@dimen/dp_6"
-                android:paddingTop="@dimen/dp_2"
-                android:paddingBottom="@dimen/dp_2">
-            </LinearLayout>
-        </LinearLayout>
-
-        <!-- 2. Redesigned Endless Mode Button (Positioned Directly Below Quest) -->
-        <LinearLayout
-            android:id="@+id/btnHomeEndlessMode"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/dp_16"
-            android:orientation="vertical"
-            android:gravity="center_horizontal"
-            android:clickable="true"
-            android:focusable="true">
-
-            <!-- Glowing Purple/Cyan Endless Orb -->
-            <FrameLayout
-                android:layout_width="@dimen/dp_50"
-                android:layout_height="@dimen/dp_50"
-                android:background="@drawable/bg_endless_badge">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:text="⚡"
-                    android:textColor="#FDE047"
-                    android:textSize="@dimen/sp_22" />
-            </FrameLayout>
-
-            <!-- Pill Tag: ENDLESS -->
+            <!-- Pill Tag: REWARDS -->
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -260,38 +219,108 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="ENDLESS"
+                    android:text="REWARDS"
                     android:textColor="#FFFFFF"
                     android:textSize="@dimen/sp_10"
                     android:textStyle="bold"
                     android:letterSpacing="0.04" />
             </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
 
-            <!-- Highscore Badge -->
+    <!-- Reimagined Endless Survival Floating Card (Bottom-Left Opposite Level Play Button) -->
+    <LinearLayout
+        android:id="@+id/btnHomeEndlessMode"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="start|bottom"
+        android:layout_marginStart="@dimen/dp_16"
+        android:layout_marginBottom="@dimen/dp_16"
+        android:background="@drawable/bg_endless_survival_card"
+        android:clickable="true"
+        android:focusable="true"
+        android:elevation="@dimen/dp_12"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingStart="@dimen/dp_8"
+        android:paddingEnd="@dimen/dp_14"
+        android:paddingTop="@dimen/dp_8"
+        android:paddingBottom="@dimen/dp_10">
+
+        <!-- Fiery Target Crosshair Rocket Icon -->
+        <ImageView
+            android:layout_width="@dimen/dp_48"
+            android:layout_height="@dimen/dp_48"
+            android:scaleType="fitCenter"
+            android:src="@drawable/ic_endless_survival_rocket"
+            android:contentDescription="Endless Survival Mode" />
+
+        <!-- Info Column: ENDLESS Header + High Score / Survival Tag -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/dp_8"
+            android:orientation="vertical">
+
+            <!-- Title Row: ENDLESS + SURVIVAL pill -->
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="ENDLESS"
+                    android:textColor="#FDE047"
+                    android:textSize="@dimen/sp_13"
+                    android:textStyle="bold"
+                    android:letterSpacing="0.06"
+                    android:shadowColor="#80000000"
+                    android:shadowDx="1"
+                    android:shadowDy="1"
+                    android:shadowRadius="2" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/dp_6"
+                    android:background="@drawable/bg_endless_tag_survival"
+                    android:paddingStart="@dimen/dp_5"
+                    android:paddingEnd="@dimen/dp_5"
+                    android:paddingTop="@dimen/dp_1"
+                    android:paddingBottom="@dimen/dp_1"
+                    android:text="SURVIVAL"
+                    android:textColor="#FFFFFF"
+                    android:textSize="@dimen/sp_8"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <!-- Highscore Tag -->
             <TextView
                 android:id="@+id/tvEndlessBestTag"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/dp_2"
-                android:background="@drawable/bg_endless_score_tag"
-                android:paddingStart="@dimen/dp_6"
-                android:paddingEnd="@dimen/dp_6"
-                android:paddingTop="@dimen/dp_1"
-                android:paddingBottom="@dimen/dp_1"
-                android:text="🏆 0"
-                android:textColor="#67E8F9"
-                android:textSize="@dimen/sp_9"
-                android:textStyle="bold" />
+                android:text="🏆 Best: 0"
+                android:textColor="#38BDF8"
+                android:textSize="@dimen/sp_11"
+                android:textStyle="bold"
+                android:shadowColor="#80000000"
+                android:shadowDx="1"
+                android:shadowDy="1"
+                android:shadowRadius="2" />
         </LinearLayout>
     </LinearLayout>
 
-    <!-- World Title Plaque (Positioned cleanly beneath Top HUD) -->
+    <!-- World Title Plaque (Positioned cleanly above bottom action buttons) -->
     <LinearLayout
         android:id="@+id/layoutWorldSwitcher"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|center_horizontal"
-        android:layout_marginTop="@dimen/dp_98"
+        android:layout_marginBottom="96dp"
         android:background="@drawable/bg_world_header_banner"
         android:gravity="center_vertical"
         android:orientation="horizontal"
@@ -299,9 +328,7 @@
         android:paddingEnd="@dimen/dp_16"
         android:paddingTop="@dimen/dp_6"
         android:paddingBottom="@dimen/dp_8"
-        android:elevation="@dimen/dp_8"
-        android:layout_marginEnd="@dimen/dp_25"
-        android:layout_marginBottom="@dimen/dp_35">
+        android:elevation="@dimen/dp_8">
 
         <TextView
             android:id="@+id/tvCurrentWorldTitle"

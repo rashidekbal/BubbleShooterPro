@@ -178,14 +178,7 @@
                     android:shadowDy="2"
                     android:shadowRadius="3" />
 
-                <!-- Star Icon on the left -->
-                <ImageView
-                    android:layout_width="@dimen/dp_24"
-                    android:layout_height="@dimen/dp_24"
-                    android:layout_gravity="start|center_vertical"
-                    android:layout_marginStart="@dimen/dp_2"
-                    android:src="@drawable/ic_star_filled"
-                    android:contentDescription="Star" />
+
             </FrameLayout>
 
         </LinearLayout>

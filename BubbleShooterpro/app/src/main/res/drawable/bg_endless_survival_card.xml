@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- 1. Ambient Drop Shadow -->
+    <item
+        android:left="0dp"
+        android:right="0dp"
+        android:top="4dp"
+        android:bottom="0dp">
+        <shape android:shape="rectangle">
+            <corners android:radius="18dp" />
+            <solid android:color="#50000000" />
+        </shape>
+    </item>
+
+    <!-- 2. 3D Bevel Rim (Fiery Amber-Gold / Crimson) -->
+    <item
+        android:left="0dp"
+        android:right="0dp"
+        android:top="0dp"
+        android:bottom="3dp">
+        <shape android:shape="rectangle">
+            <corners android:radius="18dp" />
+            <gradient
+                android:angle="270"
+                android:startColor="#FDE047"
+                android:centerColor="#EA580C"
+                android:endColor="#991B1B" />
+            <stroke
+                android:width="2dp"
+                android:color="#FEF08A" />
+        </shape>
+    </item>
+
+    <!-- 3. Inner Card Obsidian Body -->
+    <item
+        android:left="2.5dp"
+        android:right="2.5dp"
+        android:top="2.5dp"
+        android:bottom="5.5dp">
+        <shape android:shape="rectangle">
+            <corners android:radius="16dp" />
+            <gradient
+                android:angle="270"
+                android:startColor="#311042"
+                android:centerColor="#1F082B"
+                android:endColor="#110319" />
+        </shape>
+    </item>
+
+    <!-- 4. Subtle Top Gloss Highlight -->
+    <item
+        android:left="8dp"
+        android:right="8dp"
+        android:top="3.5dp"
+        android:bottom="40dp">
+        <shape android:shape="rectangle">
+            <corners android:radius="14dp" />
+            <gradient
+                android:angle="270"
+                android:startColor="#35FFFFFF"
+                android:endColor="#00FFFFFF" />
+        </shape>
+    </item>
+</layer-list>

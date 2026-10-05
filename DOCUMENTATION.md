@@ -355,10 +355,26 @@ Located in [`com.redcodersgroup.bubbleshooter.audio`](file:///d:/projects/bubble
 - **Single Deduction Guarantee**: When abandoning a match mid-game (e.g. Pause Menu -> Home, Pause Menu -> Restart, Back press, or when Android triggers `onDestroy()` on background dismissal), a strict `hasDeductedLifeForMatch` boolean flag ensures that exactly **one** life is deducted per abandoned match attempt.
 - **Race Condition Prevention**: Prevents duplicate deductions where an explicit navigation event (`onHomeClicked()`) deducted a heart, and the subsequent asynchronous `onDestroy()` lifecycle event deducted another heart due to lingering `PLAYING` match state.
 
-#### Monetization & Ads (`AdManager.java`, `IapBillingManager.java`)
-- **AdMob Rewarded Video**: Watch an ad upon Game Over to receive **+5 Free Extra Shots** and continue playing without losing a life; watch an ad in `ShopActivity` for +1 Heart or +2 Free Diamonds.
+#### Monetization & Dual Revive Mechanics (`AdManager.java`, `GameEngine.java`, `IapBillingManager.java`)
+- **Level Campaign Revive**:
+  - Watch an AdMob Rewarded Video or spend Diamonds (starting at 10 💎, +5 💎 per repeat revive) upon running out of shots to receive **+5 Free Extra Shots** and continue playing without losing a life.
+- **Endless Survival Revive (`reviveEndlessMode`)**:
+  - When the descending bubble ceiling touches the danger deadline line, players can revive via AdMob Rewarded Video or Diamonds.
+  - Upon revive, the engine executes `gameEngine.reviveEndlessMode(5)`:
+    1. Identifies the lowest 5 occupied rows from bottom to top.
+    2. Clears and pops all bubbles across those 5 rows with celebratory pop particles and sound.
+    3. Traverses the board via BFS from row 0 and drops any disconnected floating bubbles.
+    4. Automatically restocks initial waves if the board was completely cleared.
+    5. Sanitizes launcher bubble colors to match surviving board bubbles.
+    6. Displays a dynamic floating accolade: `"⚡ REVIVED! 5 ROWS CLEARED"`.
+- **AdMob Rewarded Video**: Watch an ad in `ShopActivity` for +1 Heart or +2 Free Diamonds.
 - **AdMob Interstitial**: Displayed periodically between level completions.
 - **Google Play Billing**: Integrated via `IapBillingManager` for secure in-app purchases of diamond tiers and energy refills.
+
+#### Endless Mode Home Card (`activity_main.xml`, `MainActivity.java`)
+- Dedicated 3D floating Survival Card pinned to the bottom-left of the home screen (`layout_gravity="start|bottom"`), visually balancing the bottom right Level Play button.
+- Custom artwork: `ic_endless_survival_rocket.png` (fiery target crosshair rocket), `bg_endless_survival_card.xml` (layered obsidian purple and gold rim card), and `bg_endless_tag_survival.xml` (fiery crimson badge).
+- Live high score tracking via `tvEndlessBestTag` and responsive touch bounce animations.
 
 #### Cloud Save (`CloudSaveManager.java`, `PlayGamesAuthManager.java`)
 - Automatic silent sign-in with Google Play Games.

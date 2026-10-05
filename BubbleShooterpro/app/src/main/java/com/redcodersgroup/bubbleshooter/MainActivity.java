@@ -183,7 +183,10 @@ public class MainActivity extends AppCompatActivity {
         // 4. Endless Mode Floating Button
         binding.btnHomeEndlessMode.setOnClickListener(v -> {
             soundManager.playClick();
-            startActivity(GameActivity.createEndlessIntent(this));
+            v.animate().scaleX(0.92f).scaleY(0.92f).setDuration(80).withEndAction(() -> {
+                v.animate().scaleX(1.0f).scaleY(1.0f).setDuration(100).start();
+                startActivity(GameActivity.createEndlessIntent(this));
+            }).start();
         });
 
         // 5. Floating Play Button on Bottom Right

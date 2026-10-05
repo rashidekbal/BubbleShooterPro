@@ -78,6 +78,38 @@ public class BubbleGrid {
         }
     }
 
+    public void finishDescent() {
+        if (isDescending) {
+            isDescending = false;
+            currentDescentOffsetY = 0f;
+            for (int r = 0; r < MAX_ROWS; r++) {
+                int cols = getCols(r);
+                for (int c = 0; c < cols; c++) {
+                    Bubble b = grid[r][c];
+                    if (b != null && !b.isFalling() && !b.isPopping()) {
+                        b.setX(getCenterX(r, c));
+                        b.setY(getCenterY(r));
+                        b.setAlpha(1.0f);
+                    }
+                }
+            }
+        }
+    }
+
+    public List<Integer> getOccupiedRowsFromBottom() {
+        List<Integer> list = new ArrayList<>();
+        for (int r = MAX_ROWS - 1; r >= 0; r--) {
+            int cols = getCols(r);
+            for (int c = 0; c < cols; c++) {
+                if (grid[r][c] != null) {
+                    list.add(r);
+                    break;
+                }
+            }
+        }
+        return list;
+    }
+
     public int getRowParity() {
         return rowParity;
     }

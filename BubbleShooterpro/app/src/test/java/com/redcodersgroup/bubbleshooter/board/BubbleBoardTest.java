@@ -148,4 +148,35 @@ public class BubbleBoardTest {
         assertTrue(matches.contains(new GridPosition(1, 1)));
         assertTrue(matches.contains(new GridPosition(0, 2)));
     }
+
+    @Test
+    public void testOccupiedRowsFromBottomAndClear() {
+        // Place bubbles on rows 0, 2, 4, 6, 8, 10
+        grid.setBubble(0, 0, new Bubble(BubbleColor.RED, new GridPosition(0, 0)));
+        grid.setBubble(2, 0, new Bubble(BubbleColor.BLUE, new GridPosition(2, 0)));
+        grid.setBubble(4, 0, new Bubble(BubbleColor.GREEN, new GridPosition(4, 0)));
+        grid.setBubble(6, 0, new Bubble(BubbleColor.YELLOW, new GridPosition(6, 0)));
+        grid.setBubble(8, 0, new Bubble(BubbleColor.PURPLE, new GridPosition(8, 0)));
+        grid.setBubble(10, 0, new Bubble(BubbleColor.CYAN, new GridPosition(10, 0)));
+
+        List<Integer> occupied = grid.getOccupiedRowsFromBottom();
+        assertEquals(6, occupied.size());
+        assertEquals(Integer.valueOf(10), occupied.get(0));
+        assertEquals(Integer.valueOf(8), occupied.get(1));
+        assertEquals(Integer.valueOf(6), occupied.get(2));
+        assertEquals(Integer.valueOf(4), occupied.get(3));
+        assertEquals(Integer.valueOf(2), occupied.get(4));
+        assertEquals(Integer.valueOf(0), occupied.get(5));
+
+        // Clear 5 rows from bottom (10, 8, 6, 4, 2)
+        int toClear = Math.min(5, occupied.size());
+        for (int i = 0; i < toClear; i++) {
+            int r = occupied.get(i);
+            grid.removeBubble(r, 0);
+        }
+
+        List<Integer> remaining = grid.getOccupiedRowsFromBottom();
+        assertEquals(1, remaining.size());
+        assertEquals(Integer.valueOf(0), remaining.get(0));
+    }
 }
