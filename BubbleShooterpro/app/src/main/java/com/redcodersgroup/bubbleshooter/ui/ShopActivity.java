@@ -296,7 +296,7 @@ public class ShopActivity extends BaseActivity {
             card3.setAlpha(1.0f);
 
             tvInventory.setText(
-                    android.text.Html.fromHtml(desc + " • In bag: <b>" + count + "</b>", android.text.Html.FROM_HTML_MODE_LEGACY)
+                    android.text.Html.fromHtml(desc + " • Owned: <b>" + count + "</b>", android.text.Html.FROM_HTML_MODE_LEGACY)
             );
             tvInventory.setTextColor(Color.parseColor("#64748B"));
 

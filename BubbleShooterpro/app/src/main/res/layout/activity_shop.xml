@@ -335,7 +335,7 @@
                             android:paddingEnd="@dimen/dp_8"
                             android:paddingTop="@dimen/dp_2"
                             android:paddingBottom="@dimen/dp_2"
-                            android:text="FREE REWARD"
+                            android:text="FREE"
                             android:textColor="#FFFFFF"
                             android:textSize="@dimen/sp_10"
                             android:textStyle="bold" />
@@ -351,7 +351,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="+1 Free Life"
+                            android:text="1 Heart"
                             android:textColor="#1E293B"
                             android:textSize="@dimen/sp_14"
                             android:textStyle="bold"
@@ -407,13 +407,12 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:background="@drawable/bg_store_badge_blue"
+                            android:visibility="invisible"
                             android:paddingStart="@dimen/dp_8"
                             android:paddingEnd="@dimen/dp_8"
                             android:paddingTop="@dimen/dp_2"
                             android:paddingBottom="@dimen/dp_2"
-                            android:text="INSTANT"
-                            android:textColor="#FFFFFF"
+                            android:text="1 LIFE"
                             android:textSize="@dimen/sp_10"
                             android:textStyle="bold" />
 
@@ -428,7 +427,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="+1 Heart"
+                            android:text="1 Heart"
                             android:textColor="#1E293B"
                             android:textSize="@dimen/sp_14"
                             android:textStyle="bold"
@@ -440,7 +439,7 @@
                             android:layout_weight="1"
                             android:layout_marginTop="@dimen/dp_2"
                             android:layout_marginBottom="@dimen/dp_8"
-                            android:text="Quick energy refill"
+                            android:text="+1 Life"
                             android:textColor="#64748B"
                             android:textSize="@dimen/sp_11"
                             android:gravity="center"
@@ -496,7 +495,7 @@
                             android:paddingEnd="@dimen/dp_8"
                             android:paddingTop="@dimen/dp_2"
                             android:paddingBottom="@dimen/dp_2"
-                            android:text="POPULAR"
+                            android:text="SAVE 17%"
                             android:textColor="#FFFFFF"
                             android:textSize="@dimen/sp_10"
                             android:textStyle="bold" />
@@ -512,7 +511,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="+3 Hearts"
+                            android:text="3 Hearts"
                             android:textColor="#1E293B"
                             android:textSize="@dimen/sp_14"
                             android:textStyle="bold"
@@ -524,7 +523,7 @@
                             android:layout_weight="1"
                             android:layout_marginTop="@dimen/dp_2"
                             android:layout_marginBottom="@dimen/dp_8"
-                            android:text="Save 17% • 3 Hearts"
+                            android:text="+3 Lives"
                             android:textColor="#D97706"
                             android:textSize="@dimen/sp_11"
                             android:gravity="center"
@@ -601,7 +600,7 @@
                             android:layout_weight="1"
                             android:layout_marginTop="@dimen/dp_2"
                             android:layout_marginBottom="@dimen/dp_8"
-                            android:text="Max Pool 5/5 Hearts"
+                            android:text="Restore 5 lives"
                             android:textColor="#059669"
                             android:textSize="@dimen/sp_11"
                             android:gravity="center"
@@ -1080,14 +1079,14 @@
                     android:shadowRadius="3"
                     android:layout_marginBottom="@dimen/dp_8" />
 
-                <!-- Row 1: Bomb (+1) [Left] + Bomb Pack (+3) [Right] -->
+                <!-- Row 1: Bomb x1 [Left] + Bomb x3 [Right] -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
                     android:layout_marginBottom="@dimen/dp_10">
 
-                    <!-- 1a. Bomb Booster (+1) -->
+                    <!-- 1a. Bomb Booster (x1) -->
                     <LinearLayout
                         android:id="@+id/cardShopBuyBomb1"
                         android:layout_width="0dp"
@@ -1107,13 +1106,12 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:background="@drawable/bg_store_badge_blue"
+                            android:visibility="invisible"
                             android:paddingStart="@dimen/dp_8"
                             android:paddingEnd="@dimen/dp_8"
                             android:paddingTop="@dimen/dp_2"
                             android:paddingBottom="@dimen/dp_2"
-                            android:text="SINGLE"
-                            android:textColor="#FFFFFF"
+                            android:text="x1"
                             android:textSize="@dimen/sp_10"
                             android:textStyle="bold" />
 
@@ -1128,7 +1126,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Bomb (+1)"
+                            android:text="Bomb x1"
                             android:textColor="#1E293B"
                             android:textSize="@dimen/sp_14"
                             android:textStyle="bold"
@@ -1165,7 +1163,7 @@
                             android:shadowRadius="2" />
                     </LinearLayout>
 
-                    <!-- 1b. Bomb Booster Pack (+3) -->
+                    <!-- 1b. Bomb Booster Pack (x3) -->
                     <LinearLayout
                         android:id="@+id/cardShopBuyBomb3"
                         android:layout_width="0dp"
@@ -1190,7 +1188,7 @@
                             android:paddingEnd="@dimen/dp_8"
                             android:paddingTop="@dimen/dp_2"
                             android:paddingBottom="@dimen/dp_2"
-                            android:text="3x VALUE"
+                            android:text="SAVE 5 💎"
                             android:textColor="#FFFFFF"
                             android:textSize="@dimen/sp_10"
                             android:textStyle="bold" />
@@ -1206,7 +1204,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Bomb (+3)"
+                            android:text="Bomb x3"
                             android:textColor="#1E293B"
                             android:textSize="@dimen/sp_14"
                             android:textStyle="bold"
@@ -1218,7 +1216,7 @@
                             android:layout_weight="1"
                             android:layout_marginTop="@dimen/dp_2"
                             android:layout_marginBottom="@dimen/dp_8"
-                            android:text="3x Pack • Save 5💎"
+                            android:text="Bundle pack"
                             android:textColor="#059669"
                             android:textSize="@dimen/sp_11"
                             android:gravity="center"
@@ -1243,14 +1241,14 @@
                     </LinearLayout>
                 </LinearLayout>
 
-                <!-- Row 2: Fireball (+1) [Left] + Fireball Pack (+3) [Right] -->
+                <!-- Row 2: Fireball x1 [Left] + Fireball x3 [Right] -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
                     android:layout_marginBottom="@dimen/dp_10">
 
-                    <!-- 2a. Fireball Booster (+1) -->
+                    <!-- 2a. Fireball Booster (x1) -->
                     <LinearLayout
                         android:id="@+id/cardShopBuyFireball1"
                         android:layout_width="0dp"
@@ -1270,13 +1268,12 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:background="@drawable/bg_store_badge_amber"
+                            android:visibility="invisible"
                             android:paddingStart="@dimen/dp_8"
                             android:paddingEnd="@dimen/dp_8"
                             android:paddingTop="@dimen/dp_2"
                             android:paddingBottom="@dimen/dp_2"
-                            android:text="SINGLE"
-                            android:textColor="#FFFFFF"
+                            android:text="x1"
                             android:textSize="@dimen/sp_10"
                             android:textStyle="bold" />
 
@@ -1291,7 +1288,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Fireball (+1)"
+                            android:text="Fireball x1"
                             android:textColor="#1E293B"
                             android:textSize="@dimen/sp_14"
                             android:textStyle="bold"
@@ -1328,7 +1325,7 @@
                             android:shadowRadius="2" />
                     </LinearLayout>
 
-                    <!-- 2b. Fireball Booster Pack (+3) -->
+                    <!-- 2b. Fireball Booster Pack (x3) -->
                     <LinearLayout
                         android:id="@+id/cardShopBuyFireball3"
                         android:layout_width="0dp"
@@ -1353,7 +1350,7 @@
                             android:paddingEnd="@dimen/dp_8"
                             android:paddingTop="@dimen/dp_2"
                             android:paddingBottom="@dimen/dp_2"
-                            android:text="3x VALUE"
+                            android:text="SAVE 5 💎"
                             android:textColor="#FFFFFF"
                             android:textSize="@dimen/sp_10"
                             android:textStyle="bold" />
@@ -1369,7 +1366,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Fireball (+3)"
+                            android:text="Fireball x3"
                             android:textColor="#1E293B"
                             android:textSize="@dimen/sp_14"
                             android:textStyle="bold"
@@ -1381,7 +1378,7 @@
                             android:layout_weight="1"
                             android:layout_marginTop="@dimen/dp_2"
                             android:layout_marginBottom="@dimen/dp_8"
-                            android:text="3x Pack • Save 5💎"
+                            android:text="Bundle pack"
                             android:textColor="#059669"
                             android:textSize="@dimen/sp_11"
                             android:gravity="center"
@@ -1406,14 +1403,14 @@
                     </LinearLayout>
                 </LinearLayout>
 
-                <!-- Row 3: Rainbow (+1) [Left] + Rainbow Pack (+3) [Right] -->
+                <!-- Row 3: Rainbow x1 [Left] + Rainbow x3 [Right] -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
                     android:layout_marginBottom="@dimen/dp_10">
 
-                    <!-- 3a. Rainbow Booster (+1) -->
+                    <!-- 3a. Rainbow Booster (x1) -->
                     <LinearLayout
                         android:id="@+id/cardShopBuyRainbow1"
                         android:layout_width="0dp"
@@ -1433,13 +1430,12 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:background="@drawable/bg_store_badge_blue"
+                            android:visibility="invisible"
                             android:paddingStart="@dimen/dp_8"
                             android:paddingEnd="@dimen/dp_8"
                             android:paddingTop="@dimen/dp_2"
                             android:paddingBottom="@dimen/dp_2"
-                            android:text="SINGLE"
-                            android:textColor="#FFFFFF"
+                            android:text="x1"
                             android:textSize="@dimen/sp_10"
                             android:textStyle="bold" />
 
@@ -1454,7 +1450,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Rainbow (+1)"
+                            android:text="Rainbow x1"
                             android:textColor="#1E293B"
                             android:textSize="@dimen/sp_14"
                             android:textStyle="bold"
@@ -1491,7 +1487,7 @@
                             android:shadowRadius="2" />
                     </LinearLayout>
 
-                    <!-- 3b. Rainbow Booster Pack (+3) -->
+                    <!-- 3b. Rainbow Booster Pack (x3) -->
                     <LinearLayout
                         android:id="@+id/cardShopBuyRainbow3"
                         android:layout_width="0dp"
@@ -1516,7 +1512,7 @@
                             android:paddingEnd="@dimen/dp_8"
                             android:paddingTop="@dimen/dp_2"
                             android:paddingBottom="@dimen/dp_2"
-                            android:text="3x VALUE"
+                            android:text="SAVE 10 💎"
                             android:textColor="#FFFFFF"
                             android:textSize="@dimen/sp_10"
                             android:textStyle="bold" />
@@ -1532,7 +1528,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Rainbow (+3)"
+                            android:text="Rainbow x3"
                             android:textColor="#1E293B"
                             android:textSize="@dimen/sp_14"
                             android:textStyle="bold"
@@ -1544,7 +1540,7 @@
                             android:layout_weight="1"
                             android:layout_marginTop="@dimen/dp_2"
                             android:layout_marginBottom="@dimen/dp_8"
-                            android:text="3x Pack • Save 10💎"
+                            android:text="Bundle pack"
                             android:textColor="#059669"
                             android:textSize="@dimen/sp_11"
                             android:gravity="center"
@@ -1569,13 +1565,13 @@
                     </LinearLayout>
                 </LinearLayout>
 
-                <!-- Row 4: Lightning (+1) [Left] + Lightning Pack (+3) [Right] -->
+                <!-- Row 4: Lightning x1 [Left] + Lightning x3 [Right] -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">
 
-                    <!-- 4a. Lightning Booster (+1) -->
+                    <!-- 4a. Lightning Booster (x1) -->
                     <LinearLayout
                         android:id="@+id/cardShopBuyLightning1"
                         android:layout_width="0dp"
@@ -1595,13 +1591,12 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:background="@drawable/bg_store_badge_amber"
+                            android:visibility="invisible"
                             android:paddingStart="@dimen/dp_8"
                             android:paddingEnd="@dimen/dp_8"
                             android:paddingTop="@dimen/dp_2"
                             android:paddingBottom="@dimen/dp_2"
-                            android:text="SINGLE"
-                            android:textColor="#FFFFFF"
+                            android:text="x1"
                             android:textSize="@dimen/sp_10"
                             android:textStyle="bold" />
 
@@ -1616,7 +1611,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Lightning (+1)"
+                            android:text="Lightning x1"
                             android:textColor="#1E293B"
                             android:textSize="@dimen/sp_14"
                             android:textStyle="bold"
@@ -1653,7 +1648,7 @@
                             android:shadowRadius="2" />
                     </LinearLayout>
 
-                    <!-- 4b. Lightning Booster Pack (+3) -->
+                    <!-- 4b. Lightning Booster Pack (x3) -->
                     <LinearLayout
                         android:id="@+id/cardShopBuyLightning3"
                         android:layout_width="0dp"
@@ -1678,7 +1673,7 @@
                             android:paddingEnd="@dimen/dp_8"
                             android:paddingTop="@dimen/dp_2"
                             android:paddingBottom="@dimen/dp_2"
-                            android:text="3x VALUE"
+                            android:text="SAVE 15 💎"
                             android:textColor="#FFFFFF"
                             android:textSize="@dimen/sp_10"
                             android:textStyle="bold" />
@@ -1694,7 +1689,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Lightning (+3)"
+                            android:text="Lightning x3"
                             android:textColor="#1E293B"
                             android:textSize="@dimen/sp_14"
                             android:textStyle="bold"
@@ -1706,7 +1701,7 @@
                             android:layout_weight="1"
                             android:layout_marginTop="@dimen/dp_2"
                             android:layout_marginBottom="@dimen/dp_8"
-                            android:text="3x Pack • Save 15💎"
+                            android:text="Bundle pack"
                             android:textColor="#059669"
                             android:textSize="@dimen/sp_11"
                             android:gravity="center"

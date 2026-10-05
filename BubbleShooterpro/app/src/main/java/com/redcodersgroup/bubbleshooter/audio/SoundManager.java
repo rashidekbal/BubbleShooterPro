@@ -81,7 +81,9 @@ public class SoundManager {
                     soundPurchase = loadSyntheticSound("snd_purchase.wav", SoundEffectGenerator.generatePurchaseSuccess());
                 }
                 soundBounce = loadSyntheticSound("snd_bounce.wav", SoundEffectGenerator.generateBounce());
-                soundBomb = loadSyntheticSound("snd_bomb.wav", SoundEffectGenerator.generateBomb());
+                if (soundBomb <= 0) {
+                    soundBomb = loadSyntheticSound("snd_bomb.wav", SoundEffectGenerator.generateBomb());
+                }
                 soundClick = loadSyntheticSound("snd_click.wav", SoundEffectGenerator.generateClick());
 
                 // Musical ascending pitch pops for combos (C, D, E, G, A, C) fallback
@@ -139,7 +141,7 @@ public class SoundManager {
 
     public void playFire() {
         if (!prefs.isSoundEnabled()) return;
-        playSound(soundFire, 1.0f);
+        playSound(soundFire, 0.7f);
         vibrate(45);
     }
 

@@ -931,6 +931,10 @@ public class GameEngine {
         BubbleColor shotColor = activeProjectile.getColor();
         if (shotType == BubbleType.FIREBALL || shotColor == BubbleColor.FIREBALL) {
             soundManager.playFire();
+        } else if (shotType == BubbleType.BOMB || shotColor == BubbleColor.BOMB) {
+            soundManager.playBomb();
+        } else if (shotType == BubbleType.LIGHTNING || shotColor == BubbleColor.LIGHTNING) {
+            soundManager.playLightning();
         } else {
             soundManager.playShoot();
         }

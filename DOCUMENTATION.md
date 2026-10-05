@@ -319,10 +319,10 @@ Located in [`com.redcodersgroup.bubbleshooter.audio`](file:///d:/projects/bubble
 - **`SoundManager`**: Uses Android's low-latency `SoundPool` API to play simultaneous short audio effects (`bubble_pop.mp3`, `bubble_shot.mp3`, `win_sound.wav`, `level_fail.mp3`, `purchase_success.mp3`, `bomb.mp3`, `fire.wav`, `lightning.mp3`). Features pitch variation to make rapid pops sound musically dynamic.
   - **Power Bubble & Booster Sound Design**:
     - **Equipping Boosters**: Plays standard tactile click sound (`playClick()`) upon selection in the launcher HUD.
-    - **Bomb (`bomb.mp3`)**: Low-end explosive blast triggered when detonating a 2-ring hex cluster on the board or during chain reaction detonations.
-    - **Fireball (`fire.wav`)**: High-energy roaring flame blast triggered when launching Fireball, incinerating bubbles along the piercing path, and concluding flight.
-    - **Lightning (`lightning.mp3`)**: Electric plasma arc crackle triggered when vaporizing horizontal rows across the grid.
-- **`MusicManager`**: Manages background ambient music (`bgm.mp3`) with smooth fade-in / fade-out transitions and app background pause handling.
+    - **Bomb / Blast (`bomb.mp3`)**: High-impact explosive blast audio triggered when firing a Bomb projectile and upon detonating a 2-ring hex cluster or chain-reaction explosion.
+    - **Fireball (`fire.wav`)**: Calibrated to 70% duration (2.54s with smooth fade-out) and 70% playback volume (`0.7f`), triggered on fireball launch, bubble piercing, and ceiling impact.
+    - **Lightning (`lightning.mp3`)**: Electric plasma arc crackle triggered when launching Lightning and vaporizing horizontal rows across the grid.
+- **`MusicManager`**: Manages background ambient music (`bgm.mp3`) trimmed to 60% duration (144s, optimized to 4.60MB) with volume configured at 60%, with smooth fade-in / fade-out transitions and app background pause handling.
 
 ---
 
@@ -336,19 +336,20 @@ Located in [`com.redcodersgroup.bubbleshooter.audio`](file:///d:/projects/bubble
 - **Centralized Storefront**: Replaces all legacy modal dialogs (`StoreDialog` has been completely removed from the project). All store actions—whether accessing Diamonds, Lives/Hearts, or Boosters—route to `ShopActivity` via typed tab intents (`TAB_HEARTS`, `TAB_DIAMONDS`, `TAB_BOOSTERS`).
 - **Responsive 2-Column Grid Architecture**:
   - All buyable items across all tabs are organized into a standardized 2-column grid (`match_parent` height with equal weight `0dp`, centered icon art, descriptive tags/badges, and uniform action buttons pinned to card bottoms).
+  - Streamlined, minimal text layout eliminating redundant badges ("SINGLE", "3x VALUE") and repetitive copy ("3x Pack • Save 5💎").
   - **Hearts & Energy (2x2 Grid)**:
-    - Row 1: Rewarded Ad (+1 Free Life) | Single Heart (+1 Life, 6 💎)
-    - Row 2: Triple Hearts (+3 Lives, 15 💎) | Full Refill (5/5 Lives, 25 💎, Featured Card)
+    - Row 1: Rewarded Ad (1 Heart, Free) | Single Heart (1 Heart, +1 Life, 6 💎)
+    - Row 2: Triple Hearts (3 Hearts, +3 Lives, Save 17%, 15 💎) | Full Refill (Full Refill, Restore 5 lives, 25 💎, Best Value)
   - **Diamond Vault (Top Ad Banner + 2x2 Grid)**:
     - Top Banner: Rewarded Video Ad Card (+2 Free Gems)
     - Row 1: Pocket of Gems (50 💎, ₹29) | Handful of Gems (140 💎, ₹75)
     - Row 2: Sack of Gems (500 💎, ₹249) | Royal Vault Chest (1,600 💎, ₹699, Best Value)
     - *(Note: Daily Free Diamonds +3 💎 has been relocated to the Reward Center to centralize all free daily player claims).*
   - **Power-Up Boosters (4x2 Grid)**:
-    - Row 1: Bomb Single (+1, 15 💎) | Bomb Pack (+3, 40 💎, Save 5 💎)
-    - Row 2: Fireball Single (+1, 15 💎) | Fireball Pack (+3, 40 💎, Save 5 💎)
-    - Row 3: Rainbow Single (+1, 20 💎) | Rainbow Pack (+3, 50 💎, Save 10 💎)
-    - Row 4: Lightning Single (+1, 20 💎) | Lightning Pack (+3, 45 💎, Save 15 💎)
+    - Row 1: Bomb x1 (15 💎) | Bomb x3 (40 💎, SAVE 5 💎)
+    - Row 2: Fireball x1 (15 💎) | Fireball x3 (40 💎, SAVE 5 💎)
+    - Row 3: Rainbow x1 (20 💎) | Rainbow x3 (50 💎, SAVE 10 💎)
+    - Row 4: Lightning x1 (20 💎) | Lightning x3 (45 💎, SAVE 15 💎)
 - **Original Graphic Assets (100% Royalty-Free & Copyright-Safe)**:
   - `ic_diamond_currency.png`: High-resolution, brilliant-cut cyan gemstone with specular glints and crystal facets (256x256 32-bit transparent PNG), utilized globally on the Home screen header pill, Shop tabs, Victory bonus cards, and dialogs.
   - `store_diamond_pile.png`: Sparkling pile of cut cyan diamonds used for Daily Free and Pocket of Gems (50 Diamonds).

@@ -189,8 +189,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="top|end"
-                    android:layout_marginTop="-2dp"
-                    android:layout_marginEnd="-2dp"
+                    android:layout_marginTop="0dp"
+                    android:layout_marginEnd="0dp"
                     android:minWidth="18dp"
                     android:minHeight="18dp"
                     android:gravity="center"
@@ -199,32 +199,9 @@
                     android:textColor="#FFFFFF"
                     android:textSize="@dimen/sp_10"
                     android:textStyle="bold"
-                    android:visibility="gone"
+                    android:visibility="visible"
                     android:elevation="@dimen/dp_4" />
             </FrameLayout>
-
-            <!-- Pill Tag: REWARDS -->
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="-8dp"
-                android:background="@drawable/bg_chest_floating_badge"
-                android:orientation="horizontal"
-                android:gravity="center_vertical"
-                android:paddingStart="@dimen/dp_6"
-                android:paddingEnd="@dimen/dp_6"
-                android:paddingTop="@dimen/dp_2"
-                android:paddingBottom="@dimen/dp_2">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="REWARDS"
-                    android:textColor="#FFFFFF"
-                    android:textSize="@dimen/sp_10"
-                    android:textStyle="bold"
-                    android:letterSpacing="0.04" />
-            </LinearLayout>
         </LinearLayout>
     </LinearLayout>
 
