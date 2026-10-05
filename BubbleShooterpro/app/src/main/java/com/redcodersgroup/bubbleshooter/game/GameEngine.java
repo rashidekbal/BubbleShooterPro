@@ -644,15 +644,7 @@ public class GameEngine {
         }
         floatingTexts.add(new FloatingText(boosterName, launcherX, launcherY - bubbleRadius * 1.4f, textColor, 44f, 0.9f));
 
-        if (type == BubbleType.BOMB) {
-            soundManager.playBomb();
-        } else if (type == BubbleType.FIREBALL) {
-            soundManager.playFire();
-        } else if (type == BubbleType.LIGHTNING) {
-            soundManager.playLightning();
-        } else {
-            soundManager.playClick();
-        }
+        soundManager.playClick();
         updateTrajectory();
     }
 
@@ -939,10 +931,6 @@ public class GameEngine {
         BubbleColor shotColor = activeProjectile.getColor();
         if (shotType == BubbleType.FIREBALL || shotColor == BubbleColor.FIREBALL) {
             soundManager.playFire();
-        } else if (shotType == BubbleType.LIGHTNING || shotColor == BubbleColor.LIGHTNING) {
-            soundManager.playLightning();
-        } else if (shotType == BubbleType.BOMB || shotColor == BubbleColor.BOMB) {
-            soundManager.playBomb();
         } else {
             soundManager.playShoot();
         }
