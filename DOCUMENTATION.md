@@ -316,7 +316,11 @@ flowchart TD
 
 ### 3.8 Audio Engine (SoundPool & MediaPlayer)
 Located in [`com.redcodersgroup.bubbleshooter.audio`](file:///d:/projects/bubble%20shooter%20pro/BubbleShooterpro/app/src/main/java/com/redcodersgroup/bubbleshooter/audio):
-- **`SoundManager`**: Uses Android's low-latency `SoundPool` API to play simultaneous short audio effects (`bubble_pop.mp3`, `bubble_shot.mp3`, `win_sound.wav`, `level_fail.mp3`, `purchase_success.mp3`). Features pitch variation to make rapid pops sound musically dynamic.
+- **`SoundManager`**: Uses Android's low-latency `SoundPool` API to play simultaneous short audio effects (`bubble_pop.mp3`, `bubble_shot.mp3`, `win_sound.wav`, `level_fail.mp3`, `purchase_success.mp3`, `bomb.mp3`, `fire.wav`, `lightning.mp3`). Features pitch variation to make rapid pops sound musically dynamic.
+  - **Power Bubble & Booster Sound Design**:
+    - **Bomb (`bomb.mp3`)**: Low-end explosive blast triggered when equipping a Bomb booster, launching a Bomb projectile, detonating a 2-ring hex cluster on the board, or during chain reaction detonations.
+    - **Fireball (`fire.wav`)**: High-energy roaring flame blast triggered when equipping a Fireball booster, shooting Fireball, incinerating bubbles along the piercing path, and concluding flight.
+    - **Lightning (`lightning.mp3`)**: Electric plasma arc crackle triggered when equipping a Lightning booster, launching Lightning, or vaporizing horizontal rows across the grid.
 - **`MusicManager`**: Manages background ambient music (`bgm.mp3`) with smooth fade-in / fade-out transitions and app background pause handling.
 
 ---

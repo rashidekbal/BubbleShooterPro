@@ -23,6 +23,8 @@ public class SoundManager {
     private int soundPop = -1;
     private int soundBounce = -1;
     private int soundBomb = -1;
+    private int soundFire = -1;
+    private int soundLightning = -1;
     private int soundWin = -1;
     private int soundClick = -1;
     private int soundPurchase = -1;
@@ -60,6 +62,9 @@ public class SoundManager {
             soundWin = soundPool.load(context, R.raw.win_sound, 1);
             soundFail = soundPool.load(context, R.raw.level_fail, 1);
             soundPurchase = soundPool.load(context, R.raw.purchase_success, 1);
+            soundBomb = soundPool.load(context, R.raw.bomb, 1);
+            soundFire = soundPool.load(context, R.raw.fire, 1);
+            soundLightning = soundPool.load(context, R.raw.lightning, 1);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -130,6 +135,18 @@ public class SoundManager {
         if (!prefs.isSoundEnabled()) return;
         playSound(soundBomb, 1.0f);
         vibrate(50);
+    }
+
+    public void playFire() {
+        if (!prefs.isSoundEnabled()) return;
+        playSound(soundFire, 1.0f);
+        vibrate(45);
+    }
+
+    public void playLightning() {
+        if (!prefs.isSoundEnabled()) return;
+        playSound(soundLightning, 1.0f);
+        vibrate(45);
     }
 
     public void playWin() {

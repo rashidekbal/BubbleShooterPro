@@ -644,7 +644,15 @@ public class GameEngine {
         }
         floatingTexts.add(new FloatingText(boosterName, launcherX, launcherY - bubbleRadius * 1.4f, textColor, 44f, 0.9f));
 
-        soundManager.playClick();
+        if (type == BubbleType.BOMB) {
+            soundManager.playBomb();
+        } else if (type == BubbleType.FIREBALL) {
+            soundManager.playFire();
+        } else if (type == BubbleType.LIGHTNING) {
+            soundManager.playLightning();
+        } else {
+            soundManager.playClick();
+        }
         updateTrajectory();
     }
 
@@ -927,7 +935,17 @@ public class GameEngine {
         float dirY = (float) Math.sin(aimAngleRad);
         activeProjectile.launch(launcherX, launcherY, dirX, dirY);
 
-        soundManager.playShoot();
+        BubbleType shotType = activeProjectile.getType();
+        BubbleColor shotColor = activeProjectile.getColor();
+        if (shotType == BubbleType.FIREBALL || shotColor == BubbleColor.FIREBALL) {
+            soundManager.playFire();
+        } else if (shotType == BubbleType.LIGHTNING || shotColor == BubbleColor.LIGHTNING) {
+            soundManager.playLightning();
+        } else if (shotType == BubbleType.BOMB || shotColor == BubbleColor.BOMB) {
+            soundManager.playBomb();
+        } else {
+            soundManager.playShoot();
+        }
 
         // 1. Promote queued bubble into currentBubble, starting at preview position
         if (nextBubble != null) {
@@ -1333,19 +1351,24 @@ public class GameEngine {
             // Evaluate matches
             List<GridPosition> matches = board.findMatches(snapPos);
             if (!matches.isEmpty()) {
-                boolean hadBomb = (activeProjectile.getType() == BubbleType.BOMB);
-                if (!hadBomb) {
-                    for (GridPosition pos : matches) {
-                        Bubble b = grid.getBubble(pos);
-                        if (b != null && (b.getType() == BubbleType.BOMB || b.getColor() == BubbleColor.BOMB)) {
+                boolean hadBomb = (activeProjectile.getType() == BubbleType.BOMB || activeProjectile.getColor() == BubbleColor.BOMB);
+                boolean hadLightning = (activeProjectile.getType() == BubbleType.LIGHTNING || activeProjectile.getColor() == BubbleColor.LIGHTNING);
+                for (GridPosition pos : matches) {
+                    Bubble b = grid.getBubble(pos);
+                    if (b != null) {
+                        if (b.getType() == BubbleType.BOMB || b.getColor() == BubbleColor.BOMB) {
                             hadBomb = true;
-                            break;
+                        }
+                        if (b.getType() == BubbleType.LIGHTNING || b.getColor() == BubbleColor.LIGHTNING) {
+                            hadLightning = true;
                         }
                     }
                 }
 
                 if (hadBomb) {
                     soundManager.playBomb();
+                } else if (hadLightning) {
+                    soundManager.playLightning();
                 } else {
                     soundManager.playPop(comboManager.getStreak());
                 }
@@ -1476,9 +1499,11 @@ public class GameEngine {
         // Secondary chain reactions from hit specials
         if (!bombsToExplode.isEmpty()) {
             newHits.addAll(board.getBombExplosionPositions(bombsToExplode));
+            soundManager.playBomb();
         }
         if (!lightningToTrigger.isEmpty()) {
             newHits.addAll(board.getLightningExplosionPositions(lightningToTrigger, null));
+            soundManager.playLightning();
         }
 
         boolean poppedAny = false;
@@ -1505,7 +1530,7 @@ public class GameEngine {
             }
         }
 
-        if (poppedAny) {
+        if (poppedAny && bombsToExplode.isEmpty() && lightningToTrigger.isEmpty()) {
             soundManager.playPop(1);
         }
     }
@@ -1518,7 +1543,7 @@ public class GameEngine {
             float burstY = Math.max(boardTop + bubbleRadius, activeProjectile.getY());
             confettiSystem.spawnCelebrationBurst(activeProjectile.getX(), burstY, 30);
         }
-        soundManager.playBomb();
+        soundManager.playFire();
 
         // 1. Identify and drop unsupported floating bubbles
         List<Bubble> floating = board.findFloatingBubbles();
