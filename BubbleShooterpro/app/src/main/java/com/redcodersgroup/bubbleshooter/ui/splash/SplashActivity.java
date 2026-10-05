@@ -168,7 +168,9 @@ public class SplashActivity extends BaseActivity {
     }
 
     private void navigateToHome() {
+        MainActivity.resetLaunchPromptState();
         Intent intent = new Intent(this, MainActivity.class);
+        intent.putExtra(MainActivity.EXTRA_AUTO_OPEN_LEVEL_PREVIEW, true);
         startActivity(intent);
         overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
         finish();

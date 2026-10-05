@@ -58,6 +58,13 @@ public class MainActivity extends AppCompatActivity {
     private Dialog activePreviewDialog;
     private ExitConfirmDialog activeExitDialog;
 
+    public static final String EXTRA_AUTO_OPEN_LEVEL_PREVIEW = "extra_auto_open_level_preview";
+    private static boolean sHasPromptedInitialLevelPreview = false;
+
+    public static void resetLaunchPromptState() {
+        sHasPromptedInitialLevelPreview = false;
+    }
+
     private androidx.activity.result.ActivityResultLauncher<android.content.Intent> googleSignInLauncher;
     private com.redcodersgroup.bubbleshooter.auth.PlayGamesAuthManager.AuthCallback activeAuthCallback;
 
@@ -76,6 +83,18 @@ public class MainActivity extends AppCompatActivity {
         setupAuthLauncher();
         initViews();
         checkPlayGamesSignIn();
+
+        boolean shouldAutoPrompt = getIntent().getBooleanExtra(EXTRA_AUTO_OPEN_LEVEL_PREVIEW, false);
+        if (!sHasPromptedInitialLevelPreview && (shouldAutoPrompt || savedInstanceState == null)) {
+            sHasPromptedInitialLevelPreview = true;
+            getIntent().removeExtra(EXTRA_AUTO_OPEN_LEVEL_PREVIEW);
+            binding.getRoot().postDelayed(() -> {
+                if (!isFinishing() && !isDestroyed()) {
+                    int currentLevel = prefs.getHighestUnlockedLevel();
+                    showLevelPreviewDialog(currentLevel);
+                }
+            }, 350);
+        }
 
         getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
             @Override
@@ -444,6 +463,9 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        if (isFinishing()) {
+            sHasPromptedInitialLevelPreview = false;
+        }
         stopStarChestBadgePulse();
         if (settingsDialog != null && settingsDialog.isShowing()) settingsDialog.dismiss();
         if (profileDialog != null && profileDialog.isShowing()) profileDialog.dismiss();
@@ -624,6 +646,11 @@ public class MainActivity extends AppCompatActivity {
             activePreviewDialog = null;
         });
 
+        dialog.setOnDismissListener(d -> {
+            if (activePreviewDialog == dialog) {
+                activePreviewDialog = null;
+            }
+        });
         activePreviewDialog = dialog;
         dialog.show();
     }

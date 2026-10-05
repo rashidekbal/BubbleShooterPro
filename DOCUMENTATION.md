@@ -390,6 +390,14 @@ Located in [`com.redcodersgroup.bubbleshooter.audio`](file:///d:/projects/bubble
 - Custom artwork: `ic_endless_survival_rocket.png` (fiery target crosshair rocket), `bg_endless_survival_card.xml` (layered obsidian purple and gold rim card), and `bg_endless_tag_survival.xml` (fiery crimson badge).
 - Live high score tracking via `tvEndlessBestTag` and responsive touch bounce animations.
 
+#### Automatic App Launch Level Play Dialog (`MainActivity.java`, `SplashActivity.java`)
+- **Direct-to-Action User Flow**: When launching the app, after the splash screen finishes cloud synchronization and transitions smoothly into the home screen (`MainActivity`), the app automatically prompts the **Level Play Dialog** (`showLevelPreviewDialog`) for the player's current highest unlocked level (`prefs.getHighestUnlockedLevel()`).
+- **Smooth Transition Timing**: A subtle 350ms delay (`postDelayed`) allows the home screen backdrop, saga map, and ambient particles to finish fading in cleanly before presenting the play modal.
+- **Session & Navigation Safeguard**:
+  - Initialized with intent extra `MainActivity.EXTRA_AUTO_OPEN_LEVEL_PREVIEW` from `SplashActivity` and tracked with a static flag `sHasPromptedInitialLevelPreview`.
+  - Automatically resets when the app is terminated/finished (`finishAffinity()` / `onDestroy()`).
+  - Does **not** re-prompt when returning to the home screen after completing a level or closing the store.
+
 #### Cloud Save (`CloudSaveManager.java`, `PlayGamesAuthManager.java`)
 - Automatic silent sign-in with Google Play Games.
 - Player progress (highest unlocked level, 3-star ratings, high scores, coins, unlocked avatars) syncs to Google Cloud Save snapshots.
