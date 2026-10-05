@@ -20,6 +20,7 @@
    - 3.7 Objective Verification & Star Scoring System
    - 3.8 Audio Engine (SoundPool & MediaPlayer)
    - 3.9 Meta Game: Economy, Energy, Ads & Cloud Save
+   - 3.10 Star Milestones & Chest Reward System
 4. [Desktop Game Designer Studio (`game-designer-studio`)](#4-desktop-game-designer-studio-game-designer-studio)
    - 4.1 Architecture & IPC Layer
    - 4.2 Module 1: Visual Hex Level Designer & Complexity Analyzer
@@ -326,14 +327,103 @@ Located in [`com.redcodersgroup.bubbleshooter.audio`](file:///d:/projects/bubble
 - **Coins & Diamonds**: In-game soft & hard currencies used to buy boosters and extra shots.
 - **Heart System**: 5 max lives. Failing a level consumes 1 heart. Hearts regenerate on a 30-minute countdown timer stored via unix timestamps in `SharedPreferences`.
 
+#### Full-Screen Shop Activity (`ShopActivity.java`, `activity_shop.xml`)
+- **Centralized Storefront**: Replaces all legacy modal dialogs (`StoreDialog` has been completely removed from the project). All store actions—whether accessing Diamonds, Lives/Hearts, or Boosters—route to `ShopActivity` via typed tab intents (`TAB_HEARTS`, `TAB_DIAMONDS`, `TAB_BOOSTERS`).
+- **Responsive 2-Column Grid Architecture**:
+  - All buyable items across all tabs are organized into a standardized 2-column grid (`match_parent` height with equal weight `0dp`, centered icon art, descriptive tags/badges, and uniform action buttons pinned to card bottoms).
+  - **Hearts & Energy (2x2 Grid)**:
+    - Row 1: Rewarded Ad (+1 Free Life) | Single Heart (+1 Life, 6 💎)
+    - Row 2: Triple Hearts (+3 Lives, 15 💎) | Full Refill (5/5 Lives, 25 💎, Featured Card)
+  - **Diamond Vault (Top Ad Banner + 2x2 Grid)**:
+    - Top Banner: Rewarded Video Ad Card (+2 Free Gems)
+    - Row 1: Pocket of Gems (50 💎, ₹29) | Handful of Gems (140 💎, ₹75)
+    - Row 2: Sack of Gems (500 💎, ₹249) | Royal Vault Chest (1,600 💎, ₹699, Best Value)
+    - *(Note: Daily Free Diamonds +3 💎 has been relocated to the Reward Center to centralize all free daily player claims).*
+  - **Power-Up Boosters (4x2 Grid)**:
+    - Row 1: Bomb Single (+1, 15 💎) | Bomb Pack (+3, 40 💎, Save 5 💎)
+    - Row 2: Fireball Single (+1, 15 💎) | Fireball Pack (+3, 40 💎, Save 5 💎)
+    - Row 3: Rainbow Single (+1, 20 💎) | Rainbow Pack (+3, 50 💎, Save 10 💎)
+    - Row 4: Lightning Single (+1, 20 💎) | Lightning Pack (+3, 45 💎, Save 15 💎)
+- **Original Graphic Assets (100% Royalty-Free & Copyright-Safe)**:
+  - `ic_diamond_currency.png`: High-resolution, brilliant-cut cyan gemstone with specular glints and crystal facets (256x256 32-bit transparent PNG), utilized globally on the Home screen header pill, Shop tabs, Victory bonus cards, and dialogs.
+  - `store_diamond_pile.png`: Sparkling pile of cut cyan diamonds used for Daily Free and Pocket of Gems (50 Diamonds).
+  - `store_diamond_pouch.png`: Leather adventurer pouch bursting with cyan diamonds (140 Diamonds).
+  - `store_diamond_sack.png`: Heavy burlap sack overflowing with sparkling cyan diamonds (500 Diamonds).
+  - `store_diamond_chest.png`: Royal arched wooden and gold chest overflowing with brilliant cyan diamonds (1,600 Diamonds).
+
+#### Life Deduction & Mid-Level Exit Safeguard (`GameActivity.java`)
+- **Single Deduction Guarantee**: When abandoning a match mid-game (e.g. Pause Menu -> Home, Pause Menu -> Restart, Back press, or when Android triggers `onDestroy()` on background dismissal), a strict `hasDeductedLifeForMatch` boolean flag ensures that exactly **one** life is deducted per abandoned match attempt.
+- **Race Condition Prevention**: Prevents duplicate deductions where an explicit navigation event (`onHomeClicked()`) deducted a heart, and the subsequent asynchronous `onDestroy()` lifecycle event deducted another heart due to lingering `PLAYING` match state.
+
 #### Monetization & Ads (`AdManager.java`, `IapBillingManager.java`)
-- **AdMob Rewarded Video**: Watch an ad upon Game Over to receive **+5 Free Extra Shots** and continue playing without losing a life.
+- **AdMob Rewarded Video**: Watch an ad upon Game Over to receive **+5 Free Extra Shots** and continue playing without losing a life; watch an ad in `ShopActivity` for +1 Heart or +2 Free Diamonds.
 - **AdMob Interstitial**: Displayed periodically between level completions.
-- **Google Play Billing**: In-App Purchases for diamond packs and unlimited energy bundles.
+- **Google Play Billing**: Integrated via `IapBillingManager` for secure in-app purchases of diamond tiers and energy refills.
 
 #### Cloud Save (`CloudSaveManager.java`, `PlayGamesAuthManager.java`)
 - Automatic silent sign-in with Google Play Games.
 - Player progress (highest unlocked level, 3-star ratings, high scores, coins, unlocked avatars) syncs to Google Cloud Save snapshots.
+
+---
+
+### 3.10 Reward Center, Star Milestones & Daily Free Diamonds (`StarChestDialog.java`, `StarRewardCardAdapter.java`)
+
+Bubble Shooter Pro rewards stars earned in levels via a non-intrusive 20-star milestone progression and centralized daily reward system:
+
+```mermaid
+flowchart TD
+    Stars[Level Stars Earned] --> MathCalc["Math Engine:\ntotalMilestones = totalStars / 20\nunclaimed = totalMilestones - claimed\ncurrentCycle = totalStars % 20"]
+    DailyCheck[Daily Free Gift Ready?] --> BadgeCalc["Unclaimed Total:\nunclaimedMilestones + (dailyFree ? 1 : 0)"]
+    MathCalc --> BadgeCalc
+    BadgeCalc --> Badge[Home Screen Star Button\nRed Notification Badge Dot & Counter]
+    Badge -->|User Clicks Button| Dialog[Nearly Full-Screen Reward Center Dialog]
+    
+    subgraph Reward Center Architecture
+        Header[1. Top Header Plaque: 'Reward Center' & Close 'X' Button]
+        DailyCard[2. Daily Free Diamonds Card: +3 💎 with Claim Button]
+        Progress[3. 20-Star Progress Bar: currentCycle / 20 ⭐]
+        List[4. Stacked Milestone Reward Cards List]
+        CollectSingle[Individual 'COLLECT' Button per Card]
+        CollectAll[5. Sticky 'COLLECT ALL' Button]
+    end
+    
+    Dialog --> DailyCard
+    Dialog --> List
+    List --> CollectSingle
+    Dialog --> CollectAll
+    CollectSingle -->|Claims Single Card| Credit1[Credit Diamonds + Remove Card + Increment Claim Count]
+    CollectAll -->|Claims Everything| CreditAll[Credit All Milestone Diamonds + Daily Diamonds in One Tap]
+```
+
+#### Star Milestone Mathematical Model
+- **Total Stars**: Cumulative stars earned across all playable campaign levels:
+  $$\text{totalStars} = \sum_{l=1}^{N} \text{stars}(l)$$
+- **Total Milestone Chests Earned**:
+  $$\text{milestonesEarned} = \lfloor \frac{\text{totalStars}}{20} \rfloor$$
+- **Unclaimed Chests Count**:
+  $$\text{unclaimedCount} = \max(0, \text{milestonesEarned} - \text{claimedCount})$$
+- **Current Cycle Star Progress**:
+  $$\text{currentCycleProgress} = \text{totalStars} \pmod{20}$$
+- **Stars Needed for Next Chest**:
+  $$\text{starsNeeded} = 20 - \text{currentCycleProgress}$$
+
+#### UI / UX Implementation
+- **Home Screen Launcher Button (`activity_main.xml`)**:
+  - Replaces floating progress text with a styled glossy amber/gold orb button (`bg_star_chest_badge.xml`).
+  - Top-right red notification badge (`tvStarChestBadge` with `bg_notification_badge_dot.xml`) dynamically displays the total count of unclaimed rewards (pending star milestone chests + available daily free diamonds).
+  - Badge pulses gently when total unclaimed count $> 0$ and hides automatically when all rewards are claimed.
+  - **Zero Intrusive Popups**: The automatic modal popup upon returning to home is eliminated. Players retain full control over when to open and claim their rewards.
+- **Nearly Full-Screen Dialog (`dialog_star_chest.xml`)**:
+  - Sized dynamically to 94% display width and 88% display height.
+  - **Top Section**: Header plaque banner ("Reward Center") with top-right glossy red close button (`btnCloseChest`).
+  - **Daily Free Diamonds Section**: Featured inset card offering +3 💎 every calendar day with status subtitle ("Ready to collect!" / "Collected today. Returns tomorrow.") and a dedicated "CLAIM" action button.
+  - **Progress Section**: Inset panel with a styled 20-star horizontal progress bar and dynamic subtitle (`X / 20 ⭐`).
+  - **Piled Rewards Section**: `RecyclerView` powered by `StarRewardCardAdapter.java`. Each completed milestone renders as a stacked reward card with chest art, diamond rewards, and an individual "COLLECT" button.
+  - **Single Claim**: Tapping "COLLECT" on an individual card credits diamonds, plays audio feedback, increments claimed count, and animates that specific card out of the list.
+  - **Collect All**: Tapping "COLLECT ALL" claims both pending milestone cards and the daily free gift simultaneously, credits cumulative diamonds in a single step, clears the list, and reveals the celebratory empty state ("All Rewards Claimed!").
+- **Custom Milestone Visual Assets**:
+  - `ic_star_chest_closed.png`: Beautiful closed golden treasure chest with ruby gem clasp, rendered on the Home screen launcher button and in the dialog empty state.
+  - `ic_star_chest_open.png`: Open golden treasure chest spilling radiant cyan diamonds, rendered on each milestone reward card.
 
 ---
 

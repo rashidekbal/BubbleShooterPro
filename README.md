@@ -14,7 +14,7 @@ A high-performance, production-ready arcade puzzle game for Android, paired with
 ---
 
 ## Project Structure
-- **`BubbleShooterpro/`**: Android Studio project (Java, Android SDK, Gradle, custom SurfaceView/Canvas 60 FPS renderer, custom raycasting physics, Google Play In-App Billing, Google AdMob, Google Play Games Cloud Save).
+- **`BubbleShooterpro/`**: Android Studio project (Java, Android SDK, Gradle, custom SurfaceView/Canvas 60 FPS renderer, custom raycasting physics, Google Play In-App Billing, Google AdMob, Google Play Games Cloud Save, 2-column Shop Grid, Reward Center with daily diamonds, and non-intrusive Star Milestones).
 - **`game-designer-studio/`**: Desktop Electron app for visual hex level design, deep solver complexity analysis, and saga map pin positioning.
 - **`Game Designer Studio.exe`**: Pre-built portable Windows desktop level editor executable.
 - **`worlds/`**: High-resolution world map and in-game background artwork for 400 biomes.

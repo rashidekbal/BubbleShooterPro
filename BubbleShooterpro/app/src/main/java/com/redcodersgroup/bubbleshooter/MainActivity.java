@@ -28,7 +28,6 @@ import com.redcodersgroup.bubbleshooter.profile.AvatarManager;
 import com.redcodersgroup.bubbleshooter.ui.dialogs.ProfileDialog;
 import com.redcodersgroup.bubbleshooter.ui.dialogs.SettingsDialog;
 import com.redcodersgroup.bubbleshooter.ui.dialogs.StarChestDialog;
-import com.redcodersgroup.bubbleshooter.ui.dialogs.StoreDialog;
 import android.animation.ObjectAnimator;
 import android.animation.PropertyValuesHolder;
 import android.animation.ValueAnimator;
@@ -55,7 +54,6 @@ public class MainActivity extends AppCompatActivity {
     private StarChestDialog starChestDialog;
     private ClaimGiftDialog activeClaimGiftDialog;
     private ObjectAnimator starChestBadgePulseAnimator;
-    private StoreDialog storeDialog;
     private HeartStoreDialog heartStoreDialog;
     private Dialog activePreviewDialog;
     private ExitConfirmDialog activeExitDialog;
@@ -171,12 +169,13 @@ public class MainActivity extends AppCompatActivity {
             }
             int totalStars = repository.getTotalStarsEarned(levelManager.getTotalLevels());
             int claimedCount = prefs.getClaimedStarChestsCount();
-            int currentStars = Math.max(0, totalStars - (claimedCount * 20));
-            int chestTarget = 20;
-            starChestDialog = new StarChestDialog(this, currentStars, chestTarget, diamondsEarned -> {
+            starChestDialog = new StarChestDialog(this, totalStars, claimedCount, diamondsEarned -> {
                 updateDiamondsUI();
                 updateStarChestProgressUI();
-                checkAndPromptWorldGift();
+            });
+            starChestDialog.setOnDismissListener(dialog -> {
+                updateDiamondsUI();
+                updateStarChestProgressUI();
             });
             starChestDialog.show();
         });
@@ -354,16 +353,20 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void updateStarChestProgressUI() {
-        if (binding == null || binding.tvStarChestProgress == null) return;
+        if (binding == null || binding.tvStarChestBadge == null) return;
         int totalStars = repository.getTotalStarsEarned(levelManager.getTotalLevels());
         int claimedCount = prefs.getClaimedStarChestsCount();
-        int currentStars = Math.max(0, totalStars - (claimedCount * 20));
+        int totalMilestonesEarned = totalStars / 20;
+        int unclaimedMilestones = Math.max(0, totalMilestonesEarned - claimedCount);
+        boolean dailyFreeAvailable = prefs.canClaimDailyFreeDiamonds();
+        int unclaimedCount = unclaimedMilestones + (dailyFreeAvailable ? 1 : 0);
 
-        if (currentStars >= 20) {
-            binding.tvStarChestProgress.setText("CLAIM! 🎁");
+        if (unclaimedCount > 0) {
+            binding.tvStarChestBadge.setVisibility(View.VISIBLE);
+            binding.tvStarChestBadge.setText(String.valueOf(unclaimedCount));
             startStarChestBadgePulse();
         } else {
-            binding.tvStarChestProgress.setText(currentStars + "/20");
+            binding.tvStarChestBadge.setVisibility(View.GONE);
             stopStarChestBadgePulse();
         }
     }
@@ -396,26 +399,7 @@ public class MainActivity extends AppCompatActivity {
     private void checkAndPromptAvailableGifts() {
         if (isFinishing() || isDestroyed()) return;
 
-        // 1. Check Sidebar Star Chest
-        int totalStars = repository.getTotalStarsEarned(levelManager.getTotalLevels());
-        int claimedCount = prefs.getClaimedStarChestsCount();
-        int currentStars = Math.max(0, totalStars - (claimedCount * 20));
-        if (currentStars >= 20) {
-            if (starChestDialog != null && starChestDialog.isShowing()) return;
-            binding.getRoot().postDelayed(() -> {
-                if (isFinishing() || isDestroyed()) return;
-                if (starChestDialog != null && starChestDialog.isShowing()) return;
-                starChestDialog = new StarChestDialog(MainActivity.this, currentStars, 20, diamondsEarned -> {
-                    updateDiamondsUI();
-                    updateStarChestProgressUI();
-                    checkAndPromptWorldGift();
-                });
-                starChestDialog.show();
-            }, 350);
-            return;
-        }
-
-        // 2. Check World Level Path Gifts
+        // Prompt World Level Path Gifts if ready (Star Chests are claimed via the Star button badge)
         checkAndPromptWorldGift();
     }
 
@@ -462,7 +446,6 @@ public class MainActivity extends AppCompatActivity {
         if (profileDialog != null && profileDialog.isShowing()) profileDialog.dismiss();
         if (starChestDialog != null && starChestDialog.isShowing()) starChestDialog.dismiss();
         if (activeClaimGiftDialog != null && activeClaimGiftDialog.isShowing()) activeClaimGiftDialog.dismiss();
-        if (storeDialog != null && storeDialog.isShowing()) storeDialog.dismiss();
         if (heartStoreDialog != null && heartStoreDialog.isShowing()) heartStoreDialog.dismiss();
         if (activePreviewDialog != null && activePreviewDialog.isShowing()) activePreviewDialog.dismiss();
         if (activeExitDialog != null && activeExitDialog.isShowing()) activeExitDialog.dismiss();

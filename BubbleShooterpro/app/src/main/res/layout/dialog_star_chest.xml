@@ -1,153 +1,325 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_gravity="center"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:clipChildren="false"
     android:clipToPadding="false"
-    android:paddingStart="@dimen/dp_16"
-    android:paddingEnd="@dimen/dp_16"
-    android:paddingTop="@dimen/dp_12"
-    android:paddingBottom="@dimen/dp_12">
+    android:paddingStart="@dimen/dp_12"
+    android:paddingEnd="@dimen/dp_12"
+    android:paddingTop="@dimen/dp_8"
+    android:paddingBottom="@dimen/dp_8">
 
-    <!-- Main Dialog Card Body -->
+    <!-- Main Full-Screen Frame Card Body -->
     <LinearLayout
+        android:id="@+id/mainDialog"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:orientation="vertical"
-        android:gravity="center_horizontal"
         android:background="@drawable/bg_dialog_frame"
-        android:paddingStart="@dimen/dp_20"
-        android:paddingEnd="@dimen/dp_20"
-        android:paddingTop="@dimen/dp_52"
-        android:paddingBottom="@dimen/dp_28">
+        android:paddingStart="@dimen/dp_16"
+        android:paddingEnd="@dimen/dp_16"
+        android:paddingTop="@dimen/dp_48"
+        android:paddingBottom="@dimen/dp_16"
+        android:layout_marginTop="@dimen/dp_16"
+        android:layout_marginBottom="@dimen/dp_8"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
 
-        <!-- Chest Graphic -->
-        <ImageView
-            android:id="@+id/ivChestArt"
-            android:layout_width="@dimen/dp_130"
-            android:layout_height="@dimen/dp_130"
-            android:scaleType="fitCenter"
-            android:src="@drawable/ic_star_chest_gold"
-            android:contentDescription="Star Chest" />
-
-        <!-- Star Progress Bar Container -->
-        <FrameLayout
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/dp_32"
-            android:layout_marginTop="@dimen/dp_16"
-            android:layout_marginBottom="@dimen/dp_16">
-
-            <!-- Horizontal Progress Bar -->
-            <ProgressBar
-                android:id="@+id/progressBarStarChest"
-                style="?android:attr/progressBarStyleHorizontal"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:max="20"
-                android:progress="0"
-                android:progressDrawable="@drawable/progress_drawable_star_chest" />
-
-            <!-- Progress Text -->
-            <TextView
-                android:id="@+id/tvChestProgress"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:text="3 / 20"
-                android:textColor="#FFFFFF"
-                android:textSize="@dimen/sp_16"
-                android:textStyle="bold"
-                android:shadowColor="#B0000000"
-                android:shadowDx="1"
-                android:shadowDy="2"
-                android:shadowRadius="3" />
-
-            <!-- Left Star Icon -->
-            <ImageView
-                android:layout_width="@dimen/dp_28"
-                android:layout_height="@dimen/dp_28"
-                android:layout_gravity="start|center_vertical"
-                android:layout_marginStart="@dimen/dp_2"
-                android:src="@drawable/ic_star_filled"
-                android:contentDescription="Star" />
-        </FrameLayout>
-
-        <!-- Reward Display Pill (Visible when chest target reached) -->
+        <!-- Section 1: Daily Free Diamonds Inset Card -->
         <LinearLayout
-            android:id="@+id/layoutStarChestReward"
-            android:layout_width="wrap_content"
+            android:id="@+id/cardDailyFreeReward"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/dp_10"
-            android:background="@drawable/bg_hud_pill"
             android:orientation="horizontal"
             android:gravity="center_vertical"
-            android:paddingStart="@dimen/dp_14"
-            android:paddingEnd="@dimen/dp_16"
-            android:paddingTop="@dimen/dp_4"
-            android:paddingBottom="@dimen/dp_4"
-            android:visibility="gone">
+            android:background="@drawable/bg_store_item_card_featured"
+            android:paddingStart="@dimen/dp_12"
+            android:paddingEnd="@dimen/dp_12"
+            android:paddingTop="@dimen/dp_8"
+            android:paddingBottom="@dimen/dp_8"
+            android:layout_marginTop="@dimen/dp_4"
+            android:layout_marginBottom="@dimen/dp_6">
 
             <ImageView
-                android:layout_width="@dimen/dp_24"
-                android:layout_height="@dimen/dp_24"
-                android:src="@drawable/ic_hud_diamond"
-                android:contentDescription="Diamonds" />
+                android:layout_width="@dimen/dp_44"
+                android:layout_height="@dimen/dp_44"
+                android:scaleType="fitCenter"
+                android:src="@drawable/store_diamond_pile" />
 
-            <TextView
-                android:id="@+id/tvStarChestRewardAmount"
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/dp_6"
-                android:text="+2 DIAMONDS"
-                android:textColor="#0284C7"
-                android:textSize="@dimen/sp_16"
-                android:textStyle="bold" />
+                android:layout_weight="1"
+                android:layout_marginStart="@dimen/dp_10"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Daily Free Gift"
+                        android:textColor="#1E293B"
+                        android:textSize="@dimen/sp_14"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/dp_6"
+                        android:background="@drawable/bg_store_badge_emerald"
+                        android:paddingStart="@dimen/dp_6"
+                        android:paddingEnd="@dimen/dp_6"
+                        android:paddingTop="@dimen/dp_1"
+                        android:paddingBottom="@dimen/dp_1"
+                        android:text="+3 💎"
+                        android:textColor="#FFFFFF"
+                        android:textSize="@dimen/sp_10"
+                        android:textStyle="bold" />
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/tvDailyFreeStatus"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/dp_2"
+                    android:text="Ready to collect!"
+                    android:textColor="#059669"
+                    android:textSize="@dimen/sp_11" />
+            </LinearLayout>
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btnClaimDailyFree"
+                android:layout_width="@dimen/dp_90"
+                android:layout_height="@dimen/dp_36"
+                android:background="@drawable/btn_pill_blank_green"
+                app:backgroundTint="@null"
+                android:paddingBottom="@dimen/dp_4"
+                android:text="CLAIM"
+                android:textColor="#FFFFFF"
+                android:textSize="@dimen/sp_13"
+                android:textStyle="bold"
+                android:shadowColor="#60000000"
+                android:shadowDx="1"
+                android:shadowDy="2"
+                android:shadowRadius="2" />
         </LinearLayout>
 
-        <!-- Description Subtitle -->
-        <TextView
-            android:id="@+id/tvChestSubtitle"
-            android:layout_width="wrap_content"
+        <!-- Section 2: 20-Stars Progress Panel -->
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Collect 20 stars from levels\nto open!"
-            android:textAlignment="center"
-            android:textColor="#92400E"
-            android:textSize="@dimen/sp_15"
-            android:textStyle="bold"
-            android:layout_marginBottom="@dimen/dp_16" />
+            android:orientation="vertical"
+            android:background="@drawable/bg_dialog_inset_panel"
+            android:paddingStart="@dimen/dp_14"
+            android:paddingEnd="@dimen/dp_14"
+            android:paddingTop="@dimen/dp_10"
+            android:paddingBottom="@dimen/dp_10"
+            android:layout_marginTop="@dimen/dp_6">
 
-        <!-- Big Glossy Green OK / Claim Button -->
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+
+                <ImageView
+                    android:layout_width="@dimen/dp_18"
+                    android:layout_height="@dimen/dp_18"
+                    android:src="@drawable/ic_star_filled"
+                    android:contentDescription="Star" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/dp_6"
+                    android:text="Next Chest Progress"
+                    android:textColor="#78350F"
+                    android:textSize="@dimen/sp_14"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <!-- Star Progress Bar Container -->
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/dp_28"
+                android:layout_marginTop="@dimen/dp_8"
+                android:layout_marginBottom="@dimen/dp_6">
+
+                <!-- Horizontal Progress Bar -->
+                <ProgressBar
+                    android:id="@+id/progressBarStarChest"
+                    style="?android:attr/progressBarStyleHorizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:max="20"
+                    android:progress="0"
+                    android:progressDrawable="@drawable/progress_drawable_star_chest" />
+
+                <!-- Progress Text -->
+                <TextView
+                    android:id="@+id/tvChestProgress"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:text="0 / 20"
+                    android:textColor="#FFFFFF"
+                    android:textSize="@dimen/sp_14"
+                    android:textStyle="bold"
+                    android:shadowColor="#B0000000"
+                    android:shadowDx="1"
+                    android:shadowDy="2"
+                    android:shadowRadius="3" />
+
+                <!-- Star Icon on the left -->
+                <ImageView
+                    android:layout_width="@dimen/dp_24"
+                    android:layout_height="@dimen/dp_24"
+                    android:layout_gravity="start|center_vertical"
+                    android:layout_marginStart="@dimen/dp_2"
+                    android:src="@drawable/ic_star_filled"
+                    android:contentDescription="Star" />
+            </FrameLayout>
+
+        </LinearLayout>
+
+        <!-- Section 3: Collection Rewards Container -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:layout_marginTop="@dimen/dp_10">
+
+            <!-- Section Title Row -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:layout_marginBottom="@dimen/dp_6">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Available Milestone Chests"
+                    android:textColor="#78350F"
+                    android:textSize="@dimen/sp_14"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/tvUnclaimedCountTag"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingStart="@dimen/dp_8"
+                    android:paddingEnd="@dimen/dp_8"
+                    android:paddingTop="@dimen/dp_2"
+                    android:paddingBottom="@dimen/dp_2"
+                    android:text="0 available"
+                    android:textColor="#0284C7"
+                    android:textSize="@dimen/sp_11"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <!-- Stacked Cards or Empty State -->
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1">
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rvStarMilestoneCards"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:clipToPadding="false"
+                    android:paddingTop="@dimen/dp_2"
+                    android:paddingBottom="@dimen/dp_4"
+                    android:overScrollMode="never" />
+
+                <!-- Empty State -->
+                <LinearLayout
+                    android:id="@+id/layoutEmptyRewards"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    android:gravity="center"
+                    android:padding="@dimen/dp_16"
+                    android:visibility="gone">
+
+                    <ImageView
+                        android:layout_width="@dimen/dp_64"
+                        android:layout_height="@dimen/dp_64"
+                        android:scaleType="fitCenter"
+                        android:src="@drawable/ic_star_chest_closed"
+                        android:alpha="0.45"
+                        android:contentDescription="No chests" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/dp_8"
+                        android:text="No Chests Ready Yet"
+                        android:textColor="#78350F"
+                        android:textSize="@dimen/sp_15"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/dp_4"
+                        android:text="Complete levels with 3 stars to unlock Star Chest rewards!"
+                        android:textAlignment="center"
+                        android:textColor="#92400E"
+                        android:textSize="@dimen/sp_12" />
+                </LinearLayout>
+            </FrameLayout>
+        </LinearLayout>
+
+        <!-- Section 4: Collect All Button -->
         <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/btnChestOk"
-            android:layout_width="@dimen/dp_220"
-            android:layout_height="@dimen/dp_54"
+            android:id="@+id/btnCollectAll"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/dp_50"
+            android:layout_marginTop="@dimen/dp_10"
             android:background="@drawable/btn_pill_blank_green"
-            android:text="OK"
+            android:text="🎁 COLLECT ALL"
             android:textColor="#FFFFFF"
-            android:textSize="@dimen/sp_18"
+            android:textSize="@dimen/sp_16"
             android:textStyle="bold"
-            android:letterSpacing="0.04"
+            android:letterSpacing="0.03"
             android:shadowColor="#80000000"
             android:shadowDx="1"
             android:shadowDy="2"
+            android:layout_marginBottom="@dimen/dp_10"
             android:shadowRadius="3" />
 
     </LinearLayout>
 
-    <!-- Top Curved Blue Header Plaque ("Star Chest") -->
+    <!-- Top Curved Blue Header Plaque ("Reward Center") -->
     <LinearLayout
-        android:layout_width="@dimen/dp_200"
+        android:layout_width="@dimen/dp_230"
         android:layout_height="@dimen/dp_46"
         android:layout_gravity="top|center_horizontal"
         android:background="@drawable/bg_dialog_header_plaque"
         android:gravity="center"
-        android:elevation="@dimen/dp_4">
+        android:elevation="@dimen/dp_4"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/mainDialog"
+        >
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Star Chest"
+            android:text="Reward Center"
             android:textColor="#FFFFFF"
             android:textSize="@dimen/sp_20"
             android:textStyle="bold"
@@ -169,6 +341,9 @@
         android:scaleType="fitCenter"
         android:src="@drawable/btn_close_red"
         android:elevation="@dimen/dp_6"
-        android:contentDescription="Close" />
+        android:contentDescription="Close"
+        app:layout_constraintEnd_toEndOf="@id/mainDialog"
+        app:layout_constraintTop_toTopOf="@id/mainDialog"
+        />
 
-</FrameLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -56,7 +56,7 @@
                 <ImageView
                     android:layout_width="@dimen/dp_24"
                     android:layout_height="@dimen/dp_24"
-                    android:src="@drawable/ic_hud_diamond"
+                    android:src="@drawable/ic_diamond_currency"
                     android:contentDescription="Diamonds" />
 
                 <TextView

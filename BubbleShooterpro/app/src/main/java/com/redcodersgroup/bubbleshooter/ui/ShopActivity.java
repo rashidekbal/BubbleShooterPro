@@ -142,11 +142,7 @@ public class ShopActivity extends BaseActivity {
         binding.cardShopBuyFullRefill.setOnClickListener(v -> handleBuyFullRefill());
         binding.btnShopBuyFullRefill.setOnClickListener(v -> handleBuyFullRefill());
 
-        // 5. Daily Free Diamonds
-        binding.cardShopDailyFree.setOnClickListener(v -> handleDailyFreeClaim());
-        binding.btnShopDailyFree.setOnClickListener(v -> handleDailyFreeClaim());
-
-        // 5b. Watch Ad for +2 Diamonds (REWARDED)
+        // 5. Watch Ad for +2 Diamonds (REWARDED)
         binding.cardShopWatchAdDiamonds.setOnClickListener(v -> handleWatchAdForDiamonds());
         binding.btnShopWatchAdDiamonds.setOnClickListener(v -> handleWatchAdForDiamonds());
 
@@ -217,7 +213,6 @@ public class ShopActivity extends BaseActivity {
         updateDiamondsUI();
         updateLivesUI();
         updateBoostersUI();
-        updateDailyFreeUI();
     }
 
     private void updateDiamondsUI() {
@@ -330,26 +325,6 @@ public class ShopActivity extends BaseActivity {
             btn3.setBackgroundResource(R.drawable.btn_pill_blank_disabled);
             btn3.setTextColor(Color.parseColor("#94A3B8"));
             btn3.setAlpha(0.8f);
-        }
-    }
-
-    private void updateDailyFreeUI() {
-        if (prefs.canClaimDailyFreeDiamonds()) {
-            binding.btnShopDailyFree.setEnabled(true);
-            binding.btnShopDailyFree.setText("CLAIM");
-            binding.btnShopDailyFree.setBackgroundResource(R.drawable.btn_pill_blank_green);
-            binding.btnShopDailyFree.setTextColor(Color.WHITE);
-            binding.btnShopDailyFree.setAlpha(1.0f);
-            binding.tvShopDailyFreeSubtitle.setText("Free gift is ready to collect!");
-            binding.tvShopDailyFreeSubtitle.setTextColor(Color.parseColor("#059669"));
-        } else {
-            binding.btnShopDailyFree.setEnabled(false);
-            binding.btnShopDailyFree.setText("CLAIMED");
-            binding.btnShopDailyFree.setBackgroundResource(R.drawable.btn_pill_blank_disabled);
-            binding.btnShopDailyFree.setTextColor(Color.parseColor("#E2E8F0"));
-            binding.btnShopDailyFree.setAlpha(0.75f);
-            binding.tvShopDailyFreeSubtitle.setText("Collected today. Returns in 24h.");
-            binding.tvShopDailyFreeSubtitle.setTextColor(Color.parseColor("#64748B"));
         }
     }
 
@@ -495,20 +470,6 @@ public class ShopActivity extends BaseActivity {
         } else {
             soundManager.playClick();
             NoticeDialog.showWarning(this, "WARNING", "INSUFFICIENT DIAMONDS", "NEED MORE DIAMONDS", "You don't have enough diamonds for this refill.");
-        }
-    }
-
-    private void handleDailyFreeClaim() {
-        if (prefs.canClaimDailyFreeDiamonds()) {
-            soundManager.playPurchase();
-            prefs.addDiamonds(StoreManager.DIAMONDS_DAILY_FREE);
-            prefs.markDailyFreeDiamondsClaimed();
-            com.redcodersgroup.bubbleshooter.auth.CloudSaveManager.getInstance().saveToCloud(this);
-            updateAllUI();
-            NoticeDialog.showReward(this, "REWARD", "DAILY GIFT", "+" + StoreManager.DIAMONDS_DAILY_FREE + " FREE DIAMONDS", "Free diamonds added to your vault. Return tomorrow for more!");
-        } else {
-            soundManager.playClick();
-            NoticeDialog.showInfo(this, "NOTICE", "DAILY GIFT", "ALREADY CLAIMED", "You have already collected today's free gift. Check back tomorrow!");
         }
     }
 

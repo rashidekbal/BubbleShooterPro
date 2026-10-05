@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingStart="@dimen/dp_4"
+    android:paddingEnd="@dimen/dp_4"
+    android:paddingTop="@dimen/dp_4"
+    android:paddingBottom="@dimen/dp_6">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:background="@drawable/bg_milestone_card"
+        android:paddingStart="@dimen/dp_12"
+        android:paddingEnd="@dimen/dp_12"
+        android:paddingTop="@dimen/dp_10"
+        android:paddingBottom="@dimen/dp_10">
+
+        <!-- Chest Icon Graphic (Open with Glowing Blue Diamonds) -->
+        <ImageView
+            android:layout_width="@dimen/dp_50"
+            android:layout_height="@dimen/dp_50"
+            android:scaleType="fitCenter"
+            android:src="@drawable/ic_star_chest_open"
+            android:contentDescription="Star Chest" />
+
+        <!-- Reward Details Column -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginStart="@dimen/dp_10"
+            android:layout_marginEnd="@dimen/dp_8"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/tvRewardCardTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Star Chest #1"
+                android:textColor="#78350F"
+                android:textSize="@dimen/sp_14"
+                android:textStyle="bold" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/dp_3"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+
+                <ImageView
+                    android:layout_width="@dimen/dp_18"
+                    android:layout_height="@dimen/dp_18"
+                    android:src="@drawable/ic_diamond_currency"
+                    android:contentDescription="Diamonds" />
+
+                <TextView
+                    android:id="@+id/tvRewardCardAmount"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/dp_4"
+                    android:text="+2 DIAMONDS"
+                    android:textColor="#0284C7"
+                    android:textSize="@dimen/sp_13"
+                    android:textStyle="bold" />
+
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- Individual Collect Button -->
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btnCollectCard"
+            android:layout_width="@dimen/dp_88"
+            android:layout_height="@dimen/dp_38"
+            android:background="@drawable/btn_pill_blank_green"
+            android:text="COLLECT"
+            android:textColor="#FFFFFF"
+            android:textSize="@dimen/sp_12"
+            android:textStyle="bold"
+            android:letterSpacing="0.03"
+            android:shadowColor="#80000000"
+            android:shadowDx="1"
+            android:shadowDy="1"
+            android:shadowRadius="2" />
+    </LinearLayout>
+
+</FrameLayout>

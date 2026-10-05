@@ -65,7 +65,7 @@
             <ImageView
                 android:layout_width="@dimen/dp_26"
                 android:layout_height="@dimen/dp_26"
-                android:src="@drawable/ic_hud_diamond"
+                android:src="@drawable/ic_diamond_currency"
                 android:contentDescription="Diamonds" />
 
             <TextView
@@ -151,7 +151,7 @@
         android:gravity="center_horizontal"
         android:elevation="@dimen/dp_8">
 
-        <!-- 1. Star Chest Quest Badge -->
+        <!-- 1. Star Chest / Milestones Button with Notification Badge -->
         <LinearLayout
             android:id="@+id/layoutStarChestBadge"
             android:layout_width="wrap_content"
@@ -161,13 +161,49 @@
             android:clickable="true"
             android:focusable="true">
 
-            <ImageView
-                android:layout_width="@dimen/dp_56"
-                android:layout_height="@dimen/dp_56"
-                android:scaleType="fitCenter"
-                android:src="@drawable/ic_star_chest_gold"
-                android:contentDescription="Star Chest Quest" />
+            <FrameLayout
+                android:layout_width="@dimen/dp_60"
+                android:layout_height="@dimen/dp_60"
+                >
 
+                <!-- Glowing Amber/Gold Orb -->
+                <FrameLayout
+                    android:padding="@dimen/dp_10"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/bg_star_chest_badge"
+                    >
+
+                    <ImageView
+                        android:layout_width="@dimen/dp_36"
+                        android:layout_height="@dimen/dp_36"
+                        android:layout_gravity="center"
+                        android:scaleType="fitCenter"
+                        android:src="@drawable/ic_star_chest_closed"
+                        android:contentDescription="Star Chest" />
+                </FrameLayout>
+
+                <!-- Notification Badge (Red dot / number of available milestone rewards) -->
+                <TextView
+                    android:id="@+id/tvStarChestBadge"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="top|end"
+                    android:layout_marginTop="-2dp"
+                    android:layout_marginEnd="-2dp"
+                    android:minWidth="18dp"
+                    android:minHeight="18dp"
+                    android:gravity="center"
+                    android:background="@drawable/bg_notification_badge_dot"
+                    android:text="1"
+                    android:textColor="#FFFFFF"
+                    android:textSize="@dimen/sp_10"
+                    android:textStyle="bold"
+                    android:visibility="gone"
+                    android:elevation="@dimen/dp_4" />
+            </FrameLayout>
+
+            <!-- Pill Tag: STARS -->
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -176,25 +212,9 @@
                 android:orientation="horizontal"
                 android:gravity="center_vertical"
                 android:paddingStart="@dimen/dp_6"
-                android:paddingEnd="@dimen/dp_8"
+                android:paddingEnd="@dimen/dp_6"
                 android:paddingTop="@dimen/dp_2"
                 android:paddingBottom="@dimen/dp_2">
-
-                <ImageView
-                    android:layout_width="@dimen/dp_14"
-                    android:layout_height="@dimen/dp_14"
-                    android:src="@drawable/ic_star_filled"
-                    android:contentDescription="Star" />
-
-                <TextView
-                    android:id="@+id/tvStarChestProgress"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/dp_2"
-                    android:text="3/20"
-                    android:textColor="#FDE047"
-                    android:textSize="@dimen/sp_11"
-                    android:textStyle="bold" />
             </LinearLayout>
         </LinearLayout>
 

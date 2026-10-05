@@ -217,6 +217,12 @@ public class PreferencesManager {
         prefs.edit().putInt("key_claimed_star_chests_count", getClaimedStarChestsCount() + 1).apply();
     }
 
+    public void addClaimedStarChestsCount(int count) {
+        if (count > 0) {
+            prefs.edit().putInt("key_claimed_star_chests_count", getClaimedStarChestsCount() + count).apply();
+        }
+    }
+
     public String getPlayerName() {
         return prefs.getString(KEY_PLAYER_NAME, "Player");
     }

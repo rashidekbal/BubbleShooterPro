@@ -134,7 +134,7 @@
                 android:id="@+id/ivDiamondRewardIcon"
                 android:layout_width="@dimen/dp_28"
                 android:layout_height="@dimen/dp_28"
-                android:src="@drawable/ic_hud_diamond"
+                android:src="@drawable/ic_diamond_currency"
                 android:contentDescription="Diamonds Reward" />
 
             <TextView

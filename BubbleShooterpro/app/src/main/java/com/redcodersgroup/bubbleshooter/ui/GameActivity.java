@@ -66,6 +66,7 @@ public class GameActivity extends BaseActivity implements GameEngine.GameEventLi
     private MatchState matchState = MatchState.PLAYING;
     private boolean wasBackgrounded = false;
     private int continueBubblePurchasesCount = 0;
+    private boolean hasDeductedLifeForMatch = false;
 
     public static final String EXTRA_PRESELECTED_BOOSTER = "extra_preselected_booster";
 
@@ -328,6 +329,7 @@ public class GameActivity extends BaseActivity implements GameEngine.GameEventLi
     private void loadCurrentLevel() {
         continueBubblePurchasesCount = 0;
         matchState = MatchState.PLAYING;
+        hasDeductedLifeForMatch = false;
         wasBackgrounded = false;
         stopDoubleBonusPulseAnimation();
         stopReviveAdPulseAnimation();
@@ -422,6 +424,7 @@ public class GameActivity extends BaseActivity implements GameEngine.GameEventLi
         continueBubblePurchasesCount = 0;
         AnalyticsManager.getInstance(this).logEndlessStart();
         matchState = MatchState.PLAYING;
+        hasDeductedLifeForMatch = false;
         wasBackgrounded = false;
         stopDoubleBonusPulseAnimation();
         stopReviveAdPulseAnimation();
@@ -533,18 +536,13 @@ public class GameActivity extends BaseActivity implements GameEngine.GameEventLi
             @Override
             public void onRestartClicked() {
                 activePauseDialog = null;
-                boolean isWon = (matchState == MatchState.WON) || (gameEngine != null && gameEngine.isWonOrCelebrating()) ||
-                        (binding != null && binding.overlayVictory != null && binding.overlayVictory.rootVictoryOverlay.getVisibility() == View.VISIBLE) ||
-                        (activeVictoryDialog != null && activeVictoryDialog.isShowing());
-                if (!isEndlessMode && matchState == MatchState.PLAYING && !isWon) {
-                    prefs.deductLife();
-                    if (prefs.getLives() <= 0) {
-                        showOutOfHeartsDialog(() -> {
-                            loadCurrentLevel();
-                            enableImmersiveStickyMode();
-                        });
-                        return;
-                    }
+                deductLifeIfApplicable();
+                if (!isEndlessMode && prefs.getLives() <= 0) {
+                    showOutOfHeartsDialog(() -> {
+                        loadCurrentLevel();
+                        enableImmersiveStickyMode();
+                    });
+                    return;
                 }
                 if (isEndlessMode) {
                     loadEndlessMode();
@@ -557,12 +555,8 @@ public class GameActivity extends BaseActivity implements GameEngine.GameEventLi
             @Override
             public void onHomeClicked() {
                 activePauseDialog = null;
-                boolean isWon = (matchState == MatchState.WON) || (gameEngine != null && gameEngine.isWonOrCelebrating()) ||
-                        (binding != null && binding.overlayVictory != null && binding.overlayVictory.rootVictoryOverlay.getVisibility() == View.VISIBLE) ||
-                        (activeVictoryDialog != null && activeVictoryDialog.isShowing());
-                if (!isEndlessMode && matchState == MatchState.PLAYING && !isWon) {
-                    prefs.deductLife();
-                }
+                deductLifeIfApplicable();
+                matchState = MatchState.LOST;
                 Intent intent = new Intent(GameActivity.this, MainActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
                 startActivity(intent);
@@ -589,9 +583,7 @@ public class GameActivity extends BaseActivity implements GameEngine.GameEventLi
         // If full-screen game over overlay is active, user is abandoning the level -> deduct heart and finish
         if (binding != null && binding.overlayGameOver != null &&
                 binding.overlayGameOver.rootGameOverOverlay.getVisibility() == View.VISIBLE) {
-            if (!isEndlessMode && matchState == MatchState.LOST) {
-                prefs.deductLife();
-            }
+            deductLifeIfApplicable();
             stopReviveAdPulseAnimation();
             finish();
             return;
@@ -1143,9 +1135,7 @@ public class GameActivity extends BaseActivity implements GameEngine.GameEventLi
         // Home Button (Player rejects extra shots -> deduct heart)
         binding.overlayGameOver.btnGameOverHome.setOnClickListener(v -> {
             soundManager.playClick();
-            if (!isEndlessMode && matchState == MatchState.LOST) {
-                prefs.deductLife();
-            }
+            deductLifeIfApplicable();
             stopReviveAdPulseAnimation();
             if (binding != null && binding.overlayGameOver != null) {
                 binding.overlayGameOver.rootGameOverOverlay.setVisibility(View.GONE);
@@ -1156,19 +1146,17 @@ public class GameActivity extends BaseActivity implements GameEngine.GameEventLi
         // Retry / Replay Button (Player rejects extra shots -> deduct heart)
         binding.overlayGameOver.btnGameOverRetry.setOnClickListener(v -> {
             soundManager.playClick();
-            if (!isEndlessMode && matchState == MatchState.LOST) {
-                prefs.deductLife();
-                if (prefs.getLives() <= 0) {
-                    showOutOfHeartsDialog(() -> {
-                        stopReviveAdPulseAnimation();
-                        if (binding != null && binding.overlayGameOver != null) {
-                            binding.overlayGameOver.rootGameOverOverlay.setVisibility(View.GONE);
-                        }
-                        loadCurrentLevel();
-                        enableImmersiveStickyMode();
-                    });
-                    return;
-                }
+            deductLifeIfApplicable();
+            if (!isEndlessMode && prefs.getLives() <= 0) {
+                showOutOfHeartsDialog(() -> {
+                    stopReviveAdPulseAnimation();
+                    if (binding != null && binding.overlayGameOver != null) {
+                        binding.overlayGameOver.rootGameOverOverlay.setVisibility(View.GONE);
+                    }
+                    loadCurrentLevel();
+                    enableImmersiveStickyMode();
+                });
+                return;
             }
             stopReviveAdPulseAnimation();
             if (binding != null && binding.overlayGameOver != null) {
@@ -1311,18 +1299,24 @@ public class GameActivity extends BaseActivity implements GameEngine.GameEventLi
         }
     }
 
+    private void deductLifeIfApplicable() {
+        if (isEndlessMode || hasDeductedLifeForMatch) return;
+        boolean isWon = (matchState == MatchState.WON) || (gameEngine != null && gameEngine.isWonOrCelebrating()) ||
+                (binding != null && binding.overlayVictory != null && binding.overlayVictory.rootVictoryOverlay.getVisibility() == View.VISIBLE) ||
+                (activeVictoryDialog != null && activeVictoryDialog.isShowing());
+        if (!isWon) {
+            hasDeductedLifeForMatch = true;
+            prefs.deductLife();
+        }
+    }
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
         stopDoubleBonusPulseAnimation();
         stopReviveAdPulseAnimation();
         // If exiting or killed while actively playing a level mid-match (and level is not won), deduct 1 life
-        boolean isWon = (matchState == MatchState.WON) || (gameEngine != null && gameEngine.isWonOrCelebrating()) ||
-                (binding != null && binding.overlayVictory != null && binding.overlayVictory.rootVictoryOverlay.getVisibility() == View.VISIBLE) ||
-                (activeVictoryDialog != null && activeVictoryDialog.isShowing());
-        if (!isEndlessMode && matchState == MatchState.PLAYING && !isWon) {
-            prefs.deductLife();
-        }
+        deductLifeIfApplicable();
         if (progressAnimator != null) {
             progressAnimator.cancel();
             progressAnimator = null;

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- 3D Base Drop Shadow -->
+    <item android:top="4dp">
+        <shape android:shape="oval">
+            <solid android:color="#451A03" />
+        </shape>
+    </item>
+
+    <!-- Outer Gold/Amber Rim -->
+    <item android:bottom="3dp">
+        <shape android:shape="oval">
+            <gradient
+                android:type="linear"
+                android:angle="270"
+                android:startColor="#FDE047"
+                android:endColor="#D97706" />
+            <stroke android:width="2dp" android:color="#FEF08A" />
+        </shape>
+    </item>
+
+    <!-- Main Glossy Deep Gold/Amber Body -->
+    <item android:top="2.5dp" android:bottom="5.5dp" android:left="2.5dp" android:right="2.5dp">
+        <shape android:shape="oval">
+            <gradient
+                android:type="linear"
+                android:angle="270"
+                android:startColor="#F59E0B"
+                android:centerColor="#D97706"
+                android:endColor="#78350F" />
+        </shape>
+    </item>
+
+    <!-- Top Gloss Highlight Crescent -->
+    <item android:top="3.5dp" android:left="8dp" android:right="8dp" android:bottom="26dp">
+        <shape android:shape="oval">
+            <solid android:color="#80FFFFFF" />
+        </shape>
+    </item>
+</layer-list>
