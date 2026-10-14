@@ -815,7 +815,7 @@ public class GameActivity extends BaseActivity implements GameEngine.GameEventLi
         binding.overlayVictory.tvVictoryDiamondStatus.setBackgroundResource(R.drawable.bg_booster_badge_available);
 
         // Double bonus button initial state
-        binding.overlayVictory.btnVictoryDoubleBonus.setText("🎬 DOUBLE BONUS • 💎 +" + (baseDiamonds * 2));
+        binding.overlayVictory.btnVictoryDoubleBonus.setText("📺 WATCH AD • 2X BONUS 💎 +" + (baseDiamonds * 2));
         binding.overlayVictory.btnVictoryDoubleBonus.setEnabled(true);
         binding.overlayVictory.btnVictoryDoubleBonus.setAlpha(1.0f);
 
@@ -1074,8 +1074,8 @@ public class GameActivity extends BaseActivity implements GameEngine.GameEventLi
         // Revive Options (Available in Level Mode and Endless Mode)
         binding.overlayGameOver.btnGameOverReviveAd.setVisibility(View.VISIBLE);
         binding.overlayGameOver.btnGameOverReviveAd.setText(isEndlessMode
-                ? "🎬 FREE REVIVE • CLEAR 5 ROWS"
-                : "🎬 FREE REVIVE • +5 EXTRA SHOTS");
+                ? "📺 WATCH AD • CLEAR 5 ROWS"
+                : "📺 WATCH AD • +5 EXTRA SHOTS");
         binding.overlayGameOver.btnGameOverReviveAd.setEnabled(true);
         binding.overlayGameOver.btnGameOverReviveAd.setAlpha(1.0f);
 

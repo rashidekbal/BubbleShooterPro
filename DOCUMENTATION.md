@@ -1,6 +1,6 @@
 # Bubble Shooter Pro — Complete Technical Architecture, Operation & Maintenance Manual
 
-> **Version**: 1.0.0 (Production Master)  
+> **Version**: 2.0.1 (VersionCode 8 - Production Release)  
 > **Target Platforms**: Android (Google Play Store), Windows (Desktop Game Designer Studio)  
 > **Author**: RedCoders Group & Engineering Team  
 > **Last Updated**: October 2026  
@@ -381,8 +381,17 @@ Located in [`com.redcodersgroup.bubbleshooter.audio`](file:///d:/projects/bubble
     4. Automatically restocks initial waves if the board was completely cleared.
     5. Sanitizes launcher bubble colors to match surviving board bubbles.
     6. Displays a dynamic floating accolade: `"⚡ REVIVED! 5 ROWS CLEARED"`.
-- **AdMob Rewarded Video**: Watch an ad in `ShopActivity` for +1 Heart or +2 Free Diamonds.
-- **AdMob Interstitial**: Displayed periodically between level completions.
+- **AdMob Integration & Families Policy Compliance (`AdManager.java`)**:
+  - Enforces Google Play Families Self-Certified Ads SDK requirements on initialization:
+    - `TAG_FOR_CHILD_DIRECTED_TREATMENT_TRUE`: Guarantees ad requests comply with child-directed COPPA and Families privacy regulations.
+    - `MAX_AD_CONTENT_RATING_G`: Enforces general audience rating for all ad payloads.
+  - Transparent & Unambiguous Ad Labeling across UI (Families Ad Format Requirements):
+    - **Victory Overlay (`overlay_victory.xml`, `GameActivity.java`)**: Labeled `📺 WATCH AD • 2X BONUS 💎 +4`.
+    - **Game Over Overlay (`overlay_game_over.xml`, `GameActivity.java`)**: Labeled `📺 WATCH AD • +5 EXTRA SHOTS` / `📺 WATCH AD • CLEAR 5 ROWS`.
+    - **Shop (`activity_shop.xml`)**: Badged with `AD` and action buttons labeled `🎬 WATCH AD`.
+    - **Heart Store & Out of Hearts Dialogs**: Distinctly labeled with `FREE AD` and `🎬 WATCH AD TO PLAY`.
+- **AdMob Rewarded Video**: Watch an ad in `ShopActivity` for +1 Heart or +2 Free Diamonds, revive in Game Over, or double victory diamond bonuses.
+- **AdMob Interstitial**: Displayed periodically every 3 level completions.
 - **Google Play Billing**: Integrated via `IapBillingManager` for secure in-app purchases of diamond tiers and energy refills.
 
 #### Endless Mode Home Card (`activity_main.xml`, `MainActivity.java`)

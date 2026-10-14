@@ -176,7 +176,7 @@
             android:paddingEnd="@dimen/dp_24"
             android:paddingTop="@dimen/dp_12"
             android:paddingBottom="@dimen/dp_12"
-            android:text="🎬 DOUBLE BONUS • 💎 +4"
+            android:text="📺 WATCH AD • 2X BONUS 💎 +4"
             android:textColor="#FDE047"
             android:textSize="@dimen/sp_15"
             android:textStyle="bold"

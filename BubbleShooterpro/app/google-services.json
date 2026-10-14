@@ -12,7 +12,32 @@
           "package_name": "com.redcodersgroup.bubbleshooter"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "378965108331-7eb4f36ibm5na9v5793lh5mkqnc15rh3.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.redcodersgroup.bubbleshooter",
+            "certificate_hash": "1d288dd778f45546a5569a145fd48dc513bffd42"
+          }
+        },
+        {
+          "client_id": "378965108331-ja0u9g4kb6ijv05ogioe14re9p3alaj9.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.redcodersgroup.bubbleshooter",
+            "certificate_hash": "da46f2df512229dcd77ea6a19ef8a18f89b3ee1e"
+          }
+        },
+        {
+          "client_id": "378965108331-sla034i7ndi8rp6f9vp3qld3tahfivn2.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.redcodersgroup.bubbleshooter",
+            "certificate_hash": "c48846a861bc4468402260f9b061c183bc93f240"
+          }
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyDxPX1x3fwSr_VDIlqHj9gBb-SginQuLFE"

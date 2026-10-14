@@ -109,7 +109,7 @@
             android:paddingEnd="@dimen/dp_24"
             android:paddingTop="@dimen/dp_12"
             android:paddingBottom="@dimen/dp_12"
-            android:text="🎬 FREE REVIVE • +5 EXTRA SHOTS"
+            android:text="📺 WATCH AD • +5 EXTRA SHOTS"
             android:textColor="#34D399"
             android:textSize="@dimen/sp_15"
             android:textStyle="bold"

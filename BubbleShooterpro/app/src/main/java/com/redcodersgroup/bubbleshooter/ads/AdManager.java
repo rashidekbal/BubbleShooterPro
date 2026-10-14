@@ -17,6 +17,7 @@ import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.FullScreenContentCallback;
 import com.google.android.gms.ads.LoadAdError;
 import com.google.android.gms.ads.MobileAds;
+import com.google.android.gms.ads.RequestConfiguration;
 import com.google.android.gms.ads.interstitial.InterstitialAd;
 import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback;
 import com.google.android.gms.ads.rewarded.RewardItem;
@@ -61,8 +62,15 @@ public class AdManager {
     public void initialize(@NonNull Context context) {
         this.appContext = context.getApplicationContext();
         try {
+            // Google Play Families Policy compliance: Enforce child-directed treatment & G rating
+            RequestConfiguration requestConfiguration = MobileAds.getRequestConfiguration().toBuilder()
+                    .setTagForChildDirectedTreatment(RequestConfiguration.TAG_FOR_CHILD_DIRECTED_TREATMENT_TRUE)
+                    .setMaxAdContentRating(RequestConfiguration.MAX_AD_CONTENT_RATING_G)
+                    .build();
+            MobileAds.setRequestConfiguration(requestConfiguration);
+
             MobileAds.initialize(context, initializationStatus -> {
-                Log.d(TAG, "Google Mobile Ads initialized successfully");
+                Log.d(TAG, "Google Mobile Ads initialized successfully with Families compliance");
                 preloadInterstitial();
                 preloadRewarded();
             });
