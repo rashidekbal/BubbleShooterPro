@@ -23,14 +23,15 @@ import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback;
 import com.google.android.gms.ads.rewarded.RewardItem;
 import com.google.android.gms.ads.rewarded.RewardedAd;
 import com.google.android.gms.ads.rewarded.RewardedAdLoadCallback;
+import com.redcodersgroup.bubbleshooter.analytics.AnalyticsManager;
 
 public class AdManager {
 
     private static final String TAG = "AdManager";
     private static volatile AdManager instance;
 
-    // Interstitial Configuration: Show strictly every 3 levels without conditions
-    private static final int INTERSTITIAL_LEVEL_INTERVAL = 3;
+    // Interstitial Configuration: Show strictly on Boss Level completion (every 5 levels: 5, 10, 15, etc.)
+    public static final int BOSS_LEVEL_INTERVAL = 5;
 
     private Context appContext;
     private InterstitialAd interstitialAd;
@@ -107,7 +108,7 @@ public class AdManager {
     }
 
     // -------------------------------------------------------------
-    // INTERSTITIAL ADS (Triggered strictly every 3 levels)
+    // INTERSTITIAL ADS (Triggered on Boss Level Completion: 5, 10, 15, etc.)
     // -------------------------------------------------------------
 
     public void preloadInterstitial() {
@@ -133,20 +134,31 @@ public class AdManager {
                 });
     }
 
+    public boolean isBossLevel(int level) {
+        return level > 0 && (level % BOSS_LEVEL_INTERVAL == 0);
+    }
+
     public boolean canShowInterstitial(int currentLevel) {
-        return interstitialAd != null;
+        return isBossLevel(currentLevel) && interstitialAd != null;
     }
 
     public void onLevelCompleted(Activity activity, int currentLevel, @Nullable Runnable onComplete) {
-        completedLevelsCount++;
-        if (completedLevelsCount % INTERSTITIAL_LEVEL_INTERVAL == 0) {
-            showInterstitial(activity, onComplete);
+        if (isBossLevel(currentLevel)) {
+            showInterstitial(activity, onComplete, "boss_level_completion");
         } else {
             if (onComplete != null) onComplete.run();
         }
     }
 
+    public void onEndlessModeQuit(Activity activity, @Nullable Runnable onComplete) {
+        showInterstitial(activity, onComplete, "endless_mode_quit");
+    }
+
     public void showInterstitial(@NonNull Activity activity, @Nullable Runnable onDismiss) {
+        showInterstitial(activity, onDismiss, "boss_level_completion");
+    }
+
+    public void showInterstitial(@NonNull Activity activity, @Nullable Runnable onDismiss, @NonNull String placement) {
         if (interstitialAd == null) {
             preloadInterstitial();
             if (onDismiss != null) onDismiss.run();
@@ -154,6 +166,11 @@ public class AdManager {
         }
 
         interstitialAd.setFullScreenContentCallback(new FullScreenContentCallback() {
+            @Override
+            public void onAdShowedFullScreenContent() {
+                AnalyticsManager.getInstance(activity).logAdImpression("interstitial", placement);
+            }
+
             @Override
             public void onAdDismissedFullScreenContent() {
                 interstitialAd = null;
@@ -164,6 +181,7 @@ public class AdManager {
             @Override
             public void onAdFailedToShowFullScreenContent(@NonNull AdError adError) {
                 interstitialAd = null;
+                AnalyticsManager.getInstance(activity).logAdFailedToShow("interstitial", placement, adError.getMessage());
                 preloadInterstitial();
                 if (onDismiss != null) onDismiss.run();
             }
@@ -214,6 +232,11 @@ public class AdManager {
 
         rewardedAd.setFullScreenContentCallback(new FullScreenContentCallback() {
             @Override
+            public void onAdShowedFullScreenContent() {
+                AnalyticsManager.getInstance(activity).logAdImpression("rewarded", "reward_placement");
+            }
+
+            @Override
             public void onAdDismissedFullScreenContent() {
                 rewardedAd = null;
                 preloadRewarded();
@@ -223,6 +246,7 @@ public class AdManager {
             @Override
             public void onAdFailedToShowFullScreenContent(@NonNull AdError adError) {
                 rewardedAd = null;
+                AnalyticsManager.getInstance(activity).logAdFailedToShow("rewarded", "reward_placement", adError.getMessage());
                 preloadRewarded();
                 callback.onAdClosed(false);
             }
@@ -230,6 +254,7 @@ public class AdManager {
 
         rewardedAd.show(activity, (RewardItem rewardItem) -> {
             didEarnReward[0] = true;
+            AnalyticsManager.getInstance(activity).logRewardedAdWatched("reward_placement", rewardItem.getType(), rewardItem.getAmount());
             callback.onRewardEarned(rewardItem.getAmount(), rewardItem.getType());
         });
     }

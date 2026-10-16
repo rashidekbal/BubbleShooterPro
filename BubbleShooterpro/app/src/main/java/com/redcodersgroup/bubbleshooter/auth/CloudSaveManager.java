@@ -11,6 +11,7 @@ import com.google.android.gms.games.snapshot.SnapshotMetadata;
 import com.google.android.gms.games.snapshot.SnapshotMetadataChange;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
+import com.redcodersgroup.bubbleshooter.analytics.AnalyticsManager;
 import com.redcodersgroup.bubbleshooter.data.PreferencesManager;
 import com.redcodersgroup.bubbleshooter.profile.AvatarManager;
 import org.json.JSONObject;
@@ -70,16 +71,17 @@ public class CloudSaveManager {
             json.put("seen_booster_intro_FIREBALL", prefs.hasSeenBoosterIntro("FIREBALL") || highestLevel >= PreferencesManager.UNLOCK_LEVEL_FIREBALL);
             json.put("seen_booster_intro_LIGHTNING", prefs.hasSeenBoosterIntro("LIGHTNING") || highestLevel >= PreferencesManager.UNLOCK_LEVEL_LIGHTNING);
 
-            // Track claimed world gifts
+            // Track claimed world gifts across all worlds and claimed star chests count
             JSONObject giftsObj = new JSONObject();
-            for (int w = 1; w <= 5; w++) {
-                for (int g = 0; g <= 2; g++) {
+            for (int w = 1; w <= 50; w++) {
+                for (int g = 1; g <= 2; g++) {
                     if (prefs.hasClaimedWorldGift(w, g)) {
                         giftsObj.put(w + "_" + g, true);
                     }
                 }
             }
             json.put("claimedWorldGifts", giftsObj);
+            json.put("claimedStarChestsCount", prefs.getClaimedStarChestsCount());
 
             // Star ratings and High Scores per level
             JSONObject starsObj = new JSONObject();
@@ -177,6 +179,13 @@ public class CloudSaveManager {
                         } catch (NumberFormatException ignored) {}
                     }
                 }
+            }
+
+            // Restore claimed star chests count
+            int remoteStarChests = remoteJson.optInt("claimedStarChestsCount", 0);
+            if (remoteStarChests > prefs.getClaimedStarChestsCount()) {
+                prefs.setClaimedStarChestsCount(remoteStarChests);
+                changed = true;
             }
 
             // Endless High Score
@@ -289,8 +298,11 @@ public class CloudSaveManager {
                 Task<SnapshotMetadata> commitTask = snapshotsClient.commitAndClose(snapshot, metadataChange);
                 Tasks.await(commitTask);
                 Log.d(TAG, "Cloud save committed successfully! Level " + prefs.getHighestUnlockedLevel() + ", " + prefs.getDiamonds() + " 💎");
+                AnalyticsManager.getInstance(activity).logCloudSaveSync(true, "save", "Level " + prefs.getHighestUnlockedLevel());
             } catch (Exception e) {
                 Log.e(TAG, "Error writing cloud save snapshot", e);
+                AnalyticsManager.getInstance(activity).logCloudSaveSync(false, "save", e.getMessage());
+                AnalyticsManager.getInstance(activity).recordNonFatal("CloudSave", "Error writing cloud save snapshot", e);
             }
         });
     }
@@ -319,6 +331,7 @@ public class CloudSaveManager {
 
                 if (!openTask.isSuccessful() || openTask.getResult() == null) {
                     Log.w(TAG, "Failed to open cloud save snapshot for reading");
+                    AnalyticsManager.getInstance(activity).logCloudSaveSync(false, "open", "Task unsuccessful");
                     if (callback != null) {
                         activity.runOnUiThread(() -> callback.onSyncComplete(false, "Failed to open cloud save"));
                     }
@@ -328,6 +341,7 @@ public class CloudSaveManager {
                 Snapshot snapshot = openTask.getResult().getData();
                 if (snapshot == null) {
                     Log.w(TAG, "Snapshot data is null");
+                    AnalyticsManager.getInstance(activity).logCloudSaveSync(false, "open", "Snapshot data is null");
                     if (callback != null) {
                         activity.runOnUiThread(() -> callback.onSyncComplete(false, "Snapshot data is null"));
                     }
@@ -346,6 +360,7 @@ public class CloudSaveManager {
                             .setPlayedTimeMillis(System.currentTimeMillis())
                             .build();
                     snapshotsClient.commitAndClose(snapshot, metadataChange);
+                    AnalyticsManager.getInstance(activity).logCloudSaveSync(true, "init", "Cloud save initialized");
                     if (callback != null) {
                         activity.runOnUiThread(() -> callback.onSyncComplete(true, "Cloud save initialized"));
                     }
@@ -367,11 +382,14 @@ public class CloudSaveManager {
                 snapshotsClient.commitAndClose(snapshot, metadataChange);
 
                 Log.d(TAG, "Cloud sync complete! Local updated: " + updatedLocal + ", Current level: " + prefs.getHighestUnlockedLevel());
+                AnalyticsManager.getInstance(activity).logCloudSaveSync(true, "sync", "Local updated=" + updatedLocal);
                 if (callback != null) {
                     activity.runOnUiThread(() -> callback.onSyncComplete(true, "Cloud progress synced successfully!"));
                 }
             } catch (Exception e) {
                 Log.e(TAG, "Error syncing cloud save snapshot", e);
+                AnalyticsManager.getInstance(activity).logCloudSaveSync(false, "sync", e.getMessage());
+                AnalyticsManager.getInstance(activity).recordNonFatal("CloudSave", "Error syncing cloud save snapshot", e);
                 if (callback != null) {
                     activity.runOnUiThread(() -> callback.onSyncComplete(false, e.getMessage()));
                 }

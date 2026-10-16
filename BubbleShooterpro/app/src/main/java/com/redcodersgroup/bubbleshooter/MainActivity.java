@@ -57,6 +57,7 @@ public class MainActivity extends AppCompatActivity {
     private HeartStoreDialog heartStoreDialog;
     private Dialog activePreviewDialog;
     private ExitConfirmDialog activeExitDialog;
+    private com.redcodersgroup.bubbleshooter.update.InAppUpdateManager inAppUpdateManager;
 
     public static final String EXTRA_AUTO_OPEN_LEVEL_PREVIEW = "extra_auto_open_level_preview";
     private static boolean sHasPromptedInitialLevelPreview = false;
@@ -79,6 +80,9 @@ public class MainActivity extends AppCompatActivity {
         levelManager = LevelManager.getInstance(this);
         soundManager = SoundManager.getInstance(this);
         worldConfigManager = WorldConfigManager.getInstance(this);
+
+        inAppUpdateManager = new com.redcodersgroup.bubbleshooter.update.InAppUpdateManager(this);
+        inAppUpdateManager.checkForUpdate();
 
         setupAuthLauncher();
         initViews();
@@ -191,10 +195,16 @@ public class MainActivity extends AppCompatActivity {
             starChestDialog = new StarChestDialog(this, totalStars, claimedCount, diamondsEarned -> {
                 updateDiamondsUI();
                 updateStarChestProgressUI();
+                if (worldMapAdapter != null) {
+                    worldMapAdapter.notifyDataSetChanged();
+                }
             });
             starChestDialog.setOnDismissListener(dialog -> {
                 updateDiamondsUI();
                 updateStarChestProgressUI();
+                if (worldMapAdapter != null) {
+                    worldMapAdapter.notifyDataSetChanged();
+                }
             });
             starChestDialog.show();
         });
@@ -243,6 +253,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onWorldGiftClaimed(int worldNumber, int giftIndex, int bonusDiamonds) {
                 updateDiamondsUI();
+                updateStarChestProgressUI();
                 if (worldMapAdapter != null) {
                     worldMapAdapter.notifyDataSetChanged();
                 }
@@ -346,10 +357,14 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        if (inAppUpdateManager != null) {
+            inAppUpdateManager.onResume();
+        }
         updateProfileUI();
         updateDiamondsUI();
         updateLivesUI();
         int currentLevel = prefs.getHighestUnlockedLevel();
+        AnalyticsManager.getInstance(this).updateUserState(currentLevel, prefs.getDiamonds(), prefs.getLives(), prefs.getPlayerName());
 
         binding.tvFloatingLevelNumber.setText(String.valueOf(currentLevel));
         updateStarChestProgressUI();
@@ -474,6 +489,10 @@ public class MainActivity extends AppCompatActivity {
         if (heartStoreDialog != null && heartStoreDialog.isShowing()) heartStoreDialog.dismiss();
         if (activePreviewDialog != null && activePreviewDialog.isShowing()) activePreviewDialog.dismiss();
         if (activeExitDialog != null && activeExitDialog.isShowing()) activeExitDialog.dismiss();
+        if (inAppUpdateManager != null) {
+            inAppUpdateManager.onDestroy();
+            inAppUpdateManager = null;
+        }
     }
 
     private void showLevelPreviewDialog(int level) {

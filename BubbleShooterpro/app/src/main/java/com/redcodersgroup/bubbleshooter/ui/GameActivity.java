@@ -107,6 +107,7 @@ public class GameActivity extends BaseActivity implements GameEngine.GameEventLi
         prefs = repository.getPreferences();
         levelManager = LevelManager.getInstance(this);
         soundManager = SoundManager.getInstance(this);
+        com.redcodersgroup.bubbleshooter.audio.MusicManager.getInstance(this).pauseMusic();
 
         initViews();
         setupGame();
@@ -252,6 +253,7 @@ public class GameActivity extends BaseActivity implements GameEngine.GameEventLi
             }
             playBoosterTapFeedback(targetLayout);
             gameEngine.equipBooster(type);
+            AnalyticsManager.getInstance(this).logBoosterEquipped(type.name(), currentLevelNumber);
             updateBoosterCounts();
         } else {
             soundManager.playClick();
@@ -550,6 +552,7 @@ public class GameActivity extends BaseActivity implements GameEngine.GameEventLi
             public void onRestartClicked() {
                 activePauseDialog = null;
                 deductLifeIfApplicable();
+                AnalyticsManager.getInstance(GameActivity.this).logLevelRetry(currentLevelNumber, isEndlessMode ? "Endless" : "Level");
                 if (!isEndlessMode && prefs.getLives() <= 0) {
                     showOutOfHeartsDialog(() -> {
                         loadCurrentLevel();
@@ -570,10 +573,17 @@ public class GameActivity extends BaseActivity implements GameEngine.GameEventLi
                 activePauseDialog = null;
                 deductLifeIfApplicable();
                 matchState = MatchState.LOST;
-                Intent intent = new Intent(GameActivity.this, MainActivity.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-                startActivity(intent);
-                finish();
+                Runnable navigateHome = () -> {
+                    Intent intent = new Intent(GameActivity.this, MainActivity.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                    startActivity(intent);
+                    finish();
+                };
+                if (isEndlessMode) {
+                    AdManager.getInstance().onEndlessModeQuit(GameActivity.this, navigateHome);
+                } else {
+                    navigateHome.run();
+                }
             }
         });
         activePauseDialog.show();
@@ -598,7 +608,11 @@ public class GameActivity extends BaseActivity implements GameEngine.GameEventLi
                 binding.overlayGameOver.rootGameOverOverlay.getVisibility() == View.VISIBLE) {
             deductLifeIfApplicable();
             stopReviveAdPulseAnimation();
-            finish();
+            if (isEndlessMode) {
+                AdManager.getInstance().onEndlessModeQuit(this, this::finish);
+            } else {
+                finish();
+            }
             return;
         }
 
@@ -626,7 +640,11 @@ public class GameActivity extends BaseActivity implements GameEngine.GameEventLi
         if (matchState == MatchState.PLAYING) {
             showPauseDialog();
         } else {
-            finish();
+            if (isEndlessMode) {
+                AdManager.getInstance().onEndlessModeQuit(this, this::finish);
+            } else {
+                finish();
+            }
         }
     }
 
@@ -913,7 +931,7 @@ public class GameActivity extends BaseActivity implements GameEngine.GameEventLi
                     enableImmersiveStickyMode();
                 });
             } else {
-                finish();
+                AdManager.getInstance().onLevelCompleted(GameActivity.this, completedLvl, this::finish);
             }
         });
 
@@ -940,7 +958,8 @@ public class GameActivity extends BaseActivity implements GameEngine.GameEventLi
             if (binding != null && binding.overlayVictory != null) {
                 binding.overlayVictory.rootVictoryOverlay.setVisibility(View.GONE);
             }
-            finish();
+            final int completedLvl = currentLevelNumber;
+            AdManager.getInstance().onLevelCompleted(GameActivity.this, completedLvl, this::finish);
         });
     }
 
@@ -1169,7 +1188,11 @@ public class GameActivity extends BaseActivity implements GameEngine.GameEventLi
             if (binding != null && binding.overlayGameOver != null) {
                 binding.overlayGameOver.rootGameOverOverlay.setVisibility(View.GONE);
             }
-            finish();
+            if (isEndlessMode) {
+                AdManager.getInstance().onEndlessModeQuit(GameActivity.this, this::finish);
+            } else {
+                finish();
+            }
         });
 
         // Retry / Replay Button (Player rejects extra shots -> deduct heart)
@@ -1303,6 +1326,7 @@ public class GameActivity extends BaseActivity implements GameEngine.GameEventLi
     @Override
     protected void onResume() {
         super.onResume();
+        com.redcodersgroup.bubbleshooter.audio.MusicManager.getInstance(this).pauseMusic();
         if (binding != null && binding.bubbleGameView != null) {
             binding.bubbleGameView.resume();
         }
@@ -1334,6 +1358,7 @@ public class GameActivity extends BaseActivity implements GameEngine.GameEventLi
         if (!isWon) {
             hasDeductedLifeForMatch = true;
             prefs.deductLife();
+            AnalyticsManager.getInstance(this).logLifeConsumed("gameplay_loss", prefs.getLives());
         }
     }
 

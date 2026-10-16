@@ -426,7 +426,8 @@ public class ShopActivity extends BaseActivity {
         if (prefs.spendDiamonds(StoreManager.COST_ONE_HEART)) {
             soundManager.playPurchase();
             prefs.addLives(1);
-            AnalyticsManager.getInstance(this).logHeartRefilled("diamond", 1);
+            AnalyticsManager.getInstance(this).logDiamondsSpent(StoreManager.COST_ONE_HEART, "heart", "single", prefs.getDiamonds());
+            AnalyticsManager.getInstance(this).logHeartRefilled("diamond", 1, prefs.getLives());
             updateAllUI();
             NoticeDialog.showReward(this, "PURCHASE", "LIFE RESTORED", "+1 HEART ADDED", "One heart added to your pool.");
         } else {
@@ -445,7 +446,8 @@ public class ShopActivity extends BaseActivity {
         if (prefs.spendDiamonds(StoreManager.COST_TRIPLE_HEARTS)) {
             soundManager.playPurchase();
             prefs.addLives(3);
-            AnalyticsManager.getInstance(this).logHeartRefilled("diamond", 3);
+            AnalyticsManager.getInstance(this).logDiamondsSpent(StoreManager.COST_TRIPLE_HEARTS, "heart", "triple", prefs.getDiamonds());
+            AnalyticsManager.getInstance(this).logHeartRefilled("diamond", 3, prefs.getLives());
             updateAllUI();
             NoticeDialog.showReward(this, "PURCHASE", "TRIPLE HEARTS", "+3 HEARTS ADDED", "Three hearts added to your pool.");
         } else {
@@ -464,7 +466,8 @@ public class ShopActivity extends BaseActivity {
         if (prefs.spendDiamonds(StoreManager.COST_LIVES_REFILL)) {
             soundManager.playPurchase();
             prefs.addLives(5);
-            AnalyticsManager.getInstance(this).logHeartRefilled("diamond", 5);
+            AnalyticsManager.getInstance(this).logDiamondsSpent(StoreManager.COST_LIVES_REFILL, "heart", "full_refill", prefs.getDiamonds());
+            AnalyticsManager.getInstance(this).logHeartRefilled("diamond", 5, prefs.getLives());
             updateAllUI();
             NoticeDialog.showReward(this, "PURCHASE", "ENERGY FULL", "MAX 5 HEARTS RESTORED", "Energy pool fully restored.");
         } else {
@@ -525,6 +528,8 @@ public class ShopActivity extends BaseActivity {
                     break;
             }
             com.redcodersgroup.bubbleshooter.auth.CloudSaveManager.getInstance().saveToCloud(this);
+            AnalyticsManager.getInstance(this).logDiamondsSpent(cost, "booster", type, prefs.getDiamonds());
+            AnalyticsManager.getInstance(this).logBoosterPurchased(type, count, cost);
             updateAllUI();
             NoticeDialog.showReward(this, "STORE", "PURCHASE SUCCESS", "+" + count + " " + type + " BOOSTER" + (count > 1 ? "S" : ""), count + " booster" + (count > 1 ? "s" : "") + " added to your battle arsenal!");
         } else {

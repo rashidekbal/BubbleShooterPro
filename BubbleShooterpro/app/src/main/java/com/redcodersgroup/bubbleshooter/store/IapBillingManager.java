@@ -224,9 +224,11 @@ public class IapBillingManager implements PurchasesUpdatedListener {
                 .setProductDetailsParamsList(productDetailsParamsList)
                 .build();
 
+        AnalyticsManager.getInstance(context).logIapPurchaseInitiated(productId);
         BillingResult billingResult = billingClient.launchBillingFlow(activity, billingFlowParams);
         if (billingResult.getResponseCode() != BillingClient.BillingResponseCode.OK) {
             Log.w(TAG, "launchBillingFlow returned error: " + billingResult.getDebugMessage() + " (Code: " + billingResult.getResponseCode() + ")");
+            AnalyticsManager.getInstance(context).logIapPurchaseFailed(productId, billingResult.getDebugMessage());
             notifyPurchaseFailed(productId, billingResult.getDebugMessage());
         }
     }
@@ -318,7 +320,8 @@ public class IapBillingManager implements PurchasesUpdatedListener {
             if (activity != null) {
                 CloudSaveManager.getInstance().saveToCloud(activity);
             }
-            AnalyticsManager.getInstance(context).logEvent("iap_diamond_purchase", null);
+            AnalyticsManager.getInstance(context).logIapPurchaseSuccess(productId, diamondsToAdd, getFormattedPrice(productId));
+            AnalyticsManager.getInstance(context).logDiamondsEarned(diamondsToAdd, "iap_" + productId, prefs.getDiamonds());
 
             final int finalAdded = diamondsToAdd;
             mainHandler.post(() -> {

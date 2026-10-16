@@ -14,8 +14,8 @@ android {
         applicationId "com.redcodersgroup.bubbleshooter"
         minSdk 29
         targetSdk 37
-        versionCode 8
-        versionName "2.0.1"
+        versionCode 9
+        versionName "2.0.2"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -55,4 +55,5 @@ dependencies {
     implementation libs.play.services.auth
     implementation libs.play.services.ads
     implementation libs.play.billing
+    implementation libs.play.app.update
 }

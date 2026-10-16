@@ -19,6 +19,7 @@ import com.google.android.gms.games.PlayGamesSdk;
 import com.google.android.gms.games.Player;
 import com.google.android.gms.games.PlayersClient;
 import com.google.android.gms.tasks.Task;
+import com.redcodersgroup.bubbleshooter.analytics.AnalyticsManager;
 import java.lang.reflect.Proxy;
 
 public class PlayGamesAuthManager {
@@ -97,12 +98,14 @@ public class PlayGamesAuthManager {
                     this.iconImageUri = account.getPhotoUrl().toString();
                 }
                 Log.d(TAG, "Google Sign-In successful: " + displayName + " (" + email + ")");
+                AnalyticsManager.getInstance().logPlayGamesSignIn(true, this.playerId, null);
                 Player player = createPlayerProxy(this.playerId, this.displayName, account.getPhotoUrl());
                 if (callback != null) {
                     callback.onSuccess(player);
                 }
             } else {
                 this.isAuthenticated = false;
+                AnalyticsManager.getInstance().logPlayGamesSignIn(false, null, "Google Account was null");
                 if (callback != null) {
                     callback.onFailure(new Exception("Google Account was null"));
                 }
@@ -275,10 +278,12 @@ public class PlayGamesAuthManager {
                         this.iconImageUri = player.getIconImageUri().toString();
                     }
                     Log.d(TAG, "Authenticated Play Games Player: " + displayName + " (" + playerId + ")");
+                    AnalyticsManager.getInstance(activity).logPlayGamesSignIn(true, this.playerId, null);
                     if (callback != null) {
                         callback.onSuccess(player);
                     }
                 } else {
+                    AnalyticsManager.getInstance(activity).logPlayGamesSignIn(false, null, task.getException() != null ? task.getException().getMessage() : "Unknown");
                     if (callback != null) {
                         callback.onFailure(task.getException());
                     }

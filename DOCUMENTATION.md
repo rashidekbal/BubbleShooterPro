@@ -1,6 +1,6 @@
 # Bubble Shooter Pro — Complete Technical Architecture, Operation & Maintenance Manual
 
-> **Version**: 2.0.1 (VersionCode 8 - Production Release)  
+> **Version**: 2.0.2 (VersionCode 9 - Production Release)  
 > **Target Platforms**: Android (Google Play Store), Windows (Desktop Game Designer Studio)  
 > **Author**: RedCoders Group & Engineering Team  
 > **Last Updated**: October 2026  
@@ -324,7 +324,10 @@ Located in [`com.redcodersgroup.bubbleshooter.audio`](file:///d:/projects/bubble
       - **Bomb / Blast (`bomb.mp3`)**: High-impact explosive blast audio triggered upon hitting the board and detonating a 2-ring hex cluster or chain-reaction explosion.
       - **Fireball (`fire.wav`)**: Calibrated to 70% duration (2.54s with smooth fade-out) and 70% playback volume (`0.7f`), triggered on first target bubble penetration or ceiling collision.
       - **Lightning (`lightning.mp3`)**: Electric plasma arc crackle triggered upon striking the board and vaporizing horizontal rows across the grid.
-- **`MusicManager`**: Manages background ambient music (`bgm.mp3`) trimmed to 60% duration (144s, optimized to 4.60MB) with volume configured at 60%, with smooth fade-in / fade-out transitions and app background pause handling.
+- **`MusicManager`**: Manages background ambient music (`bgm.mp3`) cropped by 70% to 47.0s duration (1,800 frames, optimized to 1.38MB) with volume configured at 60%.
+  - **Universal Music Playback (Except Gameplay Screen)**: Background music plays continuously across the app—including the Splash Screen ([`SplashActivity`](file:///d:/projects/bubble%20shooter%20pro/BubbleShooterpro/app/src/main/java/com/redcodersgroup/bubbleshooter/ui/splash/SplashActivity.java)), Lobby / World Map ([`MainActivity`](file:///d:/projects/bubble%20shooter%20pro/BubbleShooterpro/app/src/main/java/com/redcodersgroup/bubbleshooter/MainActivity.java)), and Shop ([`ShopActivity`](file:///d:/projects/bubble%20shooter%20pro/BubbleShooterpro/app/src/main/java/com/redcodersgroup/bubbleshooter/ui/ShopActivity.java)). Transitions between eligible screens (e.g., Splash into Lobby, or Lobby into Shop) occur seamlessly without stuttering or restarting playback.
+  - **Gameplay Screen Silence Policy**: Background music is strictly paused and silenced during gameplay in [`GameActivity`](file:///d:/projects/bubble%20shooter%20pro/BubbleShooterpro/app/src/main/java/com/redcodersgroup/bubbleshooter/ui/GameActivity.java). This ensures players enjoy crystal-clear, distraction-free auditory feedback for tactile bubble shots, popping sequences, combo chimes, and booster detonations.
+  - **Lifecycle Automation & Settings Safety**: [`BubbleShooterApp`](file:///d:/projects/bubble%20shooter%20pro/BubbleShooterpro/app/src/main/java/com/redcodersgroup/bubbleshooter/BubbleShooterApp.java) monitors application activities via `ActivityLifecycleCallbacks`. It sets `isGameScreenActive(true)` on `GameActivity` (silencing BGM) and increments/decrements `activeMusicActivities` across eligible non-game screens. If the app is minimized, BGM pauses. If music is toggled ON via the pause settings dialog during a match, preference state updates but playback remains silent until the match is finished and the player returns to the lobby.
 
 ---
 
@@ -391,7 +394,15 @@ Located in [`com.redcodersgroup.bubbleshooter.audio`](file:///d:/projects/bubble
     - **Shop (`activity_shop.xml`)**: Badged with `AD` and action buttons labeled `🎬 WATCH AD`.
     - **Heart Store & Out of Hearts Dialogs**: Distinctly labeled with `FREE AD` and `🎬 WATCH AD TO PLAY`.
 - **AdMob Rewarded Video**: Watch an ad in `ShopActivity` for +1 Heart or +2 Free Diamonds, revive in Game Over, or double victory diamond bonuses.
-- **AdMob Interstitial**: Displayed periodically every 3 level completions.
+- **AdMob Interstitial**: Displayed exclusively upon completing **Boss Levels** (`currentLevel % 5 == 0`, e.g. Levels 5, 10, 15, 20, etc.) on victory transitions via `AdManager.onLevelCompleted()`, and upon **quitting Endless Mode** (via Pause Dialog "Home", Game Over "Home", or back navigation via `AdManager.onEndlessModeQuit()`). Normal level completions remain completely ad-free for smooth pacing.
+- **Ad Failure & Network Resilience Architecture (`AdManager.java`)**:
+  - **Non-Blocking Gameplay Transition**: If an interstitial ad fails to load (`onAdFailedToLoad`) or fails to show (`onAdFailedToShowFullScreenContent`), `AdManager` immediately fires `onComplete.run()`. The game never freezes, hangs, or blocks player navigation; the next level or menu loads seamlessly.
+  - **Self-Healing Preloading**: Any ad dismiss or display failure automatically triggers background preloading (`preloadInterstitial()`, `preloadRewarded()`) to restore ad readiness for future encounters.
+  - **Graceful Rewarded Fallback**: If a player attempts to watch an opt-in rewarded video when no network or ad inventory is ready, the system displays a friendly `NoticeDialog` informing them that the ad is preparing, without deducting any player resources.
+- **Google Play Flexible In-App Updates (`InAppUpdateManager.java`)**:
+  - Integrated with `com.google.android.play:app-update` for background download of app updates (`AppUpdateType.FLEXIBLE`).
+  - Upon app launch in `MainActivity`, the manager queries Google Play Core for available updates and launches the background download prompt.
+  - When `InstallStatus.DOWNLOADED` is reached, an unobtrusive persistent Snackbar appears (`"🎉 An update has just been downloaded!"`) with a `"RESTART"` action calling `appUpdateManager.completeUpdate()`.
 - **Google Play Billing**: Integrated via `IapBillingManager` for secure in-app purchases of diamond tiers and energy refills.
 
 #### Endless Mode Home Card (`activity_main.xml`, `MainActivity.java`)
@@ -471,6 +482,26 @@ flowchart TD
 - **Custom Milestone & World Path Visual Assets**:
   - `ic_star_chest_closed.png`: Beautiful closed golden treasure chest with ruby gem clasp, rendered on the Home screen launcher button, dialog empty state, preview in `ClaimGiftDialog`, and for unclaimed mystery gift chests along the World Map saga path.
   - `ic_star_chest_open.png`: Open golden treasure chest spilling radiant cyan diamonds, rendered on each milestone reward card, in `ClaimGiftDialog` once claimed, and on the World Map path once collected.
+
+#### Reward Center & World Path Gift Chest Bidirectional Synchronization
+To eliminate double-collection exploits and visual desync between the **Reward Center** and **World Map Path Gifts**:
+1. **Mathematical Sequence Mapping**:
+   Every world $W \in [1, 49]$ features exactly 2 path chests ($G \in \{1, 2\}$):
+   $$\text{milestoneIndex} = (W - 1) \times 2 + G$$
+   Conversely, each milestone $M \ge 1$ maps to a deterministic world and gift:
+   $$W = \lfloor \frac{M - 1}{2} \rfloor + 1, \quad G = ((M - 1) \pmod 2) + 1$$
+2. **Unified Preferences Synchronization (`PreferencesManager.java`)**:
+   - `hasClaimedWorldGift(world, giftIndex)`: Returns `true` if explicit boolean `world_gift_W_G` is set **OR** if `getClaimedStarChestsCount() >= milestoneIndex`.
+   - `setClaimedWorldGift(world, giftIndex, true)`: Persists `world_gift_W_G = true` and guarantees `claimedStarChestsCount` is updated to at least `milestoneIndex`.
+   - `incrementClaimedStarChestsCount()` / `addClaimedStarChestsCount(count)`: Atomically updates `claimedStarChestsCount` and marks corresponding `world_gift_W_G` flags as claimed in SharedPreferences.
+3. **Collect All Sweep (`StarChestDialog.java`)**:
+   - Tapping "COLLECT ALL" claims star milestones, daily free diamonds, and sweeps any unlocked world gifts up to `highestUnlockedLevel`, granting their rewards and marking them claimed.
+4. **Immediate Map & Badge UI Refresh (`MainActivity.java`)**:
+   - `StarChestDialog` triggers `worldMapAdapter.notifyDataSetChanged()` on both item claim and dialog dismiss, immediately converting closed/pulsing map chests to open chests (`ic_star_chest_open`, $\alpha = 0.65$, no pulse).
+   - `onWorldGiftClaimed()` invokes `updateStarChestProgressUI()` to keep the Home screen star badge counter in sync.
+5. **Full Cloud Save Persistence (`CloudSaveManager.java`)**:
+   - Serializes `claimedStarChestsCount` alongside `claimedWorldGifts` across all 50 worlds (expanded from legacy 5 worlds).
+
 
 ---
 

@@ -191,6 +191,26 @@ public class StarChestDialog extends Dialog {
             setupDailyFreeSection();
         }
 
+        // Also sweep and mark any unlocked world path gifts as claimed so they cannot be collected again from the world
+        com.redcodersgroup.bubbleshooter.data.WorldConfigManager wcm = com.redcodersgroup.bubbleshooter.data.WorldConfigManager.getInstance(getContext());
+        int highestUnlocked = prefs.getHighestUnlockedLevel();
+        if (wcm != null && wcm.getWorlds() != null) {
+            for (com.redcodersgroup.bubbleshooter.data.WorldConfigManager.WorldModel world : wcm.getWorlds()) {
+                if (world != null && world.gifts != null) {
+                    for (com.redcodersgroup.bubbleshooter.data.WorldConfigManager.GiftConfig gift : world.gifts) {
+                        int reqLevel = (world.startLevel - 1) + gift.requiredLevelOffset;
+                        if (highestUnlocked > reqLevel) {
+                            if (!prefs.hasClaimedWorldGift(world.worldNumber, gift.giftIndex)) {
+                                prefs.setClaimedWorldGift(world.worldNumber, gift.giftIndex, true);
+                                int bonus = (gift.rewardDiamonds > 0) ? gift.rewardDiamonds : 2;
+                                totalDiamonds += bonus;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
         prefs.addDiamonds(totalDiamonds);
         triggerCloudSave();
         updateRewardsViewState();

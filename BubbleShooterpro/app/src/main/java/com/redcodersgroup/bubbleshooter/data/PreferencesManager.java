@@ -202,24 +202,51 @@ public class PreferencesManager {
     }
 
     public boolean hasClaimedWorldGift(int world, int giftIndex) {
-        return prefs.getBoolean("world_gift_" + world + "_" + giftIndex, false);
+        if (prefs.getBoolean("world_gift_" + world + "_" + giftIndex, false)) {
+            return true;
+        }
+        int milestoneIndex = (world - 1) * 2 + giftIndex;
+        return getClaimedStarChestsCount() >= milestoneIndex;
     }
 
     public void setClaimedWorldGift(int world, int giftIndex, boolean claimed) {
         prefs.edit().putBoolean("world_gift_" + world + "_" + giftIndex, claimed).apply();
+        if (claimed) {
+            int milestoneIndex = (world - 1) * 2 + giftIndex;
+            if (getClaimedStarChestsCount() < milestoneIndex) {
+                setClaimedStarChestsCount(milestoneIndex);
+            }
+        }
     }
 
     public int getClaimedStarChestsCount() {
         return prefs.getInt("key_claimed_star_chests_count", 0);
     }
 
+    public void setClaimedStarChestsCount(int count) {
+        prefs.edit().putInt("key_claimed_star_chests_count", Math.max(0, count)).apply();
+    }
+
     public void incrementClaimedStarChestsCount() {
-        prefs.edit().putInt("key_claimed_star_chests_count", getClaimedStarChestsCount() + 1).apply();
+        int newCount = getClaimedStarChestsCount() + 1;
+        setClaimedStarChestsCount(newCount);
+        int world = ((newCount - 1) / 2) + 1;
+        int giftIndex = ((newCount - 1) % 2) + 1;
+        prefs.edit().putBoolean("world_gift_" + world + "_" + giftIndex, true).apply();
     }
 
     public void addClaimedStarChestsCount(int count) {
         if (count > 0) {
-            prefs.edit().putInt("key_claimed_star_chests_count", getClaimedStarChestsCount() + count).apply();
+            int startCount = getClaimedStarChestsCount();
+            int newCount = startCount + count;
+            setClaimedStarChestsCount(newCount);
+            android.content.SharedPreferences.Editor editor = prefs.edit();
+            for (int i = startCount + 1; i <= newCount; i++) {
+                int world = ((i - 1) / 2) + 1;
+                int giftIndex = ((i - 1) % 2) + 1;
+                editor.putBoolean("world_gift_" + world + "_" + giftIndex, true);
+            }
+            editor.apply();
         }
     }
 

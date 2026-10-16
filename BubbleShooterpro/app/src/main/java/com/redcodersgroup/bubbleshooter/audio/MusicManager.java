@@ -14,7 +14,8 @@ public class MusicManager {
     private final PreferencesManager prefs;
     private MediaPlayer mediaPlayer;
     private boolean isPlaying = false;
-    private int activeActivities = 0;
+    private int activeMusicActivities = 0;
+    private boolean isGameScreenActive = false;
 
     private MusicManager(Context context) {
         this.context = context.getApplicationContext();
@@ -28,8 +29,39 @@ public class MusicManager {
         return instance;
     }
 
+    public synchronized void setGameScreenActive(boolean active) {
+        this.isGameScreenActive = active;
+        if (active) {
+            pauseMusic();
+        } else if (activeMusicActivities > 0 && prefs.isMusicEnabled()) {
+            startMusic();
+        }
+    }
+
+    public synchronized boolean isGameScreenActive() {
+        return isGameScreenActive;
+    }
+
+    public synchronized void onMusicActivityStarted() {
+        activeMusicActivities++;
+        if (activeMusicActivities == 1 && !isGameScreenActive && prefs.isMusicEnabled()) {
+            startMusic();
+        }
+    }
+
+    public synchronized void onMusicActivityStopped() {
+        activeMusicActivities = Math.max(0, activeMusicActivities - 1);
+        if (activeMusicActivities == 0) {
+            pauseMusic();
+        }
+    }
+
+    public synchronized boolean isMusicAllowed() {
+        return !isGameScreenActive && activeMusicActivities > 0;
+    }
+
     public synchronized void startMusic() {
-        if (!prefs.isMusicEnabled()) {
+        if (isGameScreenActive || !prefs.isMusicEnabled()) {
             return;
         }
 
@@ -75,7 +107,7 @@ public class MusicManager {
     }
 
     public synchronized void resumeMusic() {
-        if (prefs.isMusicEnabled()) {
+        if (!isGameScreenActive && activeMusicActivities > 0 && prefs.isMusicEnabled()) {
             startMusic();
         }
     }
@@ -88,7 +120,9 @@ public class MusicManager {
     public synchronized void setMusicEnabled(boolean enabled) {
         prefs.setMusicEnabled(enabled);
         if (enabled) {
-            startMusic();
+            if (!isGameScreenActive && activeMusicActivities > 0) {
+                startMusic();
+            }
         } else {
             pauseMusic();
         }
@@ -98,18 +132,31 @@ public class MusicManager {
         return prefs.isMusicEnabled();
     }
 
-    public synchronized void onActivityStarted() {
-        activeActivities++;
-        if (activeActivities == 1 && prefs.isMusicEnabled()) {
-            startMusic();
-        }
+    // Aliases for compatibility
+    public synchronized void setLobbyActive(boolean active) {
+        setGameScreenActive(!active);
     }
 
+    public synchronized boolean isLobbyActive() {
+        return !isGameScreenActive;
+    }
+
+    public synchronized void setBgmAllowed(boolean allowed) {
+        setGameScreenActive(!allowed);
+    }
+
+    public synchronized boolean isBgmAllowed() {
+        return !isGameScreenActive;
+    }
+
+    @Deprecated
+    public synchronized void onActivityStarted() {
+        onMusicActivityStarted();
+    }
+
+    @Deprecated
     public synchronized void onActivityStopped() {
-        activeActivities = Math.max(0, activeActivities - 1);
-        if (activeActivities == 0) {
-            pauseMusic();
-        }
+        onMusicActivityStopped();
     }
 
     private synchronized void releaseMediaPlayer() {
