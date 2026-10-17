@@ -20,10 +20,11 @@
         <meta-data android:name="com.google.android.gms.games.APP_ID"
             android:value="@string/game_services_project_id"/>
 
-        <!-- Google AdMob App ID -->
+        <!-- Google AdMob App ID (Test: ca-app-pub-3940256099942544~3347511713, Prod: ca-app-pub-1147620738869495~5638413366) -->
+        <!-- PROD: <meta-data android:name="com.google.android.gms.ads.APPLICATION_ID" android:value="ca-app-pub-1147620738869495~5638413366"/> -->
         <meta-data
             android:name="com.google.android.gms.ads.APPLICATION_ID"
-            android:value="ca-app-pub-1147620738869495~5638413366"/>
+            android:value="@string/admob_app_id"/>
 
         <!-- Splash Screen Launcher Activity -->
         <activity

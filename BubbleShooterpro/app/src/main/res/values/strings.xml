@@ -14,8 +14,35 @@
     <string name="music">Music</string>
     <string name="haptics">Vibration</string>
     <string translatable="false"  name="game_services_project_id">378965108331</string>
+    <!-- Google AdMob App ID -->
+    <!-- TEST: <string translatable="false" name="admob_app_id">ca-app-pub-3940256099942544~3347511713</string> -->
     <string translatable="false" name="admob_app_id">ca-app-pub-1147620738869495~5638413366</string>
+
+    <!-- App Open Ad (Reopen from background) -->
+    <!-- TEST: <string translatable="false" name="admob_app_open_unit_id">ca-app-pub-3940256099942544/9257395921</string> -->
+    <string translatable="false" name="admob_app_open_unit_id">ca-app-pub-1147620738869495/3776361306</string>
+
+    <!-- Adaptive Bottom Banner (All non-game screens) -->
+    <!-- TEST: <string translatable="false" name="admob_banner_unit_id">ca-app-pub-3940256099942544/6300978111</string> -->
     <string translatable="false" name="admob_banner_unit_id">ca-app-pub-1147620738869495/2081302570</string>
+
+    <!-- Interstitial Ad: Normal Level Mode Home Button -->
+    <!-- TEST: <string translatable="false" name="admob_interstitial_normal_level_home_unit_id">ca-app-pub-3940256099942544/1033173712</string> -->
+    <string translatable="false" name="admob_interstitial_normal_level_home_unit_id">ca-app-pub-1147620738869495/5089442971</string>
+
+    <!-- Interstitial Ad: Endless Mode Button Clicked -->
+    <!-- TEST: <string translatable="false" name="admob_interstitial_endless_enter_unit_id">ca-app-pub-3940256099942544/1033173712</string> -->
+    <string translatable="false" name="admob_interstitial_endless_enter_unit_id">ca-app-pub-1147620738869495/4316996361</string>
+
+    <!-- Interstitial Ad: Endless Mode Exit -->
+    <!-- TEST: <string translatable="false" name="admob_interstitial_endless_exit_unit_id">ca-app-pub-3940256099942544/1033173712</string> -->
+    <string translatable="false" name="admob_interstitial_endless_exit_unit_id">ca-app-pub-1147620738869495/1054829190</string>
+
+    <!-- Interstitial Ad: Boss Level Completion & Default -->
+    <!-- TEST: <string translatable="false" name="admob_interstitial_unit_id">ca-app-pub-3940256099942544/1033173712</string> -->
     <string translatable="false" name="admob_interstitial_unit_id">ca-app-pub-1147620738869495/1996707949</string>
+
+    <!-- Rewarded Video Ad -->
+    <!-- TEST: <string translatable="false" name="admob_rewarded_unit_id">ca-app-pub-3940256099942544/5224354917</string> -->
     <string translatable="false" name="admob_rewarded_unit_id">ca-app-pub-1147620738869495/4622871284</string>
 </resources>

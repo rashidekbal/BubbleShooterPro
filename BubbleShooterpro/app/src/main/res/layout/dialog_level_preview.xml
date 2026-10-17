@@ -99,13 +99,13 @@
                 android:textStyle="bold" />
         </LinearLayout>
 
-        <!-- Pre-game Boosters Selection -->
+        <!-- Pre-game Boosters Selection (Rewarded Video Ad) -->
         <TextView
             android:id="@+id/tvSelectBoostersHeader"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="SELECT A BOOSTER (FIRST SHOT)"
-            android:textColor="#64748B"
+            android:text="FREE BOOSTER • 🎬 WATCH AD TO EQUIP"
+            android:textColor="#F59E0B"
             android:textSize="@dimen/sp_11"
             android:textStyle="bold"
             android:letterSpacing="0.08"
@@ -168,7 +168,7 @@
                     android:elevation="@dimen/dp_6"
                     android:visibility="gone" />
 
-                <!-- Count Badge -->
+                <!-- Ad Badge -->
                 <TextView
                     android:id="@+id/tvCountPreviewRainbow"
                     android:layout_width="wrap_content"
@@ -179,12 +179,12 @@
                     android:gravity="center"
                     android:paddingStart="@dimen/dp_5"
                     android:paddingEnd="@dimen/dp_5"
-                    android:background="@drawable/bg_booster_badge_available"
+                    android:background="@drawable/bg_booster_badge_ad"
                     android:textColor="#FFFFFF"
-                    android:textSize="@dimen/sp_10"
+                    android:textSize="@dimen/sp_9"
                     android:textStyle="bold"
                     android:elevation="@dimen/dp_6"
-                    android:text="1" />
+                    android:text="🎬 AD" />
             </FrameLayout>
 
             <!-- Fireball Booster Container -->
@@ -235,7 +235,7 @@
                     android:elevation="@dimen/dp_6"
                     android:visibility="gone" />
 
-                <!-- Count Badge -->
+                <!-- Ad Badge -->
                 <TextView
                     android:id="@+id/tvCountPreviewFireball"
                     android:layout_width="wrap_content"
@@ -246,12 +246,12 @@
                     android:gravity="center"
                     android:paddingStart="@dimen/dp_5"
                     android:paddingEnd="@dimen/dp_5"
-                    android:background="@drawable/bg_booster_badge_available"
+                    android:background="@drawable/bg_booster_badge_ad"
                     android:textColor="#FFFFFF"
-                    android:textSize="@dimen/sp_10"
+                    android:textSize="@dimen/sp_9"
                     android:textStyle="bold"
                     android:elevation="@dimen/dp_6"
-                    android:text="1" />
+                    android:text="🎬 AD" />
             </FrameLayout>
 
             <!-- Lightning Booster Container -->
@@ -302,7 +302,7 @@
                     android:elevation="@dimen/dp_6"
                     android:visibility="gone" />
 
-                <!-- Count Badge -->
+                <!-- Ad Badge -->
                 <TextView
                     android:id="@+id/tvCountPreviewLightning"
                     android:layout_width="wrap_content"
@@ -313,12 +313,12 @@
                     android:gravity="center"
                     android:paddingStart="@dimen/dp_5"
                     android:paddingEnd="@dimen/dp_5"
-                    android:background="@drawable/bg_booster_badge_available"
+                    android:background="@drawable/bg_booster_badge_ad"
                     android:textColor="#FFFFFF"
-                    android:textSize="@dimen/sp_10"
+                    android:textSize="@dimen/sp_9"
                     android:textStyle="bold"
                     android:elevation="@dimen/dp_6"
-                    android:text="1" />
+                    android:text="🎬 AD" />
             </FrameLayout>
 
             <!-- Bomb Booster Container -->
@@ -369,7 +369,7 @@
                     android:elevation="@dimen/dp_6"
                     android:visibility="gone" />
 
-                <!-- Count Badge -->
+                <!-- Ad Badge -->
                 <TextView
                     android:id="@+id/tvCountPreviewBomb"
                     android:layout_width="wrap_content"
@@ -380,12 +380,12 @@
                     android:gravity="center"
                     android:paddingStart="@dimen/dp_5"
                     android:paddingEnd="@dimen/dp_5"
-                    android:background="@drawable/bg_booster_badge_available"
+                    android:background="@drawable/bg_booster_badge_ad"
                     android:textColor="#FFFFFF"
-                    android:textSize="@dimen/sp_10"
+                    android:textSize="@dimen/sp_9"
                     android:textStyle="bold"
                     android:elevation="@dimen/dp_6"
-                    android:text="1" />
+                    android:text="🎬 AD" />
             </FrameLayout>
         </LinearLayout>
 

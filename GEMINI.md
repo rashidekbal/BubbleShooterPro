@@ -34,3 +34,8 @@ Whenever modifications are made to:
 - [ ] Code compiles and tests pass (`.\gradlew.bat testDebugUnitTest`).
 - [ ] Any new or modified constants/enums (e.g. colors, boosters) are documented in [`DOCUMENTATION.md`](file:///d:/projects/bubble%20shooter%20pro/DOCUMENTATION.md).
 - [ ] All developer recipes and CLI commands remain tested and valid.
+
+## Mandatory Git Commit Policy
+
+> **CRITICAL REQUIREMENT**: **NEVER run `git commit` without explicitly asking the user first and receiving their confirmation.** All changes must remain for the user to review until the user explicitly requests or approves a commit.
+

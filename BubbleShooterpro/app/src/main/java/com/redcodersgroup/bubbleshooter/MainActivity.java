@@ -38,6 +38,9 @@ import com.redcodersgroup.bubbleshooter.ui.dialogs.HeartStoreDialog;
 import com.redcodersgroup.bubbleshooter.ui.dialogs.OutOfHeartsDialog;
 import com.redcodersgroup.bubbleshooter.ui.dialogs.ExitConfirmDialog;
 import androidx.activity.OnBackPressedCallback;
+import com.redcodersgroup.bubbleshooter.ads.AdManager;
+import java.util.HashSet;
+import java.util.Set;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -214,7 +217,9 @@ public class MainActivity extends AppCompatActivity {
             soundManager.playClick();
             v.animate().scaleX(0.92f).scaleY(0.92f).setDuration(80).withEndAction(() -> {
                 v.animate().scaleX(1.0f).scaleY(1.0f).setDuration(100).start();
-                startActivity(GameActivity.createEndlessIntent(this));
+                com.redcodersgroup.bubbleshooter.ads.AdManager.getInstance().showEndlessEnterInterstitial(this, () -> {
+                    startActivity(GameActivity.createEndlessIntent(this));
+                });
             }).start();
         });
 
@@ -528,117 +533,95 @@ public class MainActivity extends AppCompatActivity {
 
 
         boolean rainbowUnlocked = prefs.isBoosterUnlocked(BubbleType.RAINBOW, level);
-        int rainbowCount = prefs.getRainbowBoosters();
-        boolean rainbowAvailable = rainbowUnlocked && rainbowCount > 0;
-
         boolean fireballUnlocked = prefs.isBoosterUnlocked(BubbleType.FIREBALL, level);
-        int fireballCount = prefs.getFireballBoosters();
-        boolean fireballAvailable = fireballUnlocked && fireballCount > 0;
-
         boolean lightningUnlocked = prefs.isBoosterUnlocked(BubbleType.LIGHTNING, level);
-        int lightningCount = prefs.getLightningBoosters();
-        boolean lightningAvailable = lightningUnlocked && lightningCount > 0;
-
         boolean bombUnlocked = prefs.isBoosterUnlocked(BubbleType.BOMB, level);
-        int bombCount = prefs.getBombBoosters();
-        boolean bombAvailable = bombUnlocked && bombCount > 0;
 
-        previewBinding.layoutPreviewBoosterRainbow.setVisibility(rainbowAvailable ? View.VISIBLE : View.GONE);
-        if (rainbowAvailable) {
-            previewBinding.tvCountPreviewRainbow.setText(String.valueOf(rainbowCount));
-        }
+        previewBinding.layoutPreviewBoosterRainbow.setVisibility(rainbowUnlocked ? View.VISIBLE : View.GONE);
+        previewBinding.layoutPreviewBoosterFireball.setVisibility(fireballUnlocked ? View.VISIBLE : View.GONE);
+        previewBinding.layoutPreviewBoosterLightning.setVisibility(lightningUnlocked ? View.VISIBLE : View.GONE);
+        previewBinding.layoutPreviewBoosterBomb.setVisibility(bombUnlocked ? View.VISIBLE : View.GONE);
 
-        previewBinding.layoutPreviewBoosterFireball.setVisibility(fireballAvailable ? View.VISIBLE : View.GONE);
-        if (fireballAvailable) {
-            previewBinding.tvCountPreviewFireball.setText(String.valueOf(fireballCount));
-        }
+        boolean anyBoosterUnlocked = rainbowUnlocked || fireballUnlocked || lightningUnlocked || bombUnlocked;
+        previewBinding.tvSelectBoostersHeader.setVisibility(anyBoosterUnlocked ? View.VISIBLE : View.GONE);
+        previewBinding.layoutBoostersRow.setVisibility(anyBoosterUnlocked ? View.VISIBLE : View.GONE);
 
-        previewBinding.layoutPreviewBoosterLightning.setVisibility(lightningAvailable ? View.VISIBLE : View.GONE);
-        if (lightningAvailable) {
-            previewBinding.tvCountPreviewLightning.setText(String.valueOf(lightningCount));
-        }
-
-        previewBinding.layoutPreviewBoosterBomb.setVisibility(bombAvailable ? View.VISIBLE : View.GONE);
-        if (bombAvailable) {
-            previewBinding.tvCountPreviewBomb.setText(String.valueOf(bombCount));
-        }
-
-        boolean anyBoosterAvailable = rainbowAvailable || fireballAvailable || lightningAvailable || bombAvailable;
-        previewBinding.tvSelectBoostersHeader.setVisibility(anyBoosterAvailable ? View.VISIBLE : View.GONE);
-        previewBinding.layoutBoostersRow.setVisibility(anyBoosterAvailable ? View.VISIBLE : View.GONE);
-
+        final Set<BubbleType> adClaimedBoosters = new HashSet<>();
         final BubbleType[] selectedBooster = new BubbleType[]{null};
+
         Runnable updateBoosterSelection = () -> {
             BubbleType sel = selectedBooster[0];
 
             boolean isRainbow = sel == BubbleType.RAINBOW;
+            boolean rainbowClaimed = adClaimedBoosters.contains(BubbleType.RAINBOW);
             previewBinding.ringBoosterRainbow.setVisibility(isRainbow ? View.VISIBLE : View.GONE);
             previewBinding.ivCheckPreviewRainbow.setVisibility(isRainbow ? View.VISIBLE : View.GONE);
+            previewBinding.tvCountPreviewRainbow.setText(rainbowClaimed ? (isRainbow ? "✓" : "READY") : "🎬 AD");
 
             boolean isFireball = sel == BubbleType.FIREBALL;
+            boolean fireballClaimed = adClaimedBoosters.contains(BubbleType.FIREBALL);
             previewBinding.ringBoosterFireball.setVisibility(isFireball ? View.VISIBLE : View.GONE);
             previewBinding.ivCheckPreviewFireball.setVisibility(isFireball ? View.VISIBLE : View.GONE);
+            previewBinding.tvCountPreviewFireball.setText(fireballClaimed ? (isFireball ? "✓" : "READY") : "🎬 AD");
 
             boolean isLightning = sel == BubbleType.LIGHTNING;
+            boolean lightningClaimed = adClaimedBoosters.contains(BubbleType.LIGHTNING);
             previewBinding.ringBoosterLightning.setVisibility(isLightning ? View.VISIBLE : View.GONE);
             previewBinding.ivCheckPreviewLightning.setVisibility(isLightning ? View.VISIBLE : View.GONE);
+            previewBinding.tvCountPreviewLightning.setText(lightningClaimed ? (isLightning ? "✓" : "READY") : "🎬 AD");
 
             boolean isBomb = sel == BubbleType.BOMB;
+            boolean bombClaimed = adClaimedBoosters.contains(BubbleType.BOMB);
             previewBinding.ringBoosterBomb.setVisibility(isBomb ? View.VISIBLE : View.GONE);
             previewBinding.ivCheckPreviewBomb.setVisibility(isBomb ? View.VISIBLE : View.GONE);
+            previewBinding.tvCountPreviewBomb.setText(bombClaimed ? (isBomb ? "✓" : "READY") : "🎬 AD");
         };
 
-        previewBinding.btnToggleBoosterRainbow.setOnClickListener(v -> {
-            soundManager.playClick();
-            if (selectedBooster[0] == BubbleType.RAINBOW) {
-                selectedBooster[0] = null;
-            } else {
-                selectedBooster[0] = BubbleType.RAINBOW;
-                v.animate().scaleX(1.12f).scaleY(1.12f).setDuration(80).withEndAction(() ->
-                        v.animate().scaleX(1.0f).scaleY(1.0f).setDuration(120).start()
-                ).start();
-            }
-            updateBoosterSelection.run();
-        });
+        updateBoosterSelection.run();
 
-        previewBinding.btnToggleBoosterFireball.setOnClickListener(v -> {
+        java.util.function.BiConsumer<BubbleType, View> handleBoosterClick = (type, v) -> {
             soundManager.playClick();
-            if (selectedBooster[0] == BubbleType.FIREBALL) {
-                selectedBooster[0] = null;
+            if (adClaimedBoosters.contains(type)) {
+                if (selectedBooster[0] == type) {
+                    selectedBooster[0] = null;
+                } else {
+                    selectedBooster[0] = type;
+                    v.animate().scaleX(1.12f).scaleY(1.12f).setDuration(80).withEndAction(() ->
+                            v.animate().scaleX(1.0f).scaleY(1.0f).setDuration(120).start()
+                    ).start();
+                }
+                updateBoosterSelection.run();
             } else {
-                selectedBooster[0] = BubbleType.FIREBALL;
-                v.animate().scaleX(1.12f).scaleY(1.12f).setDuration(80).withEndAction(() ->
-                        v.animate().scaleX(1.0f).scaleY(1.0f).setDuration(120).start()
-                ).start();
-            }
-            updateBoosterSelection.run();
-        });
+                AdManager adManager = AdManager.getInstance();
+                if (!adManager.isRewardedReady()) {
+                    adManager.preloadRewarded();
+                    return;
+                }
+                adManager.showRewardedVideo(MainActivity.this, new AdManager.RewardCallback() {
+                    @Override
+                    public void onRewardEarned(int amount, String rewardType) {
+                        adClaimedBoosters.add(type);
+                        selectedBooster[0] = type;
+                        runOnUiThread(() -> {
+                            updateBoosterSelection.run();
+                            v.animate().scaleX(1.15f).scaleY(1.15f).setDuration(100).withEndAction(() ->
+                                    v.animate().scaleX(1.0f).scaleY(1.0f).setDuration(150).start()
+                            ).start();
+                        });
+                    }
 
-        previewBinding.btnToggleBoosterLightning.setOnClickListener(v -> {
-            soundManager.playClick();
-            if (selectedBooster[0] == BubbleType.LIGHTNING) {
-                selectedBooster[0] = null;
-            } else {
-                selectedBooster[0] = BubbleType.LIGHTNING;
-                v.animate().scaleX(1.12f).scaleY(1.12f).setDuration(80).withEndAction(() ->
-                        v.animate().scaleX(1.0f).scaleY(1.0f).setDuration(120).start()
-                ).start();
+                    @Override
+                    public void onAdClosed(boolean rewarded) {
+                        runOnUiThread(updateBoosterSelection);
+                    }
+                });
             }
-            updateBoosterSelection.run();
-        });
+        };
 
-        previewBinding.btnToggleBoosterBomb.setOnClickListener(v -> {
-            soundManager.playClick();
-            if (selectedBooster[0] == BubbleType.BOMB) {
-                selectedBooster[0] = null;
-            } else {
-                selectedBooster[0] = BubbleType.BOMB;
-                v.animate().scaleX(1.12f).scaleY(1.12f).setDuration(80).withEndAction(() ->
-                        v.animate().scaleX(1.0f).scaleY(1.0f).setDuration(120).start()
-                ).start();
-            }
-            updateBoosterSelection.run();
-        });
+        previewBinding.btnToggleBoosterRainbow.setOnClickListener(v -> handleBoosterClick.accept(BubbleType.RAINBOW, v));
+        previewBinding.btnToggleBoosterFireball.setOnClickListener(v -> handleBoosterClick.accept(BubbleType.FIREBALL, v));
+        previewBinding.btnToggleBoosterLightning.setOnClickListener(v -> handleBoosterClick.accept(BubbleType.LIGHTNING, v));
+        previewBinding.btnToggleBoosterBomb.setOnClickListener(v -> handleBoosterClick.accept(BubbleType.BOMB, v));
 
         previewBinding.btnStartLevel.setOnClickListener(v -> {
             soundManager.playClick();

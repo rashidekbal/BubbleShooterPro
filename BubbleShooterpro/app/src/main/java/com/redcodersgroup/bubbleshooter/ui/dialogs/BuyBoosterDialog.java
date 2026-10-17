@@ -14,28 +14,34 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.redcodersgroup.bubbleshooter.R;
+import com.redcodersgroup.bubbleshooter.ads.AdManager;
 import com.redcodersgroup.bubbleshooter.audio.SoundManager;
 import com.redcodersgroup.bubbleshooter.bubble.BubbleType;
+import com.redcodersgroup.bubbleshooter.data.PreferencesManager;
 import com.redcodersgroup.bubbleshooter.databinding.DialogBuyBoosterBinding;
 
 public class BuyBoosterDialog extends Dialog {
 
     public interface BuyBoosterListener {
         void onGoToShop(BubbleType type);
+        default void onBoosterRewarded(BubbleType type) {}
     }
 
+    private final Activity activity;
     private final BubbleType boosterType;
     @Nullable
     private final BuyBoosterListener listener;
     private DialogBuyBoosterBinding binding;
     private boolean isDismissing = false;
 
-    public BuyBoosterDialog(@NonNull Context context,
+    public BuyBoosterDialog(@NonNull Activity activity,
                             BubbleType boosterType,
                             @Nullable BuyBoosterListener listener) {
-        super(context);
+        super(activity);
+        this.activity = activity;
         this.boosterType = boosterType;
         this.listener = listener;
+        setOwnerActivity(activity);
     }
 
     @Override
@@ -51,14 +57,14 @@ public class BuyBoosterDialog extends Dialog {
         if (getWindow() != null) {
             getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
             getWindow().setLayout(
-                    (int) (getContext().getResources().getDisplayMetrics().widthPixels * 0.90),
+                    (int) (activity.getResources().getDisplayMetrics().widthPixels * 0.90),
                     ViewGroup.LayoutParams.WRAP_CONTENT
             );
         }
 
         configureBoosterDetails();
 
-        SoundManager soundManager = SoundManager.getInstance(getContext());
+        SoundManager soundManager = SoundManager.getInstance(activity);
         soundManager.playBounce();
 
         binding.btnCloseDialog.setOnClickListener(v -> {
@@ -69,6 +75,11 @@ public class BuyBoosterDialog extends Dialog {
         binding.btnCancel.setOnClickListener(v -> {
             soundManager.playClick();
             dismissWithAnimation(null);
+        });
+
+        binding.btnWatchAdForBooster.setOnClickListener(v -> {
+            soundManager.playClick();
+            handleWatchAdForBooster();
         });
 
         binding.btnBuyInShop.setOnClickListener(v -> {
@@ -83,6 +94,50 @@ public class BuyBoosterDialog extends Dialog {
         startEntranceAnimation();
     }
 
+    private void handleWatchAdForBooster() {
+        if (activity == null || activity.isFinishing() || activity.isDestroyed()) {
+            return;
+        }
+
+        AdManager adManager = AdManager.getInstance();
+        if (!adManager.isRewardedReady()) {
+            adManager.preloadRewarded();
+            return;
+        }
+
+        final boolean[] rewardClaimed = {false};
+
+        adManager.showRewardedVideo(activity, new AdManager.RewardCallback() {
+            @Override
+            public void onRewardEarned(int amount, String rewardType) {
+                if (!rewardClaimed[0]) {
+                    rewardClaimed[0] = true;
+                    PreferencesManager prefs = new PreferencesManager(activity);
+                    prefs.addBooster(boosterType, 1);
+                }
+            }
+
+            @Override
+            public void onAdClosed(boolean rewarded) {
+                activity.runOnUiThread(() -> {
+                    if (rewarded || rewardClaimed[0]) {
+                        if (!rewardClaimed[0]) {
+                            rewardClaimed[0] = true;
+                            PreferencesManager prefs = new PreferencesManager(activity);
+                            prefs.addBooster(boosterType, 1);
+                        }
+
+                        dismissWithAnimation(() -> {
+                            if (listener != null) {
+                                listener.onBoosterRewarded(boosterType);
+                            }
+                        });
+                    }
+                });
+            }
+        });
+    }
+
     private void configureBoosterDetails() {
         if (boosterType == null) return;
 
@@ -91,7 +146,7 @@ public class BuyBoosterDialog extends Dialog {
                 binding.ivBoosterIcon.setImageResource(R.drawable.bomb_bubble);
                 binding.tvBoosterName.setText("OUT OF BOMBS");
                 binding.tvBoosterDescription.setText(
-                        "You've used all your Bomb power-ups! Blast 3x3 bubble clusters away by grabbing more in the Shop."
+                        "You've used all your Bomb power-ups! Watch a quick ad to get 1 free, or visit the Shop to restock."
                 );
                 break;
 
@@ -99,7 +154,7 @@ public class BuyBoosterDialog extends Dialog {
                 binding.ivBoosterIcon.setImageResource(R.drawable.rainbow_bubble);
                 binding.tvBoosterName.setText("OUT OF RAINBOWS");
                 binding.tvBoosterDescription.setText(
-                        "You've used all your Rainbow power-ups! Match and clear any color cluster by getting more in the Shop."
+                        "You've used all your Rainbow power-ups! Watch a quick ad to get 1 free, or visit the Shop to restock."
                 );
                 break;
 
@@ -107,7 +162,7 @@ public class BuyBoosterDialog extends Dialog {
                 binding.ivBoosterIcon.setImageResource(R.drawable.fireball_bubble);
                 binding.tvBoosterName.setText("OUT OF FIREBALLS");
                 binding.tvBoosterDescription.setText(
-                        "You've used all your Fireball power-ups! Incinerate whole vertical columns by restocking in the Shop."
+                        "You've used all your Fireball power-ups! Watch a quick ad to get 1 free, or visit the Shop to restock."
                 );
                 break;
 
@@ -115,14 +170,14 @@ public class BuyBoosterDialog extends Dialog {
                 binding.ivBoosterIcon.setImageResource(R.drawable.lightning_bubble);
                 binding.tvBoosterName.setText("OUT OF LIGHTNING");
                 binding.tvBoosterDescription.setText(
-                        "You've used all your Lightning power-ups! Zap entire horizontal rows away with a quick refill from the Shop."
+                        "You've used all your Lightning power-ups! Watch a quick ad to get 1 free, or visit the Shop to restock."
                 );
                 break;
 
             default:
                 binding.tvBoosterName.setText("OUT OF POWER-UPS");
                 binding.tvBoosterDescription.setText(
-                        "You've used all of this power-up! Visit the Shop to restock and keep your winning streak going."
+                        "You've used all of this power-up! Watch a quick ad to get 1 free, or visit the Shop to restock."
                 );
                 break;
         }

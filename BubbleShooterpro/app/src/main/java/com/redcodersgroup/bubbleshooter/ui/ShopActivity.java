@@ -115,6 +115,10 @@ public class ShopActivity extends BaseActivity {
     }
 
     private void initViews() {
+        if (binding.layoutShopBanner != null) {
+            AdManager.getInstance().loadBanner(this, binding.layoutShopBanner);
+        }
+
         binding.btnShopBack.setOnClickListener(v -> {
             soundManager.playClick();
             finish();

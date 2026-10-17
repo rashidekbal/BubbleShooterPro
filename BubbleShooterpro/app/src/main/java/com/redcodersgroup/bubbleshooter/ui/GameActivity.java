@@ -257,12 +257,40 @@ public class GameActivity extends BaseActivity implements GameEngine.GameEventLi
             updateBoosterCounts();
         } else {
             soundManager.playClick();
+            // Preload rewarded video so it's ready immediately when player taps Watch Ad
+            com.redcodersgroup.bubbleshooter.ads.AdManager.getInstance().preloadRewarded();
+
             if (activeBuyBoosterDialog != null && activeBuyBoosterDialog.isShowing()) {
                 activeBuyBoosterDialog.dismiss();
                 activeBuyBoosterDialog = null;
             }
-            activeBuyBoosterDialog = BuyBoosterDialog.show(this, type, boosterType -> {
-                startActivity(ShopActivity.createIntent(GameActivity.this, ShopActivity.TAB_BOOSTERS));
+            activeBuyBoosterDialog = BuyBoosterDialog.show(this, type, new BuyBoosterDialog.BuyBoosterListener() {
+                @Override
+                public void onGoToShop(BubbleType boosterType) {
+                    startActivity(ShopActivity.createIntent(GameActivity.this, ShopActivity.TAB_BOOSTERS));
+                }
+
+                @Override
+                public void onBoosterRewarded(BubbleType boosterType) {
+                    runOnUiThread(() -> {
+                        updateBoosterCounts();
+                        soundManager.playPurchase();
+
+                        View targetLayout = null;
+                        if (boosterType == BubbleType.BOMB) {
+                            targetLayout = binding.layoutBoosterBomb;
+                        } else if (boosterType == BubbleType.RAINBOW) {
+                            targetLayout = binding.layoutBoosterRainbow;
+                        } else if (boosterType == BubbleType.FIREBALL) {
+                            targetLayout = binding.layoutBoosterFireball;
+                        } else if (boosterType == BubbleType.LIGHTNING) {
+                            targetLayout = binding.layoutBoosterLightning;
+                        }
+                        if (targetLayout != null) {
+                            playBoosterTapFeedback(targetLayout);
+                        }
+                    });
+                }
             });
         }
     }
@@ -371,31 +399,12 @@ public class GameActivity extends BaseActivity implements GameEngine.GameEventLi
         resetStarProgressNodes(level != null ? level.getStarThresholds() : new int[]{1000, 2000, 3000});
         gameEngine.loadLevel(level);
 
-        // Equip pre-selected booster if chosen in the level preview dialog
+        // Equip pre-selected booster if chosen in the level preview dialog (earned via rewarded ad)
         String preselectedBooster = getIntent().getStringExtra(EXTRA_PRESELECTED_BOOSTER);
         if (preselectedBooster != null) {
             try {
                 BubbleType boosterType = BubbleType.valueOf(preselectedBooster);
-                boolean consumed = false;
-                switch (boosterType) {
-                    case BOMB:
-                        consumed = prefs.consumeBombBooster();
-                        break;
-                    case RAINBOW:
-                        consumed = prefs.consumeRainbowBooster();
-                        break;
-                    case FIREBALL:
-                        consumed = prefs.consumeFireballBooster();
-                        break;
-                    case LIGHTNING:
-                        consumed = prefs.consumeLightningBooster();
-                        break;
-                    default:
-                        break;
-                }
-                if (consumed) {
-                    gameEngine.equipBooster(boosterType);
-                }
+                gameEngine.equipBooster(boosterType);
             } catch (Exception ignored) {}
             getIntent().removeExtra(EXTRA_PRESELECTED_BOOSTER);
         }
@@ -582,7 +591,7 @@ public class GameActivity extends BaseActivity implements GameEngine.GameEventLi
                 if (isEndlessMode) {
                     AdManager.getInstance().onEndlessModeQuit(GameActivity.this, navigateHome);
                 } else {
-                    navigateHome.run();
+                    AdManager.getInstance().showNormalLevelHomeInterstitial(GameActivity.this, navigateHome);
                 }
             }
         });
@@ -611,7 +620,7 @@ public class GameActivity extends BaseActivity implements GameEngine.GameEventLi
             if (isEndlessMode) {
                 AdManager.getInstance().onEndlessModeQuit(this, this::finish);
             } else {
-                finish();
+                AdManager.getInstance().showNormalLevelHomeInterstitial(this, this::finish);
             }
             return;
         }
@@ -643,7 +652,7 @@ public class GameActivity extends BaseActivity implements GameEngine.GameEventLi
             if (isEndlessMode) {
                 AdManager.getInstance().onEndlessModeQuit(this, this::finish);
             } else {
-                finish();
+                AdManager.getInstance().showNormalLevelHomeInterstitial(this, this::finish);
             }
         }
     }
@@ -958,8 +967,11 @@ public class GameActivity extends BaseActivity implements GameEngine.GameEventLi
             if (binding != null && binding.overlayVictory != null) {
                 binding.overlayVictory.rootVictoryOverlay.setVisibility(View.GONE);
             }
-            final int completedLvl = currentLevelNumber;
-            AdManager.getInstance().onLevelCompleted(GameActivity.this, completedLvl, this::finish);
+            if (isEndlessMode) {
+                AdManager.getInstance().onEndlessModeQuit(GameActivity.this, this::finish);
+            } else {
+                AdManager.getInstance().showNormalLevelHomeInterstitial(GameActivity.this, this::finish);
+            }
         });
     }
 
@@ -1093,14 +1105,14 @@ public class GameActivity extends BaseActivity implements GameEngine.GameEventLi
         // Revive Options (Available in Level Mode and Endless Mode)
         binding.overlayGameOver.btnGameOverReviveAd.setVisibility(View.VISIBLE);
         binding.overlayGameOver.btnGameOverReviveAd.setText(isEndlessMode
-                ? "📺 WATCH AD • CLEAR 5 ROWS"
+                ? "📺 WATCH AD • CLEAR 10 ROWS"
                 : "📺 WATCH AD • +5 EXTRA SHOTS");
         binding.overlayGameOver.btnGameOverReviveAd.setEnabled(true);
         binding.overlayGameOver.btnGameOverReviveAd.setAlpha(1.0f);
 
         binding.overlayGameOver.btnGameOverReviveDiamonds.setVisibility(View.VISIBLE);
         binding.overlayGameOver.btnGameOverReviveDiamonds.setText(isEndlessMode
-                ? "💎 REVIVE (CLEAR 5 ROWS • " + continueCost + " 💎)"
+                ? "💎 REVIVE (CLEAR 10 ROWS • " + continueCost + " 💎)"
                 : "💎 REVIVE (+5 EXTRA SHOTS • " + continueCost + " 💎)");
 
         // Attach Touch Feedback to Action Buttons
@@ -1148,7 +1160,7 @@ public class GameActivity extends BaseActivity implements GameEngine.GameEventLi
                                 "NO REVIVE",
                                 "AD INCOMPLETE",
                                 isEndlessMode
-                                        ? "Watch the full video to revive and clear 5 rows!"
+                                        ? "Watch the full video to revive and clear 10 rows!"
                                         : "Watch the full video to revive with +5 extra shots!"
                         ));
                     }
@@ -1169,7 +1181,7 @@ public class GameActivity extends BaseActivity implements GameEngine.GameEventLi
                 soundManager.playPurchase();
                 if (gameEngine != null) {
                     if (isEndlessMode) {
-                        gameEngine.reviveEndlessMode(5);
+                        gameEngine.reviveEndlessMode(10);
                     } else {
                         gameEngine.addExtraShots(5);
                     }
@@ -1191,7 +1203,7 @@ public class GameActivity extends BaseActivity implements GameEngine.GameEventLi
             if (isEndlessMode) {
                 AdManager.getInstance().onEndlessModeQuit(GameActivity.this, this::finish);
             } else {
-                finish();
+                AdManager.getInstance().showNormalLevelHomeInterstitial(GameActivity.this, this::finish);
             }
         });
 
@@ -1317,7 +1329,7 @@ public class GameActivity extends BaseActivity implements GameEngine.GameEventLi
         }
         if (gameEngine != null) {
             gameEngine.pause();
-            if (matchState == MatchState.PLAYING) {
+            if (matchState == MatchState.PLAYING && !AdManager.getInstance().isShowingFullscreenAd()) {
                 wasBackgrounded = true;
             }
         }
@@ -1331,6 +1343,19 @@ public class GameActivity extends BaseActivity implements GameEngine.GameEventLi
             binding.bubbleGameView.resume();
         }
         updateBoosterCounts();
+
+        // If returning while playing without the app being backgrounded (e.g. after ad or dialog), resume engine if no dialogs active
+        if (!wasBackgrounded && matchState == MatchState.PLAYING && gameEngine != null) {
+            boolean isPauseShowing = activePauseDialog != null && activePauseDialog.isShowing();
+            boolean isVictoryShowing = (binding != null && binding.overlayVictory != null &&
+                    binding.overlayVictory.rootVictoryOverlay.getVisibility() == View.VISIBLE) ||
+                    (activeVictoryDialog != null && activeVictoryDialog.isShowing());
+            boolean isGameOverShowing = (binding != null && binding.overlayGameOver != null &&
+                    binding.overlayGameOver.rootGameOverOverlay.getVisibility() == View.VISIBLE);
+            if (!isPauseShowing && !isVictoryShowing && !isGameOverShowing) {
+                gameEngine.resume();
+            }
+        }
 
         // Only auto-show pause dialog if the app was actively sent to background during gameplay
         if (wasBackgrounded) {

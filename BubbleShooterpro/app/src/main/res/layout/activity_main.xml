@@ -353,4 +353,13 @@
             android:shadowRadius="3" />
     </FrameLayout>
 
+    <!-- Bottom Banner Ad Container (Non-game screen) -->
+    <FrameLayout
+        android:id="@+id/layoutMainBanner"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|center_horizontal"
+        android:elevation="@dimen/dp_12"
+        android:visibility="gone" />
+
 </FrameLayout>

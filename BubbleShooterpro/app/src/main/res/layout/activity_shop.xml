@@ -1734,4 +1734,13 @@
         </LinearLayout>
     </ScrollView>
 
+    <!-- Bottom Banner Ad Container (Non-game screen) -->
+    <FrameLayout
+        android:id="@+id/layoutShopBanner"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|center_horizontal"
+        android:elevation="@dimen/dp_10"
+        android:visibility="gone" />
+
 </LinearLayout>

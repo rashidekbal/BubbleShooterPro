@@ -1,6 +1,6 @@
 # Bubble Shooter Pro — Complete Technical Architecture, Operation & Maintenance Manual
 
-> **Version**: 2.0.2 (VersionCode 9 - Production Release)  
+> **Version**: 2.0.3 (VersionCode 10 - Production Release)  
 > **Target Platforms**: Android (Google Play Store), Windows (Desktop Game Designer Studio)  
 > **Author**: RedCoders Group & Engineering Team  
 > **Last Updated**: October 2026  
@@ -384,20 +384,63 @@ Located in [`com.redcodersgroup.bubbleshooter.audio`](file:///d:/projects/bubble
     4. Automatically restocks initial waves if the board was completely cleared.
     5. Sanitizes launcher bubble colors to match surviving board bubbles.
     6. Displays a dynamic floating accolade: `"⚡ REVIVED! 5 ROWS CLEARED"`.
-- **AdMob Integration & Families Policy Compliance (`AdManager.java`)**:
-  - Enforces Google Play Families Self-Certified Ads SDK requirements on initialization:
-    - `TAG_FOR_CHILD_DIRECTED_TREATMENT_TRUE`: Guarantees ad requests comply with child-directed COPPA and Families privacy regulations.
-    - `MAX_AD_CONTENT_RATING_G`: Enforces general audience rating for all ad payloads.
+- **AdMob Integration & Families Policy Compliance (`AdManager.java`, `BubbleShooterApp.java`)**:
+  - Enforces Google Play Families Self-Certified Ads SDK requirements globally on initialization:
+    - `TAG_FOR_CHILD_DIRECTED_TREATMENT_TRUE`: Guarantees ad requests strictly comply with COPPA child-directed regulations.
+    - `TAG_FOR_UNDER_AGE_OF_CONSENT_TRUE`: Guarantees compliance with GDPR under-age and global privacy standards.
+    - `MAX_AD_CONTENT_RATING_G`: Strict General Audiences content rating filter for all ad creatives.
+  - **Ad Formats & Placements Architecture**:
+    - *Production Configuration*: Production ad units are fully active across [`strings.xml`](file:///d:/projects/bubble%20shooter%20pro/BubbleShooterpro/app/src/main/res/values/strings.xml), [`AndroidManifest.xml`](file:///d:/projects/bubble%20shooter%20pro/BubbleShooterpro/app/src/main/AndroidManifest.xml), and [`AdManager.java`](file:///d:/projects/bubble%20shooter%20pro/BubbleShooterpro/app/src/main/java/com/redcodersgroup/bubbleshooter/ads/AdManager.java). Official Google test ad units remain documented in comments for rapid developer testing.
+    1. **App Open Ad**:
+       - *Prod Unit ID*: `ca-app-pub-1147620738869495/3776361306` (Active)
+       - *Test Unit ID*: `ca-app-pub-3940256099942544/9257395921`
+       - Powered by `ProcessLifecycleOwner` and `DefaultLifecycleObserver` in `BubbleShooterApp.java`.
+       - Shows when returning to the game from the background (app reopen), with 4-hour cache expiry and cold-start bypass.
+    2. **Normal Level Home Interstitial**:
+       - *Prod Unit ID*: `ca-app-pub-1147620738869495/5089442971` (Active)
+       - *Test Unit ID*: `ca-app-pub-3940256099942544/1033173712`
+       - Triggered whenever the player navigates to Home from normal level mode (Pause dialog Home, Game Over Home, Victory Home, or system Back press).
+    3. **Endless Mode Enter Interstitial**:
+       - *Prod Unit ID*: `ca-app-pub-1147620738869495/4316996361` (Active)
+       - *Test Unit ID*: `ca-app-pub-3940256099942544/1033173712`
+       - Triggered upon clicking the **Endless Mode** button on the Main Menu / World Map.
+    4. **Endless Mode Exit Interstitial**:
+       - *Prod Unit ID*: `ca-app-pub-1147620738869495/1054829190` (Active)
+       - *Test Unit ID*: `ca-app-pub-3940256099942544/1033173712`
+       - Triggered when leaving Endless Survival Mode (Pause Home, Game Over Home, or Back navigation).
+    5. **Adaptive Anchored Bottom Banner**:
+       - *Prod Unit ID*: `ca-app-pub-1147620738869495/2081302570` (Active)
+       - *Test Unit ID*: `ca-app-pub-3940256099942544/6300978111`
+       - Displayed on non-game menu screens (`ShopActivity`). Intentionally omitted from `MainActivity` (Saga World Map) to preserve 100% unobstructed edge-to-edge visibility for all level pins.
+       - Uses `AdSize.getCurrentOrientationAnchoredAdaptiveBannerAdSize` for full screen width responsiveness.
+    6. **Rewarded Video**:
+       - *Prod Unit ID*: `ca-app-pub-1147620738869495/4622871284` (Active)
+       - *Test Unit ID*: `ca-app-pub-3940256099942544/5224354917`
+       - Opt-in rewards:
+         - **In-Game Out-of-Booster Instant Refill (`BuyBoosterDialog.java`, `GameActivity.java`)**: When a player taps an unlocked booster whose count is 0 during gameplay, `BuyBoosterDialog` presents two distinct paths: watch a rewarded video (`🎬 WATCH AD • GET 1 FREE`) to immediately earn +1 unit added directly to their inventory (updating badge from `+` to `1` with celebratory bounce feedback and sound), or tap `🛒 VISIT SHOP TO BUY MORE` to open the shop.
+         - **Pre-Game Free Booster Equipping (`MainActivity.java`, `dialog_level_preview.xml`)**: In the Level Preview dialog, only boosters unlocked at the current level (`prefs.isBoosterUnlocked`) are displayed. Rather than consuming saved player inventory or displaying inventory counts, each booster item displays a prominent `"🎬 AD"` badge. Tapping prompts a rewarded ad via `AdManager.getInstance().showRewardedVideo()`; upon completion, the booster is unlocked for that specific match, marked with `"✓"` / `"READY"`, and automatically loaded into the launcher via `EXTRA_PRESELECTED_BOOSTER` without deducting the player's saved booster inventory.
+         - **Revive (+5 shots / clear 5 rows)** in normal and endless modes.
+         - **Victory 2X Diamond bonus** in post-game celebration.
+         - **Shop +1 Heart & +2 Diamonds** daily ad rewards.
+         - **Out-of-Hearts play voucher** to play without hearts.
+  - **Switching Between Production and Test Ad Units**:
+    - In [`strings.xml`](file:///d:/projects/bubble%20shooter%20pro/BubbleShooterpro/app/src/main/res/values/strings.xml): Uncomment the `<!-- TEST: ... -->` lines and comment out the production units if returning to test mode.
+    - In [`AndroidManifest.xml`](file:///d:/projects/bubble%20shooter%20pro/BubbleShooterpro/app/src/main/AndroidManifest.xml): The `APPLICATION_ID` references `@string/admob_app_id` automatically.
+    - In [`AdManager.java`](file:///d:/projects/bubble%20shooter%20pro/BubbleShooterpro/app/src/main/java/com/redcodersgroup\bubbleshooter\ads\AdManager.java): Production unit constants are active directly.
   - Transparent & Unambiguous Ad Labeling across UI (Families Ad Format Requirements):
+    - **Out-of-Boosters In-Game Modal (`dialog_buy_booster.xml`)**: Labeled `🎬 WATCH AD • GET 1 FREE`.
+    - **Level Preview Dialog (`dialog_level_preview.xml`)**: Labeled `FREE BOOSTER • 🎬 WATCH AD TO EQUIP` with `🎬 AD` badges.
     - **Victory Overlay (`overlay_victory.xml`, `GameActivity.java`)**: Labeled `📺 WATCH AD • 2X BONUS 💎 +4`.
     - **Game Over Overlay (`overlay_game_over.xml`, `GameActivity.java`)**: Labeled `📺 WATCH AD • +5 EXTRA SHOTS` / `📺 WATCH AD • CLEAR 5 ROWS`.
     - **Shop (`activity_shop.xml`)**: Badged with `AD` and action buttons labeled `🎬 WATCH AD`.
     - **Heart Store & Out of Hearts Dialogs**: Distinctly labeled with `FREE AD` and `🎬 WATCH AD TO PLAY`.
-- **AdMob Rewarded Video**: Watch an ad in `ShopActivity` for +1 Heart or +2 Free Diamonds, revive in Game Over, or double victory diamond bonuses.
-- **AdMob Interstitial**: Displayed exclusively upon completing **Boss Levels** (`currentLevel % 5 == 0`, e.g. Levels 5, 10, 15, 20, etc.) on victory transitions via `AdManager.onLevelCompleted()`, and upon **quitting Endless Mode** (via Pause Dialog "Home", Game Over "Home", or back navigation via `AdManager.onEndlessModeQuit()`). Normal level completions remain completely ad-free for smooth pacing.
 - **Ad Failure & Network Resilience Architecture (`AdManager.java`)**:
+  - **App Open Ad Background Reopen Reliability**:
+    - `BubbleShooterApp.java` filters out AdMob's internal `AdActivity` so showing full-screen ads never triggers false-positive background/foreground transitions.
+    - Uses dual-trigger background detection (`startedActivityCount` + `ProcessLifecycleOwner`).
+    - If an App Open ad is still loading when the player returns from background, `pendingAppOpenActivity` holds the foreground activity and presents the ad immediately when loaded (with a 5-second freshness guard).
   - **Non-Blocking Gameplay Transition**: If an interstitial ad fails to load (`onAdFailedToLoad`) or fails to show (`onAdFailedToShowFullScreenContent`), `AdManager` immediately fires `onComplete.run()`. The game never freezes, hangs, or blocks player navigation; the next level or menu loads seamlessly.
-  - **Self-Healing Preloading**: Any ad dismiss or display failure automatically triggers background preloading (`preloadInterstitial()`, `preloadRewarded()`) to restore ad readiness for future encounters.
+  - **Self-Healing Preloading**: Any ad dismiss or display failure automatically triggers background preloading (`preloadAllInterstitials()`, `preloadAppOpenAd()`, `preloadRewarded()`) to restore ad readiness for future encounters.
   - **Graceful Rewarded Fallback**: If a player attempts to watch an opt-in rewarded video when no network or ad inventory is ready, the system displays a friendly `NoticeDialog` informing them that the ad is preparing, without deducting any player resources.
 - **Google Play Flexible In-App Updates (`InAppUpdateManager.java`)**:
   - Integrated with `com.google.android.play:app-update` for background download of app updates (`AppUpdateType.FLEXIBLE`).

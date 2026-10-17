@@ -14,7 +14,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.animation.AccelerateDecelerateInterpolator;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -138,11 +137,6 @@ public class OutOfHeartsDialog extends Dialog {
             public void onAdClosed(boolean rewarded) {
                 if (!rewarded) {
                     AdManager.getInstance().preloadRewarded();
-                    if (hostActivity != null && !hostActivity.isFinishing() && !hostActivity.isDestroyed()) {
-                        hostActivity.runOnUiThread(() -> {
-                            Toast.makeText(getContext(), "Watch the full video to get a free life and play!", Toast.LENGTH_SHORT).show();
-                        });
-                    }
                 }
             }
         });

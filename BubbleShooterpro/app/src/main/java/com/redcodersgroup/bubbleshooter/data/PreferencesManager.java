@@ -414,19 +414,23 @@ public class PreferencesManager {
     }
 
     public void refundBooster(com.redcodersgroup.bubbleshooter.bubble.BubbleType type) {
-        if (type == null) return;
+        addBooster(type, 1);
+    }
+
+    public void addBooster(com.redcodersgroup.bubbleshooter.bubble.BubbleType type, int count) {
+        if (type == null || count <= 0) return;
         switch (type) {
             case BOMB:
-                addBombBoosters(1);
+                addBombBoosters(count);
                 break;
             case RAINBOW:
-                addRainbowBoosters(1);
+                addRainbowBoosters(count);
                 break;
             case FIREBALL:
-                addFireballBoosters(1);
+                addFireballBoosters(count);
                 break;
             case LIGHTNING:
-                addLightningBoosters(1);
+                addLightningBoosters(count);
                 break;
             default:
                 break;

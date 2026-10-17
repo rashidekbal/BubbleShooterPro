@@ -86,16 +86,16 @@
                 android:gravity="center" />
         </LinearLayout>
 
-        <!-- Primary CTA: Go To Shop / Buy Boosters -->
+        <!-- Primary Rewarded Ad CTA: Watch Ad to Get 1 Free Booster -->
         <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/btnBuyInShop"
+            android:id="@+id/btnWatchAdForBooster"
             android:layout_width="match_parent"
             android:layout_height="@dimen/dp_48"
             android:layout_marginTop="@dimen/dp_14"
-            android:background="@drawable/btn_pill_blank_green"
-            android:text="🛒 VISIT SHOP"
+            android:background="@drawable/btn_pill_blank_yellow"
+            android:text="🎬 WATCH AD • GET 1 FREE"
             android:textColor="#FFFFFF"
-            android:textSize="@dimen/sp_16"
+            android:textSize="@dimen/sp_15"
             android:textStyle="bold"
             android:shadowColor="#80000000"
             android:shadowDx="1"
@@ -103,7 +103,24 @@
             android:shadowRadius="3"
             android:stateListAnimator="@null" />
 
-        <!-- Secondary Button: Later / Dismiss -->
+        <!-- Secondary CTA: Go To Shop / Buy Boosters -->
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btnBuyInShop"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/dp_44"
+            android:layout_marginTop="@dimen/dp_10"
+            android:background="@drawable/btn_pill_blank_green"
+            android:text="🛒 VISIT SHOP TO BUY MORE"
+            android:textColor="#FFFFFF"
+            android:textSize="@dimen/sp_14"
+            android:textStyle="bold"
+            android:shadowColor="#80000000"
+            android:shadowDx="1"
+            android:shadowDy="2"
+            android:shadowRadius="3"
+            android:stateListAnimator="@null" />
+
+        <!-- Dismiss / Cancel -->
         <TextView
             android:id="@+id/btnCancel"
             android:layout_width="wrap_content"
